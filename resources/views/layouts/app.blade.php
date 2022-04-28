@@ -16,11 +16,11 @@
         <div class="container ">
             <div class="row">
                 <div class="col">
-                   <h1>Warnock Variety Show</h1>
+                   <h1 class="text-center"><a href="/">Warnock Variety Show</a></h1>
                 </div>
             </div>
             <div class="row">
-                <div class="col"><a href="/schedule">Schedule</a></div>
+                <div class="col"><a href="/shows">Shows</a></div>
                 <div class="col"><a href="/rsvp">RSVP</a></div>
                 <div class="col"><a href="/mailing-list">Mailing List</a></div>
             </div>
