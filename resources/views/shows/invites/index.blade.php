@@ -1,18 +1,14 @@
-@extends('layouts.app')
-@section('content')
-    <h2 class="text-center">{{$show->name}}</h2>
+@extends('shows.layout')
+@section('shows-content')
     <div class="card mt-2">
         <div class="card-body p-4">
-            <h5 class="card-title">Generate Invite</h5>
+            <h5 class="card-title text-center">Generate Invite</h5>
             <form class="row" action="/shows/{{$show->id}}/invite" method="POST">
                 @csrf
-                <div class="col-md-4 my-1">
+                <div class="col-md-6 my-1">
                     <input class="form-control" type="text" name="first_name" placeholder="First Name">
                 </div>
-                <div class="col-md-4 my-1">
-                    <input class="form-control" type="text" name="middle_name" placeholder="Middle Name">
-                </div>
-                <div class="col-md-4 my-1">
+                <div class="col-md-6 my-1">
                     <input class="form-control" type="text" name="last_name" placeholder="Last Name">
                 </div>
                 <div class="col-md-6 my-1">
@@ -29,7 +25,7 @@
     </div>
     <div class="card mt-2">
         <div class="card-body p-4">
-            <h5 class="card-title">Sent Invites</h5>
+            <h5 class="card-title text-center">Sent Invites</h5>
             <div class="row">
                 <div class="col-3">Name</div>
                 <div class="col-3">Contact</div>

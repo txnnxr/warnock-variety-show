@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreInviteRequest;
 use App\Http\Requests\UpdateInviteRequest;
+use Illuminate\Http\Request;
 use App\Models\Invite;
 use App\Models\Show;
 use Illuminate\Support\Str;
@@ -102,5 +103,16 @@ class InviteController extends Controller
         $invite = Invite::where('key', $key)->firstOrFail();
 
         return view('shows.invites.respond', compact('show', 'invite'));
+    }
+
+    public function registerResponse(Show $show, $key, Request $request)
+    {
+        Invite::where('key', $key)
+            ->update([
+            'response_status' => $request->input('response_status'),
+            'talent' => $request->input('talent', 0),
+        ]);
+
+        return redirect()->action('InviteController@index', ['show' => $show]);
     }
 }
