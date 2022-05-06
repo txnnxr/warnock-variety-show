@@ -1,6 +1,6 @@
 @extends('shows.layout')
 @section('shows-content')
-    <div class="card">
+    <div class="card my-3">
         <div class="card-body">
             <h5 class="card-title">Thank you {{$invite->first_name}} {{$invite->middle_name}}
                 {{$invite->last_name}}! Your response has been saved!</h5>
