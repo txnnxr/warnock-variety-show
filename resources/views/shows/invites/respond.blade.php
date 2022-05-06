@@ -1,4 +1,7 @@
 @extends('shows.layout')
+@push('meta')
+    <meta property="og:title" content="{{$show->name}} Invitation" />
+@endpush
 @section('shows-content')
 
     <form action="/shows/{{$show->id}}/invite/respond/{{$invite->key}}" method="POST" class="card my-3">
