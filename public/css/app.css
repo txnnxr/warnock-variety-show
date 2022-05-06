@@ -1,4 +1,7 @@
 @import url(https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica&display=swap);
+@import url(https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css);
+@import url(https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css);
+@import url(https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap5.min.css);
 @charset "UTF-8";
 /*!
  * Bootstrap v5.1.3 (https://getbootstrap.com/)
@@ -11316,4 +11319,10 @@ h1 a, .h1 a {
 }
 h1 a:hover, .h1 a:hover {
   color: black;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  margin: 0;
+  margin-left: -1px;
+  padding: 0;
 }

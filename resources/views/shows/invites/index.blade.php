@@ -27,16 +27,15 @@
         <div class="card-title">Total Invites: {{count($show->invites)}} Attending: {{count($show->attending_invites)}}
          Pending: {{count($show->pending_invites)}} No: {{count($show->no_invites)}}</div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table tabled-bordered">
+            <table class="table tabled-bordered dt-responsive no-wrap" id="invitesTable">
                   <thead>
                     <tr>
-                        <th scope="col" colspan="1">#</th>
-                        <th scope="col" colspan="2">Name</th>
+                        <th>#</th>
+                        <th>Name</th>
         {{--                <th scope="col-1">Contact</th>--}}
-                        <th scope="col" colspan="2">Response</th>
-                        <th scope="col" colspan="2">Talent</th>
-                        <th scope="col" colspan="5"></th>
+                        <th>Response</th>
+                        <th>Talent</th>
+                        <th>Buttons</th>
                     </tr>
                   </thead>
                     <tbody>
@@ -45,13 +44,13 @@
                     @endphp
                         @foreach($show->invites as $invite)
                             <tr>
-                                <th scope="row" colspan="1">{{$index++}}</th>
-                                <td colspan="2">{{$invite->first_name}} {{$invite->middle_name}}
+                                <td>{{$index++}}</td>
+                                <td>{{$invite->first_name}} {{$invite->middle_name}}
                                     {{$invite->last_name}}</td>
         {{--                        <td>@if($invite->phone){{$invite->phone}}@else{{$invite->email}}@endif</td>--}}
-                                <td colspan="2">{{$invite->response_status}}</td>
-                                <td colspan="2">@if($invite->talent) YES @else NO @endif</td>
-                                <td colspan="5">
+                                <td>{{$invite->response_status}}</td>
+                                <td>@if($invite->talent) YES @else NO @endif</td>
+                                <td>
                                     <a class="btn btn-secondary" width="50%">Edit</a>
                                     <a class="btn btn-primary copy-link" width="50%" data-link="{{$invite->link}}">Link</a>
                                 </td>
@@ -59,15 +58,17 @@
                         @endforeach
                   </tbody>
                 </table>
-            </div>
         </div>
     </div>
 @endsection
 @push('scripts')
     <script>
-        $('.copy-link').click(function(){
-            navigator.clipboard.writeText($(this).attr('data-link'));
-            $(this).text('Copied!');
+        $(document).ready(function () {
+            $('.copy-link').click(function () {
+                navigator.clipboard.writeText($(this).attr('data-link'));
+                $(this).text('Copied!');
+            });
+            $('#invitesTable').DataTable();
         });
     </script>
 @endpush
