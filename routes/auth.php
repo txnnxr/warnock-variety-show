@@ -53,4 +53,10 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
+
+    Route::resource('mailing-list', 'MailingListController');
+    Route::resource('rsvps', 'RSVPController');
+    Route::resource('shows', 'ShowController');
+    Route::get('shows/{show}/invite', 'InviteController@index');
+    Route::post('shows/{show}/invite', 'InviteController@store');
 });

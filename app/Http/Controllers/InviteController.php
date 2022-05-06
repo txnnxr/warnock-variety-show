@@ -105,14 +105,25 @@ class InviteController extends Controller
         return view('shows.invites.respond', compact('show', 'invite'));
     }
 
+    public function guestThankYou(Invite $invite)
+    {
+        $show = $invite->show;
+        return view('shows.invites.thank-you', compact('invite', 'show'));
+    }
+
     public function registerResponse(Show $show, $key, Request $request)
     {
-        Invite::where('key', $key)
-            ->update([
-            'response_status' => $request->input('response_status'),
-            'talent' => $request->input('talent', 0),
-        ]);
+        $invite = tap(Invite::where('key', $key)->first(), function ($invite) use ($request){
+            $invite->update([
+                'response_status' => $request->input('response_status'),
+                'talent' => $request->input('talent', 0),
+            ]);
+        });
 
-        return redirect()->action('InviteController@index', ['show' => $show]);
+        if(auth()->user()) {
+            return redirect()->action('InviteController@index', ['show' => $show]);
+        } else {
+            return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
+        }
     }
 }

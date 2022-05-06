@@ -20,7 +20,8 @@
         <div class="container ">
             <div class="row">
                 <div class="col">
-                   <h1 class="text-center my-3"><a href="/">Warnock Variety Show</a></h1>
+                   <h1 class="text-center my-3">
+                       @if(Auth::user())<a href="/">Warnock Variety Show</a>@else Warnock Variety Show @endif</h1>
                 </div>
             </div>
             @if(Auth::user())
@@ -39,12 +40,12 @@
                     <div class="col"><a href="/rsvp">RSVP</a></div>
                     <div class="col"><a href="/mailing-list">Mailing List</a></div>
                 </div>
-            @else
-                <div class="row">
-                    <a href="{{ route('login') }}"> Login </a>
-                </div>
             @endif
-            @yield('content')
+            <div class="card p-3">
+                <h2 class="card-title text-center mt-3">{{$show->name}}</h2>
+                <div class="card-body mb-3">{!! nl2br($show->description) !!} </div>
+            </div>
+            @yield('shows-content')
        </div>
     <footer>
         <script

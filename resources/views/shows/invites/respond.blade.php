@@ -1,13 +1,13 @@
 @extends('shows.layout')
 @section('shows-content')
 
-    <form action="/shows/{{$show->id}}/invite/respond/{{$invite->key}}" method="POST" class="card">
+    <form action="/shows/{{$show->id}}/invite/respond/{{$invite->key}}" method="POST" class="card my-3">
         @csrf
         <div class="card-body">
-            <h5 class="card-title">{{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}} - RSVP</h5>
+            <h3 class="card-title">{{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}} - RSVP</h3>
             <div class="form-control my-2">
                 <div class="row ">
-                    <div class="col-12">Attending?</div>
+                    <h4 class="col-12">Attending?</h4>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="response_status" id="yes" value="ATTENDING" checked>
@@ -24,13 +24,13 @@
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="response_status" id="maybe" value="COWARD">
                   <label class="form-check-label" for="maybe">
-                    Coward (Maybe)
+                    Maybe
                   </label>
                 </div>
             </div>
             <div class="talent-box form-control my-2">
                 <div class="row ">
-                    <div class="col-12">Talent?</div>
+                    <h4 class="col-12">Talent?</h4>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="talent" id="yes" value="1" checked>
@@ -54,7 +54,7 @@
     $('[name=response_status]').change(function(){
       if($(this).val() === 'ATTENDING')
       {
-          $('[name=talent]').attr('disabled', 'false');
+          $('[name=talent]').removeAttr('disabled');
           $('.talent-box').show();
       }
       else

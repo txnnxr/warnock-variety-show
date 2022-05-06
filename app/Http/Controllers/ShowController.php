@@ -39,7 +39,7 @@ class ShowController extends Controller
     {
         $show = Show::create([
             'name' => $request->name,
-            'description' => $request->description,
+            'description' => htmlspecialchars($request->description),
             'date' => $request->date,
             'max_attendants' => $request->max_attendants,
             'address' => $request->address,
@@ -80,7 +80,8 @@ class ShowController extends Controller
      */
     public function update(UpdateShowRequest $request, Show $show)
     {
-        //
+        //https://calendar.google
+        //.com/calendar/u/0/r/eventedit/copy/Nm8zbDhjNnUza2g5Z2xkNWcwdnQ0c2lqN2wgdHdlbGxzODMwQG0/dHdlbGxzODMwQGdtYWlsLmNvbQ?sf=true
     }
 
     /**

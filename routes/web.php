@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-//use App\Http\Controllers\ShowController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,15 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+//
+//Route::get('/dashboard', function () {
+//    return view('dashboard');
+//})->middleware(['auth'])->name('dashboard');
 
-
-Route::resource('mailing-list', 'MailingListController');
-Route::resource('rsvps', 'RSVPController');
-Route::resource('shows', 'ShowController');
-Route::get('shows/{show}/invite', 'InviteController@index');
-Route::post('shows/{show}/invite', 'InviteController@store');
 Route::get('shows/{show}/invite/respond/{key}', 'InviteController@respond');
 Route::post('shows/{show}/invite/respond/{key}', 'InviteController@registerResponse');
+Route::get('/invite/{invite}/thank-you', 'InviteController@guestThankYou');
+
+require __DIR__.'/auth.php';
