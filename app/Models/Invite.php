@@ -16,6 +16,6 @@ class Invite extends Model
     }
 
     public function getLinkAttribute(){
-        return env('APP_URL').'/shows/'.$this->show->id.'/invite/respond/'.$this->key;
+        return config('app.url').'/shows/'.$this->show->id.'/invite/respond/'.$this->key;
     }
 }
