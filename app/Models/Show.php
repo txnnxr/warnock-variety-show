@@ -12,7 +12,23 @@ class Show extends Model
     protected $guarded = [];
 
 
-    public function invites() {
+    public function invites(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
         return $this->hasMany(Invite::class);
+    }
+
+    public function getAttendingInvitesAttribute()
+    {
+        return $this->invites()->withResponse('ATTENDING')->get();
+    }
+
+    public function getPendingInvitesAttribute()
+    {
+        return $this->invites()->withResponse('PENDING')->get();
+    }
+
+    public function getNoInvitesAttribute()
+    {
+        return $this->invites()->withResponse('NO')->get();
     }
 }

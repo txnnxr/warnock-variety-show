@@ -18,4 +18,9 @@ class Invite extends Model
     public function getLinkAttribute(){
         return config('app.url').'/shows/'.$this->show->id.'/invite/respond/'.$this->key;
     }
+
+    public function scopeWithResponse($query, $response)
+    {
+        return $query->where('response_status', $response);
+    }
 }
