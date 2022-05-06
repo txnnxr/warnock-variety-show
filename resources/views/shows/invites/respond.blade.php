@@ -1,6 +1,6 @@
 @extends('shows.layout')
 @push('meta')
-    <meta property="og:title" content="{{$show->name}} - Invitation" />
+    <meta property="og:title" content="{{$show->name}} - {{$invite->first_name}} Invitation" />
 @endpush
 @section('shows-content')
 
