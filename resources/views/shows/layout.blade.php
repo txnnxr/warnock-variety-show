@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 {{--        --}}
-
+        <link rel="icon" href="/favicon.ico">
         @stack('meta')
         <meta property="og:image" content="/images/background.jpg" />
         <title>{{ config('app.name', 'Laravel') }}</title>
