@@ -27,6 +27,16 @@
                         </div>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-12">
+                        <form method="post" action="/invites/{{$invite->id}}/generate-ics">
+                            @csrf
+                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-kiwi-bird"></i> Add
+                                to Calendar
+                            </button>
+                        </form>
+                    </div>
+                </div>
             @endif
         </div>
     </div>

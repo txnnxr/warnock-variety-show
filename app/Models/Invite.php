@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Libraries\ICS;
+use Carbon\Carbon;
 
 class Invite extends Model
 {
@@ -22,5 +24,21 @@ class Invite extends Model
     public function scopeWithResponse($query, $response)
     {
         return $query->where('response_status', $response);
+    }
+
+    public function generateICS(){
+        header('Content-Type: text/calendar; charset=utf-8');
+        header("Content-Disposition: attachment; filename={$this->show->name}.ics");
+
+        $ics = new ICS(array(
+          'location' => $this->show->address,
+          'description' => $this->show->description,
+          'dtstart' => $this->show->date,
+          'dtend' => Carbon::parse($this->show->date)->addHours(3)->toDateTimeString(),
+          'summary' => "Warnock Variety Show - " . $this->show->name,
+          'url' => $this->link
+        ));
+
+        echo $ics->to_string();
     }
 }

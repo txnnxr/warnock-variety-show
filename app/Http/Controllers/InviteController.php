@@ -126,4 +126,9 @@ class InviteController extends Controller
             return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
         }
     }
+
+    public function generateICS(Invite $invite)
+    {
+        $invite->generateICS();
+    }
 }

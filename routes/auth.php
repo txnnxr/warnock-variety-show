@@ -14,6 +14,8 @@ Route::middleware('guest')->group(function () {
     Route::get('/', function () {
         return view('home');
     });
+    Route::post('/invites/{invite}/generate-ics', 'InviteController@generateICS');
+
 
     Route::get('register', [RegisteredUserController::class, 'create'])
                 ->name('register');
@@ -67,4 +69,5 @@ Route::middleware('auth')->group(function () {
     Route::resource('shows', 'ShowController');
     Route::get('shows/{show}/invite', 'InviteController@index');
     Route::post('shows/{show}/invite', 'InviteController@store');
+
 });

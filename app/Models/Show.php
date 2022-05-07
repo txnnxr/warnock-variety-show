@@ -11,7 +11,6 @@ class Show extends Model
 
     protected $guarded = [];
 
-
     public function invites(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Invite::class);
