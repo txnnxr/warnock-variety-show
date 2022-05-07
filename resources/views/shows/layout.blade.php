@@ -40,13 +40,13 @@
                 </div>
                 <div class="row">
                     <div class="col"><a href="/shows">Shows</a></div>
-                    <div class="col"><a href="/rsvp">RSVP</a></div>
-                    <div class="col"><a href="/mailing-list">Mailing List</a></div>
+{{--                    <div class="col"><a href="/rsvp">RSVP</a></div>--}}
+{{--                    <div class="col"><a href="/mailing-list">Mailing List</a></div>--}}
                 </div>
             @endif
             <div class="card p-3">
                 <h2 class="card-title text-center mt-3">{{$show->name}}</h2>
-                <div class="card-body mb-3">{!! nl2br($show->description) !!} </div>
+                <div class="card-body mb-3">{!! nl2br($show->description) !!}</div>
             </div>
             @yield('shows-content')
        </div>

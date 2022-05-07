@@ -13,7 +13,7 @@ class UpdateShowRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,10 @@ class UpdateShowRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required',
+            'date' => 'required',
+            'max_attendants' => 'required',
+            'address' => 'required',
         ];
     }
 }

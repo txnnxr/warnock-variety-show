@@ -44,9 +44,8 @@ class ShowController extends Controller
             'max_attendants' => $request->max_attendants,
             'address' => $request->address,
         ]);
-        if ($show) {
-            return redirect('/shows');
-        }
+
+        return redirect('/shows');
     }
 
     /**
@@ -64,11 +63,11 @@ class ShowController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Show  $show
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
     public function edit(Show $show)
     {
-        //
+        return view('shows.create', compact('show'));
     }
 
     /**
@@ -80,8 +79,15 @@ class ShowController extends Controller
      */
     public function update(UpdateShowRequest $request, Show $show)
     {
-        //https://calendar.google
-        //.com/calendar/u/0/r/eventedit/copy/Nm8zbDhjNnUza2g5Z2xkNWcwdnQ0c2lqN2wgdHdlbGxzODMwQG0/dHdlbGxzODMwQGdtYWlsLmNvbQ?sf=true
+        $show->update([
+            'name' => $request->name,
+            'description' => htmlspecialchars($request->description),
+            'date' => $request->date,
+            'max_attendants' => $request->max_attendants,
+            'address' => $request->address,
+        ]);
+
+        return redirect('/shows');
     }
 
     /**

@@ -12,6 +12,13 @@ class Show extends Model
 
     protected $guarded = [];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+        'date'
+    ];
+
     public function invites(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Invite::class);

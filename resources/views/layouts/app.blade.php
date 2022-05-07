@@ -35,8 +35,8 @@
                 </div>
                 <div class="row">
                     <div class="col"><a href="/shows">Shows</a></div>
-                    <div class="col"><a href="/rsvp">RSVP</a></div>
-                    <div class="col"><a href="/mailing-list">Mailing List</a></div>
+{{--                    <div class="col"><a href="/rsvp">RSVP</a></div>--}}
+{{--                    <div class="col"><a href="/mailing-list">Mailing List</a></div>--}}
                 </div>
             @else
                 <div class="row">
