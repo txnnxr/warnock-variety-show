@@ -27,7 +27,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+            @endif
+            <div class="row">
+                @if($invite->response_status == "ATTENDING")
                     <div class="col">
                         <form method="post" action="/invites/{{$invite->id}}/generate-ics">
                             @csrf
@@ -36,14 +38,14 @@
                             </button>
                         </form>
                     </div>
-                    <div class="col">
-                        <a href="/invites/{{$invite->id}}/edit">
-                            <button type="submit" class="btn btn-warning"><i class="fa-solid fa-hippo"></i>
-                                Update Response</button>
-                        </a>
-                    </div>
+                @endif
+                <div class="col">
+                    <a href="/invites/{{$invite->id}}/edit">
+                        <button type="submit" class="btn btn-warning"><i class="fa-solid fa-hippo"></i>
+                            Update Response</button>
+                    </a>
                 </div>
-            @endif
+            </div>
         </div>
     </div>
 @endsection
