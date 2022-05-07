@@ -68,11 +68,15 @@ class InviteController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Invite  $invite
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function edit(Invite $invite)
     {
-        //
+        $invite->update([
+            'response_status' => 'PENDING',
+        ]);
+
+        return redirect()->action('InviteController@respond', ['show'=> $invite->show, 'key' => $invite->key]);
     }
 
     /**
@@ -98,10 +102,14 @@ class InviteController extends Controller
         //
     }
 
+    //TODO: this should just be show
     public function respond(Show $show, $key)
     {
         $invite = Invite::where('key', $key)->firstOrFail();
 
+        if ($invite->response_status != 'PENDING') {
+            return view('shows.invites.thank-you', compact('invite', 'show'));
+        }
         return view('shows.invites.respond', compact('show', 'invite'));
     }
 
@@ -111,6 +119,7 @@ class InviteController extends Controller
         return view('shows.invites.thank-you', compact('invite', 'show'));
     }
 
+    //TODO: this should just be update?
     public function registerResponse(Show $show, $key, Request $request)
     {
         $invite = tap(Invite::where('key', $key)->first(), function ($invite) use ($request){
@@ -120,11 +129,11 @@ class InviteController extends Controller
             ]);
         });
 
-        if(auth()->user()) {
-            return redirect()->action('InviteController@index', ['show' => $show]);
-        } else {
+//        if(auth()->user()) {
+//            return redirect()->action('InviteController@index', ['show' => $show]);
+//        } else {
             return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
-        }
+//        }
     }
 
     public function generateICS(Invite $invite)

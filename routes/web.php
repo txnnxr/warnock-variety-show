@@ -18,5 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('shows/{show}/invite/respond/{key}', 'InviteController@respond');
 Route::post('shows/{show}/invite/respond/{key}', 'InviteController@registerResponse');
 Route::get('/invite/{invite}/thank-you', 'InviteController@guestThankYou');
+Route::post('/invites/{invite}/generate-ics', 'InviteController@generateICS');
+Route::get('/invites/{invite}/edit', 'InviteController@edit');
 
 require __DIR__.'/auth.php';

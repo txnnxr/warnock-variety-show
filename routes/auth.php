@@ -14,8 +14,6 @@ Route::middleware('guest')->group(function () {
     Route::get('/', function () {
         return view('home');
     });
-    Route::post('/invites/{invite}/generate-ics', 'InviteController@generateICS');
-
 
     Route::get('register', [RegisteredUserController::class, 'create'])
                 ->name('register');
