@@ -34,7 +34,13 @@ class Invite extends Model
 
     public function generateICS(){
         header('Content-Type: text/calendar; charset=utf-8');
-        header("Content-Disposition: attachment; filename={$this->show->name}.ics");
+
+        if ($this->isMobileDevice())
+        {
+            header("Content-Disposition: inline; filename={$this->show->name}.ics");
+        } else {
+            header("Content-Disposition: attachment; filename={$this->show->name}.ics");
+        }
 
         $ics = new ICS(array(
             'location' => $this->show->address,
@@ -46,5 +52,11 @@ class Invite extends Model
         ));
 
         echo $ics->to_string();
+    }
+
+    public function isMobileDevice() {
+        return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo
+        |fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i"
+        , $_SERVER["HTTP_USER_AGENT"]);
     }
 }
