@@ -129,11 +129,7 @@ class InviteController extends Controller
             ]);
         });
 
-//        if(auth()->user()) {
-//            return redirect()->action('InviteController@index', ['show' => $show]);
-//        } else {
-            return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
-//        }
+        return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
     }
 
     public function generateICS(Invite $invite)

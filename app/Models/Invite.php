@@ -29,15 +29,14 @@ class Invite extends Model
     public function generateICS(){
         header('Content-Type: text/calendar; charset=utf-8');
         header("Content-Disposition: inline; filename={$this->show->name}.ics");
-//        header("Content-Disposition: attachment; filename={$this->show->name}.ics");
 
         $ics = new ICS(array(
-          'location' => $this->show->address,
-          'description' => $this->show->description,
-          'dtstart' => $this->show->date,
-          'dtend' => Carbon::parse($this->show->date)->addHours(3)->toDateTimeString(),
-          'summary' => "Warnock Variety Show - " . $this->show->name,
-          'url' => $this->link
+            'location' => $this->show->address,
+            'description' => preg_replace('/[\n\r]+/', '', $this->show->description),
+            'dtstart' => $this->show->date,
+            'dtend' => Carbon::parse($this->show->date)->addHours(3)->toDateTimeString(),
+            'summary' => "Warnock Variety Show - " . $this->show->name,
+            'url' => $this->link
         ));
 
         echo $ics->to_string();
