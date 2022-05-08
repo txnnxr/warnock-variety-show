@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\guestRequestRequest;
 use App\Http\Requests\StoreInviteRequest;
 use App\Http\Requests\UpdateInviteRequest;
 use Illuminate\Http\Request;
@@ -146,5 +147,37 @@ class InviteController extends Controller
     public function markAsOpened(Invite $invite)
     {
         $invite->update(['response_status' => 'PENDING - OPENED']);
+    }
+
+    public function guestRequest(Show $show){
+        return view('shows.invites.guest-request', compact('show'));
+    }
+
+    public function guestRequestSave(guestRequestRequest $request, Show $show)
+    {
+        $invite = Invite::create([
+            'show_id' => $show->id,
+            'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name' => $request->last_name,
+            'phone' => $request->phone,
+            'email' => $request->email,
+            'response_status' => $request->response_status,
+            'talent' => $request->talent,
+            'guest_request' => true,
+            'key' => Str::uuid(),
+        ]);
+
+        return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
+    }
+
+    public function guestRequestApprove(Invite $invite){
+        if (\Auth::user()) {
+            $invite->update([
+                'guest_request' => false
+            ]);
+        }
+
+        return redirect()->action('InviteController@index', ['show' => $invite->show]);
     }
 }

@@ -36,6 +36,9 @@ Route::middleware('guest')->group(function () {
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
                 ->name('password.update');
+
+    Route::get('/shows/{show}/invite/guest-request', 'InviteController@guestRequest')->name('invites.guest-request');
+    Route::post('/shows/{show}/invite/guest-request', 'InviteController@guestRequestSave');
 });
 
 Route::middleware('auth')->group(function () {
@@ -67,5 +70,5 @@ Route::middleware('auth')->group(function () {
     Route::resource('shows', 'ShowController');
     Route::get('shows/{show}/invite', 'InviteController@index');
     Route::post('shows/{show}/invite', 'InviteController@store');
-
+    Route::post('/invites/{invite}/guest-request/approve', 'InviteController@guestRequestApprove')->name('invites.guest-request.approve');
 });

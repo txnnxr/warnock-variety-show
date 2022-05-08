@@ -1,6 +1,12 @@
 @extends('shows.layout')
 @section('shows-content')
-    <div class="card mt-2">
+    <div class="card mt-3">
+        <div class="card-title"></div>
+        <div class="card-body">
+            <button class="btn btn-info copy-link form-control" data-link="{{route('invites.guest-request', ['show' => $show])}}">Guest Request Invite Link</button>
+        </div>
+    </div>
+    <div class="card mt-3">
         <div class="card-body p-4">
             <h5 class="card-title text-center">Generate Invite</h5>
             <form class="row" action="/shows/{{$show->id}}/invite" method="POST">
@@ -56,7 +62,7 @@
                                 <td>{{$invite->first_name}} {{$invite->middle_name}}
                                     {{$invite->last_name}}</td>
         {{--                        <td>@if($invite->phone){{$invite->phone}}@else{{$invite->email}}@endif</td>--}}
-                                <td>{{$invite->response_status}}</td>
+                                <td>{{$invite->response_status}} @if($invite->guest_request) - REQUESTED @endif</td>
                                 <td>@if($invite->talent) YES @else NO @endif</td>
                                 <td>
                                     <a class="btn btn-secondary col">Edit</a>
@@ -65,6 +71,12 @@
                                         <form class="d-inline-block" action="/invites/{{$invite->id}}/mark-as-sent" method="POST">
                                             @csrf
                                             <button type="submit" class="btn btn-warning col d-inline-block" href>Sent</button>
+                                        </form>
+                                    @endif
+                                    @if($invite->guest_request)
+                                        <form class="d-inline-block" action="{{route('invites.guest-request.approve', ['invite' => $invite])}}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success col d-inline-block" href>Approve</button>
                                         </form>
                                     @endif
                                 </td>
