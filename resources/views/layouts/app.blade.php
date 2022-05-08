@@ -41,7 +41,7 @@
             @else
                 <div class="row">
                     <a class ="col-1" href="{{ route('login') }}"> Login </a>
-                    <a class ="col-1" href="{{ route('register') }}">Register </a>
+{{--                    <a class ="col-1" href="{{ route('register') }}">Register </a>--}}
                 </div>
             @endif
             @yield('content')
