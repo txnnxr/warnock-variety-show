@@ -4,7 +4,7 @@ namespace App\Libraries;
 
 class ICS
 {
-    const DT_FORMAT = 'Ymd\THis\Z';
+    const DT_FORMAT = 'Ymd\THis';
 
     protected $properties = array();
     private $available_properties = array(
