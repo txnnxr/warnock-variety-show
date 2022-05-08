@@ -6,16 +6,16 @@
             <form class="row" action="/shows/{{$show->id}}/invite" method="POST">
                 @csrf
                 <div class="col-md-6 my-1">
-                    <input class="form-control" type="text" name="first_name" placeholder="First Name">
+                    <input class="form-control" type="text" name="first_name" placeholder="First Name (required)">
                 </div>
                 <div class="col-md-6 my-1">
-                    <input class="form-control" type="text" name="last_name" placeholder="Last Name">
+                    <input class="form-control" type="text" name="last_name" placeholder="Last Name (optional)">
                 </div>
                 <div class="col-md-6 my-1">
-                    <input class="form-control" type="text" name="phone" placeholder="Phone">
+                    <input class="form-control" type="text" name="phone" placeholder="Phone (optional)">
                 </div>
                 <div class="col-md-6 my-1">
-                    <input class="form-control" type="text" name="email" placeholder="Email">
+                    <input class="form-control" type="text" name="email" placeholder="Email (optional)">
                 </div>
                 <div class="col-md-12 my-1">
                     <button class="form-control btn btn-primary" type="submit">Create Invite</button>
@@ -24,8 +24,16 @@
         </div>
     </div>
     <div class="card my-3">
-        <div class="card-title">Total Invites: {{count($show->invites)}} Attending: {{count($show->attending_invites)}}
-         Pending: {{count($show->pending_invites)}} No: {{count($show->no_invites)}}</div>
+        <div class="card-title mt-3 px-3">
+            <div class="row">
+                <div class="col">Total Invites: {{count($show->invites)}}</div>
+                <div class="col">Attending: {{count($show->attending_invites)}}</div>
+                <div class="col">Maybe: {{count($show->maybe_invites)}}</div>
+                <div class="col">No: {{count($show->no_invites)}} </div>
+                <div class="col">Pending: {{count($show->pending_invites)}}</div>
+                <div class="col">Created: {{count($show->created_invites)}} </div>
+            </div>
+        </div>
         <div class="card-body">
             <table class="table tabled-bordered dt-responsive no-wrap" id="invitesTable">
                   <thead>
@@ -51,8 +59,14 @@
                                 <td>{{$invite->response_status}}</td>
                                 <td>@if($invite->talent) YES @else NO @endif</td>
                                 <td>
-                                    <a class="btn btn-secondary" width="50%">Edit</a>
-                                    <a class="btn btn-primary copy-link" width="50%" data-link="{{$invite->link}}">Link</a>
+                                    <a class="btn btn-secondary col">Edit</a>
+                                    <a class="btn btn-primary copy-link col" data-link="{{$invite->link}}">Link</a>
+                                    @if($invite->response_status == 'CREATED')
+                                        <form class="d-inline-block" action="/invites/{{$invite->id}}/mark-as-sent" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-warning col d-inline-block" href>Sent</button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach

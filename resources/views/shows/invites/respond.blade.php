@@ -54,17 +54,22 @@
 @endsection
 @push('scripts')
 <script>
+    @if($invite->response_status == 'PENDING - SENT')
+        $(document).ready(function(){
+            $.post( "/invites/{{$invite->id}}/mark-as-opened", {"_token": "{{ csrf_token() }}"});
+        });
+    @endif
     $('[name=response_status]').change(function(){
-      if($(this).val() === 'ATTENDING')
-      {
-          $('[name=talent]').removeAttr('disabled');
-          $('.talent-box').show();
-      }
-      else
-      {
-          $('[name=talent]').attr('disabled', 'disabled');
-          $('.talent-box').hide();
-      }
+        if($(this).val() === 'ATTENDING')
+        {
+            $('[name=talent]').removeAttr('disabled');
+            $('.talent-box').show();
+        }
+        else
+        {
+            $('[name=talent]').attr('disabled', 'disabled');
+            $('.talent-box').hide();
+        }
     });
 </script>
 @endpush

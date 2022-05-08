@@ -26,6 +26,11 @@ class Invite extends Model
         return $query->where('response_status', $response);
     }
 
+    public function scopeWithPending($query)
+    {
+        return $query->where('response_status', 'like', 'PENDING%');
+    }
+
     public function generateICS(){
         header('Content-Type: text/calendar; charset=utf-8');
         header("Content-Disposition: inline; filename={$this->show->name}.ics");

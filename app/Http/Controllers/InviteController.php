@@ -73,7 +73,7 @@ class InviteController extends Controller
     public function edit(Invite $invite)
     {
         $invite->update([
-            'response_status' => 'PENDING',
+            'response_status' => 'PENDING - UPDATE',
         ]);
 
         return redirect()->action('InviteController@respond', ['show'=> $invite->show, 'key' => $invite->key]);
@@ -107,7 +107,7 @@ class InviteController extends Controller
     {
         $invite = Invite::where('key', $key)->firstOrFail();
 
-        if ($invite->response_status != 'PENDING') {
+        if (!str_contains($invite->response_status, 'PENDING')) {
             return view('shows.invites.thank-you', compact('invite', 'show'));
         }
         return view('shows.invites.respond', compact('show', 'invite'));
@@ -135,5 +135,16 @@ class InviteController extends Controller
     public function generateICS(Invite $invite)
     {
         $invite->generateICS();
+    }
+
+    public function markAsSent(Invite $invite)
+    {
+        $invite->update(['response_status' => 'PENDING - SENT']);
+        return redirect()->action('InviteController@index', ['show' => $invite->show]);
+    }
+
+    public function markAsOpened(Invite $invite)
+    {
+        $invite->update(['response_status' => 'PENDING - OPENED']);
     }
 }

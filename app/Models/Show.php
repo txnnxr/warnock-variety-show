@@ -31,11 +31,21 @@ class Show extends Model
 
     public function getPendingInvitesAttribute()
     {
-        return $this->invites()->withResponse('PENDING')->get();
+        return $this->invites()->withPending()->get();
     }
 
     public function getNoInvitesAttribute()
     {
+        return $this->invites()->withResponse('COWARD')->get();
+    }
+
+    public function getMaybeInvitesAttribute()
+    {
         return $this->invites()->withResponse('NO')->get();
+    }
+
+    public function getCreatedInvitesAttribute()
+    {
+        return $this->invites()->withResponse('CREATED')->get();
     }
 }
