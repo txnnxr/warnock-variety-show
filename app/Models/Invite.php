@@ -9,7 +9,7 @@ use Carbon\Carbon;
 
 class Invite extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = [];
 
