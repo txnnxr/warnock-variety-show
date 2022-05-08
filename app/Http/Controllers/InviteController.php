@@ -108,7 +108,7 @@ class InviteController extends Controller
     {
         $invite = Invite::where('key', $key)->firstOrFail();
 
-        if (!str_contains($invite->response_status, 'PENDING') || !str_contains($invite->response_status, 'CREATED')) {
+        if (!str_contains($invite->response_status, 'PENDING') && !str_contains($invite->response_status, 'CREATED')) {
             return view('shows.invites.thank-you', compact('invite', 'show'));
         }
         return view('shows.invites.respond', compact('show', 'invite'));
