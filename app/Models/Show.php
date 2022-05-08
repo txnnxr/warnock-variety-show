@@ -36,12 +36,12 @@ class Show extends Model
 
     public function getNoInvitesAttribute()
     {
-        return $this->invites()->withResponse('COWARD')->get();
+        return $this->invites()->withResponse('NO')->get();
     }
 
     public function getMaybeInvitesAttribute()
     {
-        return $this->invites()->withResponse('NO')->get();
+        return $this->invites()->withResponse('COWARD')->get();
     }
 
     public function getCreatedInvitesAttribute()
