@@ -41,12 +41,11 @@
             </div>
         </div>
         <div class="card-body">
-            <table class="table tabled-bordered dt-responsive no-wrap" id="invitesTable">
+            <table class="dt-responsive no-wrap" id="invitesTable">
                   <thead>
                     <tr>
                         <th>#</th>
                         <th>Name</th>
-        {{--                <th scope="col-1">Contact</th>--}}
                         <th>Response</th>
                         <th>Talent</th>
                         <th>Buttons</th>

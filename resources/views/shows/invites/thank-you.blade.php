@@ -9,7 +9,7 @@
                     <div class="col-12">Attending?</div>
                 </div>
                 <div class="row">
-                    <div class="col-12">{{$invite->response_status}} @if($invite->guest_request) - REQUESTED @endif</div>
+                    <div class="col-12"> @if($invite->response_status == 'COWARD') MAYBE @else {{$invite->response_status}} @endif @if($invite->guest_request) - REQUESTED @endif</div>
                 </div>
             </div>
             @if($invite->response_status == "ATTENDING")
