@@ -79,6 +79,12 @@
                                             <button type="submit" class="btn btn-success col d-inline-block" href>Approve</button>
                                         </form>
                                     @endif
+                                    @if(!$invite->attendee_id)
+                                        <form class="d-inline-block" action="{{route('invites.generate-attendee-profile', ['invite' => $invite])}}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-warning col d-inline-block" href>Create Profile</button>
+                                        </form>
+                                    @endif
                                 </td>
                             </tr>
                         @endforeach
