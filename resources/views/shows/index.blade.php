@@ -20,6 +20,7 @@
                         <td>{{$show->date}}</td>
                         <td>
                             <a class="btn btn-primary"href="/shows/{{$show->id}}/invite">Invite</a>
+                            <a class="btn btn-secondary"href="/shows/{{$show->id}}">View</a>
                             <a class="btn btn-secondary"href="/shows/{{$show->id}}/edit">Edit</a>
                         </td>
                     </tr>
