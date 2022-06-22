@@ -24,7 +24,7 @@
             <div class="row">
                 <div class="col">
                    <h1 class="text-center my-3">
-                       <a href="/">Warnock Variety Show</a
+                       <a href="/">Warnock Variety Show</a>
                    </h1>
                 </div>
             </div>
