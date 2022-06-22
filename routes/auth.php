@@ -67,7 +67,12 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('mailing-list', 'MailingListController');
     Route::resource('rsvps', 'RSVPController');
-    Route::resource('shows', 'ShowController');
+    Route::get('shows', 'ShowController@index');
+    Route::get('shows/create', 'ShowController@create');
+    Route::post('shows', 'ShowController@store');
+    Route::put('shows/{show}/edit', 'ShowController@edit');
+    Route::delete('shows/{show}', 'ShowController@destroy');
+
     Route::get('shows/{show}/invite', 'InviteController@index');
     Route::post('shows/{show}/invite', 'InviteController@store');
     Route::post('/invites/{invite}/guest-request/approve', 'InviteController@guestRequestApprove')->name('invites.guest-request.approve');

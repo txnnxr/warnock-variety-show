@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-
+Route::get('shows/{show}', 'ShowController@show');
 Route::get('shows/{show}/invite/respond/{key}', 'InviteController@respond');
 Route::post('shows/{show}/invite/respond/{key}', 'InviteController@registerResponse');
 Route::get('/invite/{invite}/thank-you', 'InviteController@guestThankYou');

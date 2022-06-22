@@ -24,7 +24,8 @@
             <div class="row">
                 <div class="col">
                    <h1 class="text-center my-3">
-                       @if(Auth::user())<a href="/">Warnock Variety Show</a>@else Warnock Variety Show @endif</h1>
+                       <a href="/">Warnock Variety Show</a
+                   </h1>
                 </div>
             </div>
             @if(Auth::user())
@@ -40,8 +41,6 @@
                 </div>
                 <div class="row">
                     <div class="col"><a href="/shows">Shows</a></div>
-{{--                    <div class="col"><a href="/rsvp">RSVP</a></div>--}}
-{{--                    <div class="col"><a href="/mailing-list">Mailing List</a></div>--}}
                 </div>
             @endif
             <div class="card p-3">

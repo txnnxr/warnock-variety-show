@@ -11327,3 +11327,7 @@ h1 a:hover, .h1 a:hover {
   margin-left: -1px;
   padding: 0;
 }
+
+ul {
+  list-style-type: none;
+}
