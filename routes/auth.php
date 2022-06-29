@@ -39,6 +39,8 @@ Route::middleware('guest')->group(function () {
 
     Route::get('/shows/{show}/invite/guest-request', 'InviteController@guestRequest')->name('invites.guest-request');
     Route::post('/shows/{show}/invite/guest-request', 'InviteController@guestRequestSave');
+
+    Route::get('/card', 'CardController@show')->name('card.show');
 });
 
 Route::middleware('auth')->group(function () {

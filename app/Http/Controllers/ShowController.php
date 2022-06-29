@@ -33,7 +33,7 @@ class ShowController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\StoreShowRequest  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
     public function store(StoreShowRequest $request)
     {
@@ -56,6 +56,7 @@ class ShowController extends Controller
      */
     public function show(Show $show)
     {
+        dd($show);
         return view('shows.show', compact('show'));
     }
 
