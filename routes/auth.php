@@ -72,7 +72,8 @@ Route::middleware('auth')->group(function () {
     Route::get('shows', 'ShowController@index');
     Route::get('shows/create', 'ShowController@create');
     Route::post('shows', 'ShowController@store');
-    Route::put('shows/{show}/edit', 'ShowController@edit');
+    Route::get('shows/{show}/edit', 'ShowController@edit');
+    Route::put('shows/{show}', 'ShowController@update');
     Route::delete('shows/{show}', 'ShowController@destroy');
 
     Route::get('shows/{show}/invite', 'InviteController@index');
