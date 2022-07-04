@@ -48,7 +48,7 @@ class CardController extends Controller
      */
     public function show(Card $card)
     {
-        return redirect(route('invites.guest-request', [
+        return redirect(route('shows.show', [
             'show' => Show::latest('date')->first(),
         ]));
     }
