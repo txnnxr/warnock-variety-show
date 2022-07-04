@@ -60,7 +60,7 @@
         });
     @endif
     $('[name=response_status]').change(function(){
-        if($(this).val() === 'ATTENDING')
+        if($(this).val() !== 'NO')
         {
             $('[name=talent]').removeAttr('disabled');
             $('.talent-box').show();
