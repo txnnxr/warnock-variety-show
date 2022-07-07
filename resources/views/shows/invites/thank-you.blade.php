@@ -40,6 +40,12 @@
                     </div>
                 @endif
                 <div class="col">
+                    <a href="/shows/{{$invite->show->id}}/view">
+                        <button type="submit" class="btn btn-info"><i class="fa-solid fa-worm"></i>
+                            View Show</button>
+                    </a>
+                </div>
+                <div class="col">
                     <a href="/invites/{{$invite->id}}/edit">
                         <button type="submit" class="btn btn-warning"><i class="fa-solid fa-hippo"></i>
                             Update Response</button>

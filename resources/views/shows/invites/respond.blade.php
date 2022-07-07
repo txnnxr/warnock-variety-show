@@ -7,7 +7,10 @@
     <form action="/shows/{{$show->id}}/invite/respond/{{$invite->key}}" method="POST" class="card my-3">
         @csrf
         <div class="card-body">
-            <h3 class="card-title">{{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}} - RSVP</h3>
+            <h3 class="card-title">{{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}} - RSVP <a href="/shows/{{$invite->show->id}}/view">
+                        <button type="button" class="btn btn-info"><i class="fa-solid fa-worm"></i>
+                            View Show</button>
+                    </a></h3>
             <div class="form-control my-2">
                 <div class="row ">
                     <h4 class="col-12">Attending?</h4>

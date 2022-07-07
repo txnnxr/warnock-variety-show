@@ -45,7 +45,7 @@
             @endif
             <div class="card p-3">
                 <h2 class="card-title text-center mt-3">{{$show->name}}</h2>
-                <div class="card-body mb-3">{!! nl2br($show->description) !!}</div>
+                <div class="card-body mb-3">{!! htmlspecialchars_decode(nl2br($show->description)) !!}</div>
             </div>
             @yield('shows-content')
        </div>
