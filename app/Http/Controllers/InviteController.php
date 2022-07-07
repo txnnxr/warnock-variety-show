@@ -168,7 +168,7 @@ class InviteController extends Controller
             'key' => Str::uuid(),
         ]);
 
-        return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
+        return back();
     }
 
     public function guestRequestApprove(Invite $invite){
