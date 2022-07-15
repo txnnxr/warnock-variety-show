@@ -11377,7 +11377,7 @@ nav .row .col {
   position: absolute;
   bottom: 1rem;
   left: 50%;
-  width: 317.8px;
+  width: 240px;
   opacity: 0.33;
   transform: translate(-50%, 0%);
 }
@@ -11398,5 +11398,9 @@ nav .row .col {
   }
   nav .row .col {
     text-align: center;
+  }
+
+  .invitation-logo {
+    width: 318px;
   }
 }
