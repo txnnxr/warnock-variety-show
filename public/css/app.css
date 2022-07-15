@@ -11288,8 +11288,7 @@ textarea.form-control-lg {
 }
 body {
   font-family: "IM Fell DW Pica", serif;
-  background-image: url("/images/background.jpg");
-  background-size: cover;
+  background: #f6fc97;
 }
 
 .btn-primary {
@@ -11298,11 +11297,18 @@ body {
 }
 
 .btn-primary:active {
-  background-color: #146c43;
+  background-color: #ab7d5c;
+  border-color: #ab7d5c;
 }
 
 .btn-primary:focus {
-  background-color: #146c43;
+  background-color: #ab7d5c;
+  border-color: #ab7d5c;
+}
+
+.btn-primary:hover {
+  background-color: #ab7d5c;
+  border-color: #ab7d5c;
 }
 
 a {
@@ -11336,6 +11342,46 @@ h1 a:hover, .h1 a:hover {
   font-size: 14px;
 }
 
+.container {
+  padding: 2rem 2rem;
+  margin: auto;
+}
+
+nav {
+  width: 63%;
+  margin: auto;
+}
+nav .row .col {
+  text-align: center;
+}
+
+.card {
+  left: -1000px;
+  -webkit-animation: slide 1s forwards;
+  -webkit-animation-delay: 0.3s;
+  animation: slide 1s forwards;
+  animation-delay: 0.3s;
+}
+
+@-webkit-keyframes slide {
+  100% {
+    left: 0;
+  }
+}
+@keyframes slide {
+  100% {
+    left: 0;
+  }
+}
+.invitation-logo {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  width: 317.8px;
+  opacity: 0.33;
+  transform: translate(-50%, 0%);
+}
+
 @media (min-width: 576px) {
   .inviteeList {
     list-style-type: none;
@@ -11343,5 +11389,14 @@ h1 a:hover, .h1 a:hover {
   }
   .inviteeList li {
     font-size: 16px;
+  }
+}
+@media (min-width: 768px) {
+  nav {
+    width: 36%;
+    margin: auto;
+  }
+  nav .row .col {
+    text-align: center;
   }
 }
