@@ -45,7 +45,7 @@
             @endif
             <div class="card p-3">
                 <h2 class="card-title text-center mt-3">{{$show->name}}</h2>
-                <img class="invitation-logo" src="{{URL::asset('/images/PetsOnly.png')}}" alt="">
+                <img class="invitation-logo" src="/images/PetsOnly.png" alt="">
                 <div class="card-body mb-3">{!! htmlspecialchars_decode(nl2br($show->description)) !!}</div>
             </div>
             @yield('shows-content')
