@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\guestRequestRequest;
 use App\Http\Requests\StoreInviteRequest;
 use App\Http\Requests\UpdateInviteRequest;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Invite;
 use App\Models\Show;
@@ -103,9 +104,12 @@ class InviteController extends Controller
         //
     }
 
-    //TODO: this should just be show
     public function respond(Show $show, $key)
     {
+        if ($show->date->isBefore(Carbon::now())){
+            return redirect('/');
+        }
+
         $invite = Invite::where('key', $key)->firstOrFail();
 
         if (!str_contains($invite->response_status, 'PENDING') && !str_contains($invite->response_status, 'CREATED')) {
