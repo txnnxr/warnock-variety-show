@@ -64,7 +64,7 @@
                                 <td>{{$invite->response_status}} @if($invite->guest_request) - REQUESTED @endif</td>
                                 <td>@if($invite->talent) YES @else NO @endif</td>
                                 <td>
-                                    <a class="btn btn-secondary col">Edit</a>
+                                    <a href="{{action([\App\Http\Controllers\InviteController::class, 'edit'], ['invite' => $invite])}}" class="btn btn-secondary col">Edit</a>
                                     <a class="btn btn-primary copy-link col" data-link="{{$invite->link}}">Link</a>
                                     @if($invite->response_status == 'CREATED')
                                         <form class="d-inline-block" action="/invites/{{$invite->id}}/mark-as-sent" method="POST">
