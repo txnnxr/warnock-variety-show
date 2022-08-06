@@ -49,6 +49,7 @@ class InviteController extends Controller
             'last_name' => $request->last_name,
             'phone' => $request->phone,
             'email' => $request->email,
+            'has_plus_one_option' => $request->has_plus_one_option,
             'key' => Str::uuid(),
         ]);
 
@@ -131,6 +132,9 @@ class InviteController extends Controller
             $invite->update([
                 'response_status' => $request->input('response_status'),
                 'talent' => $request->input('talent', 0),
+                'talent_write_in' => ($request->input('talent_write_in')),
+                'plus_one_status' => $request->input('plus_one_status', false),
+                'plus_one_name' => $request->input('plus_one_name', null),
             ]);
         });
 

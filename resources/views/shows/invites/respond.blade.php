@@ -44,6 +44,10 @@
                     Ye
                   </label>
                 </div>
+                <div class="talent-write-in-box">
+                    <div class="form-label">If you already know, what is your talent? (optional)</div>
+                    <input class="form-text" type="text" name="talent_write_in" placeholder="">
+                </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="talent" id="no" value="0">
                   <label class="form-check-label" for="no">
@@ -51,27 +55,85 @@
                   </label>
                 </div>
             </div>
+            @if($invite->has_plus_one_option)
+                <div class="plus-one-box form-control my-2">
+                    <div class="row ">
+                        <h4 class="col-12">Plus One?</h4>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="plus_one_status" id="yes" value="1" checked>
+                      <label class="form-check-label" for="yes">
+                          Si si
+                      </label>
+                    </div>
+                    <div class="plus-one-name-box">
+                        <div class="form-label">Who is this motherfucker?</div>
+                        <input class="form-text" type="text" name="plus_one_name" placeholder="">
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="plus_one_status" id="no" value="0">
+                      <label class="form-check-label" for="no">
+                        Non
+                      </label>
+                    </div>
+                </div>
+            @endif
         </div>
         <button class="btn btn-primary mx-3 mb-3" type="submit">Submit</button>
     </form>
 @endsection
 @push('scripts')
 <script>
+    // $(document).ready(function(){
+    //     if ($('[name=talent]').val() !== '0')
+    //     {
+    //         $('.talent-write-in-box').show();
+    //     } else {
+    //         $('[name=talent-write-in]').attr('disabled', 'disabled');
+    //         $('.talent-write-in-box').hide();
+    //     }
+    // });
     @if($invite->response_status == 'PENDING - SENT')
         $(document).ready(function(){
             $.post( "/invites/{{$invite->id}}/mark-as-opened", {"_token": "{{ csrf_token() }}"});
         });
     @endif
     $('[name=response_status]').change(function(){
-        if($(this).val() !== 'NO')
-        {
+        if($(this).val() !== 'NO') {
             $('[name=talent]').removeAttr('disabled');
             $('.talent-box').show();
-        }
-        else
-        {
+            if($(this).val() == 'ATTENDING') {
+                $('[name=plus-one-name]').removeAttr('disabled');
+                $('.plus-one-box').show();
+            } else {
+                $('[name=plus-one-name]').attr('disabled', 'disabled');
+                $('.plus-one-box').hide();
+            }
+        } else {
             $('[name=talent]').attr('disabled', 'disabled');
             $('.talent-box').hide();
+            $('[name=plus-one-name]').attr('disabled', 'disabled');
+            $('.plus-one-box').hide();
+        }
+    });
+    $('[name=talent]').change(function(){
+        if($(this).val() !== '0')
+        {
+            $('[name=talent-write-in]').removeAttr('disabled');
+            $('.talent-write-in-box').show();
+        } else {
+            $('[name=talent-write-in]').attr('disabled', 'disabled');
+            $('.talent-write-in-box').hide();
+        }
+    });
+    $('[name=plus-one]').change(function(){
+        if($(this).val() !== '0')
+        {
+            $('[name=plus-one-name]').removeAttr('disabled');
+            $('.plus-one-name-box').show();
+        } else {
+            $('[name=plus-one-name]').attr('disabled', 'disabled');
+            $('.plus-one-name-box').hide();
         }
     });
 </script>
