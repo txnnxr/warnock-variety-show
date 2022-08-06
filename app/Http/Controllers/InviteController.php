@@ -49,7 +49,7 @@ class InviteController extends Controller
             'last_name' => $request->last_name,
             'phone' => $request->phone,
             'email' => $request->email,
-            'has_plus_one_option' => $request->has_plus_one_option,
+            'has_plus_one_option' => $request->input('has_plus_one_option', false),
             'key' => Str::uuid(),
         ]);
 
