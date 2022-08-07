@@ -60,6 +60,7 @@
                 <div class="plus-one-box form-control my-2">
                     <div class="row ">
                         <h4 class="col-12">Plus One?</h4>
+                        <span><i>This does not include the option for the plus one to do a talent.</i></span>
                     </div>
                     <div class="form-check">
                       <input class="form-check-input" type="radio" name="plus_one_status" id="yes" value="1" checked>
