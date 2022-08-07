@@ -41,6 +41,16 @@ class Invite extends Model
         return $query->whereNotNull($waitlistType.'_waitlist_priority');
     }
 
+    public function isOnAttendingWaitlist(): bool
+    {
+        return $this->response_status == 'ATTENDING' && $this->attendance_waitlist_priority !== null;
+    }
+
+    public function isOnTalentWaitlist(): bool
+    {
+        return $this->talent && $this->talent_waitlist_priority !== null;
+    }
+
     public function generateICS(){
         header('Content-Type: text/calendar; charset=utf-8');
 

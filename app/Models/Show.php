@@ -19,6 +19,8 @@ class Show extends Model
         'date'
     ];
 
+    // TODO: Attributes may be getting crazy. Might want to clean them up.
+
     public function invites(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Invite::class);
@@ -27,6 +29,16 @@ class Show extends Model
     public function getAttendingInvitesAttribute()
     {
         return $this->invites()->withResponse('ATTENDING')->get();
+    }
+
+    public function getAttendingWaitlistInvitesAttribute()
+    {
+        return $this->invites()->withResponse('ATTENDING')->onWaitlist('attendance')->get();
+    }
+
+    public function getTalentWaitlistInvitesAttribute()
+    {
+        return $this->invites()->withResponse('ATTENDING')->onWaitlist('talent')->get();
     }
 
     public function getPendingInvitesAttribute()
@@ -49,19 +61,20 @@ class Show extends Model
         return $this->invites()->withResponse('CREATED')->get();
     }
 
-    public function getAtCapacityAttendantsAttribute()
+    public function getAtCapacityAttendantsAttribute(): bool
     {
         return ($this->attending_invites->count() + $this->attending_invites->sum('plus_one_status'))>= $this->max_attendants;
     }
 
-    public function getAtCapacityTalentsAttribute()
+    public function getAtCapacityTalentsAttribute(): bool
     {
         return $this->invites()->withAttendingTalent()->count() >= $this->max_talents;
     }
 
     public function getNextWaitlistPriority($type) {
-        if ($waitlistCount = $this->invites->max($type.'_waitlist_priority') != null) {
-            return $waitlistCount - 1;
+        $waitlistCount = $this->invites->max($type.'_waitlist_priority');
+        if ($waitlistCount !== null) {
+            return $waitlistCount + 1;
         }
         return 0;
     }

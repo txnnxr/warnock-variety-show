@@ -23,39 +23,58 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-6 col-sm-3">
-                    <h3 class="headers">Attending ({{count($show->attending_invites)}})</h3>
-
+                    <h3 class="headers">Attending ({{count($show->attending_invites)+$show->attending_invites->sum('plus_one_status')}})</h3>
                     <ul class="inviteeList">
                         @foreach($show->attending_invites as $invite)
-
-                            <li><i class="fa-regular fa-circle-check"></i> @if($invite->talent) <i class="fa-solid fa-otter"></i>  @else <i class="fa-solid fa-bugs"></i> @endif {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}}</li>
+                            <li><i class="fa-regular fa-circle-check"></i> @if($invite->talent) <i class="fa-solid fa-otter"></i>  @else <i class="fa-solid fa-bugs"></i> @endif {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}} @if($invite->plus_one_status)<i>(+1)</i>@endif</li>
                         @endforeach
                     </ul>
                 </div>
-                <div class="col-6 col-sm-3">
-                    <h3>Maybe ({{count($show->maybe_invites)}})</h3>
-                    <ul class="inviteeList">
-                        @foreach($show->maybe_invites as $invite)
-                            <li><i class="fa-regular fa-circle-question"></i> @if($invite->talent) <i class="fa-solid fa-otter"></i>  @else <i class="fa-solid fa-bugs"></i> @endif  {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                <div class="col-6 col-sm-3">
-                    <h3>No ({{count($show->no_invites)}})</h3>
-                    <ul class="inviteeList">
-                        @foreach($show->no_invites as $invite)
-                            <li><i class="fa-regular fa-circle-xmark"></i> {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                <div class="col-6 col-sm-3">
-                    <h3>Pending ({{count($show->pending_invites)}})</h3>
-                    <ul class="inviteeList">
-                        @foreach($show->pending_invites as $invite)
-                            <li><i class="fa-solid fa-circle-exclamation"></i> {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}}</li>
-                        @endforeach
-                    </ul>
-                </div>
+                @if(!$show->at_capacity_attendants)
+                    <div class="col-6 col-sm-3">
+                        <h3>Maybe ({{count($show->maybe_invites)}})</h3>
+                        <ul class="inviteeList">
+                            @foreach($show->maybe_invites as $invite)
+                                <li><i class="fa-regular fa-circle-question"></i> @if($invite->talent) <i class="fa-solid fa-otter"></i>  @else <i class="fa-solid fa-bugs"></i> @endif  {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <h3>No ({{count($show->no_invites)}})</h3>
+                        <ul class="inviteeList">
+                            @foreach($show->no_invites as $invite)
+                                <li><i class="fa-regular fa-circle-xmark"></i> {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <h3>Pending ({{count($show->pending_invites)}})</h3>
+                        <ul class="inviteeList">
+                            @foreach($show->pending_invites as $invite)
+                                <li><i class="fa-solid fa-circle-exclamation"></i> {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @else
+                    <div class="col-6 col-sm-3">
+                        <h3>Attendance Waitlist ({{count($show->attending_waitlist_invites)}})</h3>
+                        <ul class="inviteeList">
+                            @foreach($show->attending_waitlist_invites as $invite)
+                                <li>{{$invite->first_name}} {{$invite->last_name}}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+                @if($show->at_capacity_talents)
+                    <div class="col-6 col-sm-3">
+                        <h3>Talent Waitlist ({{count($show->talent_waitlist_invites)}})</h3>
+                        <ul class="inviteeList">
+                            @foreach($show->talent_waitlist_invites as $invite)
+                                <li>{{$invite->first_name}} {{$invite->last_name}}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
