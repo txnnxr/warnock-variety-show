@@ -14,36 +14,12 @@
         <link rel="stylesheet" href="{{ asset('css/app.css') }}">
         <!-- Scripts -->
         <script src="{{ asset('js/app.js') }}" defer></script>
+        @livewireStyles
     </head>
     <body class="antialiased">
-        <div class="container ">
-            <div class="row">
-                <div class="col">
-                   <h1 class="text-center my-3"><a href="/">Warnock Variety Show</a></h1>
-                </div>
-            </div>
-            @if(Auth::user())
-                <div class="row">
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <a href="route('logout')"
-                                onclick="event.preventDefault();
-                                            this.closest('form').submit();">
-                            Logout
-                        </a>
-                    </form>
-                </div>
-                <div class="row">
-                    <div class="col"><a href="/shows">Shows</a></div>
-{{--                    <div class="col"><a href="/rsvp">RSVP</a></div>--}}
-{{--                    <div class="col"><a href="/mailing-list">Mailing List</a></div>--}}
-                </div>
-            @else
-                <div class="row">
-                    <a class ="col-1" href="{{ route('login') }}"> Login </a>
-{{--                    <a class ="col-1" href="{{ route('register') }}">Register </a>--}}
-                </div>
-            @endif
+        <div class="container">
+            <h1 class="text-center my-3 site-title"><a href="/">Warnock Variety Show</a></h1>
+            @livewire('navigation')
             @yield('content')
        </div>
     <footer>
@@ -53,5 +29,6 @@
 			  crossorigin="anonymous"></script>
         @stack('scripts')
     </footer>
+    @livewireScripts
     </body>
 </html>

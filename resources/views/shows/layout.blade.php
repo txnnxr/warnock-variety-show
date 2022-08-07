@@ -24,7 +24,8 @@
             <div class="row">
                 <div class="col">
                    <h1 class="text-center my-3">
-                       @if(Auth::user())<a href="/">Warnock Variety Show</a>@else Warnock Variety Show @endif</h1>
+                       <a href="/">Warnock Variety Show</a>
+                   </h1>
                 </div>
             </div>
             @if(Auth::user())
@@ -40,13 +41,12 @@
                 </div>
                 <div class="row">
                     <div class="col"><a href="/shows">Shows</a></div>
-{{--                    <div class="col"><a href="/rsvp">RSVP</a></div>--}}
-{{--                    <div class="col"><a href="/mailing-list">Mailing List</a></div>--}}
                 </div>
             @endif
             <div class="card p-3">
                 <h2 class="card-title text-center mt-3">{{$show->name}}</h2>
-                <div class="card-body mb-3">{!! nl2br($show->description) !!}</div>
+                <img class="invitation-logo" src="/images/PetsOnly.png" alt="">
+                <div class="card-body mb-3">{!! htmlspecialchars_decode(nl2br($show->description)) !!}</div>
             </div>
             @yield('shows-content')
        </div>
@@ -57,7 +57,9 @@
 			  crossorigin="anonymous"></script>
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
+
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
         <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>

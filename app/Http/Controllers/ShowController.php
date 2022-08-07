@@ -33,7 +33,7 @@ class ShowController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\StoreShowRequest  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
     public function store(StoreShowRequest $request)
     {
@@ -41,7 +41,8 @@ class ShowController extends Controller
             'name' => $request->name,
             'description' => htmlspecialchars($request->description),
             'date' => $request->date,
-            'max_attendants' => $request->max_attendants,
+            'max_attendants' => $request->input('max_attendants', 30),
+            'max_talents' => $request->input('max_talents', 10),
             'address' => $request->address,
         ]);
 
@@ -56,7 +57,7 @@ class ShowController extends Controller
      */
     public function show(Show $show)
     {
-        //
+        return view('shows.show', compact('show'));
     }
 
     /**
@@ -83,7 +84,8 @@ class ShowController extends Controller
             'name' => $request->name,
             'description' => htmlspecialchars($request->description),
             'date' => $request->date,
-            'max_attendants' => $request->max_attendants,
+            'max_attendants' => $request->input('max_attendants', 30),
+            'max_talents' => $request->input('max_talents', 10),
             'address' => $request->address,
         ]);
 

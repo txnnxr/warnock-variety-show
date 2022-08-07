@@ -15,30 +15,32 @@ Route::middleware('guest')->group(function () {
         return view('home');
     });
 
-    Route::get('register', [RegisteredUserController::class, 'create'])
-                ->name('register');
+//    Route::get('register', [RegisteredUserController::class, 'create'])
+//                ->name('register');
 
-    Route::post('register', [RegisteredUserController::class, 'store']);
+//    Route::post('register', [RegisteredUserController::class, 'store']);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
                 ->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
-                ->name('password.request');
+//    Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
+//                ->name('password.request');
+//
+//    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
+//                ->name('password.email');
 
-    Route::post('forgot-password', [PasswordResetLinkController::class, 'store'])
-                ->name('password.email');
-
-    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
-                ->name('password.reset');
-
-    Route::post('reset-password', [NewPasswordController::class, 'store'])
-                ->name('password.update');
+//    Route::get('reset-password/{token}', [NewPasswordController::class, 'create'])
+//                ->name('password.reset');
+//
+//    Route::post('reset-password', [NewPasswordController::class, 'store'])
+//                ->name('password.update');
 
     Route::get('/shows/{show}/invite/guest-request', 'InviteController@guestRequest')->name('invites.guest-request');
     Route::post('/shows/{show}/invite/guest-request', 'InviteController@guestRequestSave');
+
+    Route::get('/card', 'CardController@show')->name('card.show');
 });
 
 Route::middleware('auth')->group(function () {
@@ -67,7 +69,13 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('mailing-list', 'MailingListController');
     Route::resource('rsvps', 'RSVPController');
-    Route::resource('shows', 'ShowController');
+    Route::get('shows', 'ShowController@index');
+    Route::get('shows/create', 'ShowController@create');
+    Route::post('shows', 'ShowController@store');
+    Route::get('shows/{show}/edit', 'ShowController@edit');
+    Route::put('shows/{show}', 'ShowController@update');
+    Route::delete('shows/{show}', 'ShowController@destroy');
+
     Route::get('shows/{show}/invite', 'InviteController@index');
     Route::post('shows/{show}/invite', 'InviteController@store');
     Route::post('/invites/{invite}/guest-request/approve', 'InviteController@guestRequestApprove')->name('invites.guest-request.approve');

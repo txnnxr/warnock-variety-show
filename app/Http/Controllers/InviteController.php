@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\guestRequestRequest;
 use App\Http\Requests\StoreInviteRequest;
 use App\Http\Requests\UpdateInviteRequest;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Invite;
 use App\Models\Show;
@@ -48,6 +49,7 @@ class InviteController extends Controller
             'last_name' => $request->last_name,
             'phone' => $request->phone,
             'email' => $request->email,
+            'has_plus_one_option' => $request->input('has_plus_one_option', false),
             'key' => Str::uuid(),
         ]);
 
@@ -103,9 +105,12 @@ class InviteController extends Controller
         //
     }
 
-    //TODO: this should just be show
     public function respond(Show $show, $key)
     {
+        if ($show->date->isBefore(Carbon::now())){
+            return redirect('/');
+        }
+
         $invite = Invite::where('key', $key)->firstOrFail();
 
         if (!str_contains($invite->response_status, 'PENDING') && !str_contains($invite->response_status, 'CREATED')) {
@@ -121,14 +126,25 @@ class InviteController extends Controller
     }
 
     //TODO: this should just be update?
-    public function registerResponse(Show $show, $key, Request $request)
+    public function registerResponse(Invite $invite, Request $request)
     {
-        $invite = tap(Invite::where('key', $key)->first(), function ($invite) use ($request){
-            $invite->update([
-                'response_status' => $request->input('response_status'),
-                'talent' => $request->input('talent', 0),
-            ]);
-        });
+        $show = $invite->show;
+        $updateArray = [
+            'response_status' => $request->input('response_status'),
+            'talent' => $request->input('talent', 0),
+            'talent_write_in' => ($request->input('talent_write_in')),
+            'plus_one_status' => $request->input('plus_one_status', false),
+            'plus_one_name' => $request->input('plus_one_name', null),
+        ];
+
+        if ($show->at_capacity_attendants && $updateArray['response_status'] == 'ATTENDING') {
+            $updateArray['attendance_waitlist_priority'] = $show->getNextWaitlistPriority('attendance');
+        }
+        if ($show->at_capacity_talents && $updateArray['talent'] == 1) {
+            $updateArray['talent_waitlist_priority'] = $show->getNextWaitlistPriority('talent');
+        }
+
+        $invite->update($updateArray);
 
         return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
     }
@@ -168,7 +184,7 @@ class InviteController extends Controller
             'key' => Str::uuid(),
         ]);
 
-        return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
+        return back();
     }
 
     public function guestRequestApprove(Invite $invite){

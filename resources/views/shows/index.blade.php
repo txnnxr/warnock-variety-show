@@ -2,6 +2,9 @@
 @section('content')
     <div class="card">
         <div class="card-body">
+            <a href="{{action([\App\Http\Controllers\ShowController::class, 'create'])}}">
+                <button class="btn btn-primary mt-2 mb-3">Create Show</button>
+            </a>
             <table class="table tabled-bordered dt-responsive no-wrap" id="showsTable">
                 <thead>
                     <tr>
@@ -20,6 +23,7 @@
                         <td>{{$show->date}}</td>
                         <td>
                             <a class="btn btn-primary"href="/shows/{{$show->id}}/invite">Invite</a>
+                            <a class="btn btn-secondary"href="/shows/{{$show->id}}/view">View</a>
                             <a class="btn btn-secondary"href="/shows/{{$show->id}}/edit">Edit</a>
                         </td>
                     </tr>
