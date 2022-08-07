@@ -66,6 +66,10 @@ class Show extends Model
         return ($this->attending_invites->count() + $this->attending_invites->sum('plus_one_status'))>= $this->max_attendants;
     }
 
+    public function attendingTalents(){
+        return $this->invites()->withAttendingTalent()->whereNull('talent_waitlist_priority')->get();
+    }
+
     public function getAtCapacityTalentsAttribute(): bool
     {
         return $this->invites()->withAttendingTalent()->count() >= $this->max_talents;

@@ -79,6 +79,18 @@
         </div>
     </div>
 
+    <div class="card my-3">
+        <div class="card-body">
+            <h3 class="card-title">Current Line Up</h3>
+            <h6>(in no particular order)</h6>
+            <ul class="inviteeList">
+                @foreach($show->attendingTalents() as $exhibitor)
+                    <li>{{$exhibitor->first_name}} {{$exhibitor->middle_name}} {{$exhibitor->last_name}}  @if($exhibitor->talent_write_in) - {{$exhibitor->talent_write_in}}@endif</li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+
     <!-- Modal -->
     <div class="modal fade" id="rsvpModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">

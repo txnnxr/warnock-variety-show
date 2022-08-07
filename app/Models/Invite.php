@@ -34,7 +34,7 @@ class Invite extends Model
 
     public function scopeWithAttendingTalent($query)
     {
-        return $this->withResponse('ATTENDING')->where('talent', 1);
+        return $query->withResponse('ATTENDING')->where('talent', 1);
     }
 
     public function scopeOnWaitlist($query, $waitlistType) {
