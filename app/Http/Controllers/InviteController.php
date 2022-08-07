@@ -53,6 +53,7 @@ class InviteController extends Controller
             'key' => Str::uuid(),
         ]);
 
+        //TODO: for livewire this will have to return a real result instead of a redirect
         return redirect()->action('InviteController@index', ['show' => $show]);
     }
 

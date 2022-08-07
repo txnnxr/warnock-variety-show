@@ -1,49 +1,17 @@
 @extends('shows.layout')
 @section('shows-content')
-    <div class="card mt-3">
-        <div class="card-title"></div>
-        <div class="card-body">
-            <button class="btn btn-info copy-link form-control" data-link="{{route('invites.guest-request', ['show' => $show])}}">Guest Request Invite Link</button>
-        </div>
-    </div>
-    <div class="card mt-3">
-        <div class="card-body p-4">
-            <h5 class="card-title text-center">Generate Invite</h5>
-            <form class="row" action="/shows/{{$show->id}}/invite" method="POST">
-                @csrf
-                <div class="col-md-6 my-1">
-                    <input class="form-control" type="text" name="first_name" placeholder="First Name (required)">
-                </div>
-                <div class="col-md-6 my-1">
-                    <input class="form-control" type="text" name="last_name" placeholder="Last Name (optional)">
-                </div>
-                <div class="col-md-6 my-1">
-                    <label for="has_plus_one_option">Give invitation optional plus one?</label>
-                    <input class="" type="checkbox" name="has_plus_one_option" value="1">
-                </div>
-{{--                <div class="col-md-6 my-1">--}}
-{{--                    <input class="form-control" type="text" name="phone" placeholder="Phone (optional)">--}}
-{{--                </div>--}}
-{{--                <div class="col-md-6 my-1">--}}
-{{--                    <input class="form-control" type="text" name="email" placeholder="Email (optional)">--}}
-{{--                </div>--}}
-                <div class="col-md-12 my-1">
-                    <button class="form-control btn btn-primary" type="submit">Create Invite</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    @livewire('rsvp', compact('show'))
     <div class="card my-3">
-        <div class="card-title mt-3 px-3">
-            <div class="row">
-                <div class="col">Total Invites: {{count($show->invites)}}</div>
-                <div class="col">Attending: {{count($show->attending_invites)}}</div>
-                <div class="col">Maybe: {{count($show->maybe_invites)}}</div>
-                <div class="col">No: {{count($show->no_invites)}} </div>
-                <div class="col">Pending: {{count($show->pending_invites)}}</div>
-                <div class="col">Created: {{count($show->created_invites)}} </div>
-            </div>
-        </div>
+{{--        <div class="card-title mt-3 px-3">--}}
+{{--            <div class="row">--}}
+{{--                <div class="col">Total Invites: {{count($show->invites)}}</div>--}}
+{{--                <div class="col">Attending: {{count($show->attending_invites)}}</div>--}}
+{{--                <div class="col">Maybe: {{count($show->maybe_invites)}}</div>--}}
+{{--                <div class="col">No: {{count($show->no_invites)}} </div>--}}
+{{--                <div class="col">Pending: {{count($show->pending_invites)}}</div>--}}
+{{--                <div class="col">Created: {{count($show->created_invites)}} </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
         <div class="card-body">
             <table class="dt-responsive no-wrap" id="invitesTable">
                   <thead>
