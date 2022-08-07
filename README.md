@@ -14,10 +14,10 @@
 - General/Open Invitations - best option for quickly disseminating information about the show. *However this opens the issue of making the event public and people rsvp multiple times accidentally.*
 
 ## Tech
-Laravel 8
-Livewire
-Vue.js
-Npm
+- Laravel 8
+- Livewire
+- Vue.js
+- Npm
 
 ## Installation
 copy .env.example to .env and fill in machine relevant credentials
