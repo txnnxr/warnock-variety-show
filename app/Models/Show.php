@@ -28,7 +28,7 @@ class Show extends Model
 
     public function getAttendingInvitesAttribute()
     {
-        return $this->invites()->withResponse('ATTENDING')->get();
+        return $this->invites()->withResponse('ATTENDING')->whereNull('attendance_waitlist_priority')->get();
     }
 
     public function getAttendingWaitlistInvitesAttribute()

@@ -137,11 +137,11 @@ class InviteController extends Controller
             'plus_one_name' => $request->input('plus_one_name', null),
         ];
 
-        if ($show->at_capacity_attendants) {
-            $updateArray['attendance_waitlist_priority'] = $show->getNextWaitlistPriority('talent');
+        if ($show->at_capacity_attendants && $updateArray['response_status'] == 'ATTENDING') {
+            $updateArray['attendance_waitlist_priority'] = $show->getNextWaitlistPriority('attendance');
         }
-        if ($show->at_capacity_talents) {
-            $updateArray['talent_waitlist_priority'] = $show->getNextWaitlistPriority('attendance');
+        if ($show->at_capacity_talents && $updateArray['talent'] == 1) {
+            $updateArray['talent_waitlist_priority'] = $show->getNextWaitlistPriority('talent');
         }
 
         $invite->update($updateArray);
