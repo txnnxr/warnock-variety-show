@@ -3,8 +3,7 @@
     <meta property="og:title" content="{{$show->name}} - {{$invite->first_name}} Invitation" />
 @endpush
 @section('shows-content')
-
-    <form action="/shows/{{$show->id}}/invite/respond/{{$invite->key}}" method="POST" class="card my-3">
+    <form action="/invite/respond/{{$invite->id}}" method="POST" class="card my-3">
         @csrf
         <div class="card-body">
             <h3 class="card-title">{{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}} - RSVP <a href="/shows/{{$invite->show->id}}/view">
@@ -13,7 +12,7 @@
                     </a></h3>
             <div class="form-control my-2">
                 <div class="row ">
-                    <h4 class="col-12">Attending?</h4>
+                    <h4 class="col-12">@if($show->at_capacity_attendants) Add to Attending Waitlist? @else Attending? @endif</h4>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="response_status" id="yes" value="ATTENDING" checked>
@@ -27,16 +26,18 @@
                     No
                   </label>
                 </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="response_status" id="maybe" value="COWARD">
-                  <label class="form-check-label" for="maybe">
-                    Maybe
-                  </label>
-                </div>
+                @if(!$show->at_capacity_attendants)
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="response_status" id="maybe" value="COWARD">
+                      <label class="form-check-label" for="maybe">
+                        Maybe
+                      </label>
+                    </div>
+                @endif
             </div>
             <div class="talent-box form-control my-2">
                 <div class="row ">
-                    <h4 class="col-12">Talent?</h4>
+                    <h4 class="col-12">@if($show->at_capacity_talents) Add to Talent Waitlist? @else Talent? @endif</h4>
                 </div>
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="talent" id="yes" value="1" checked>
@@ -55,7 +56,7 @@
                   </label>
                 </div>
             </div>
-            @if($invite->has_plus_one_option)
+            @if($invite->has_plus_one_option && !$show->at_capacity_attendants)
                 <div class="plus-one-box form-control my-2">
                     <div class="row ">
                         <h4 class="col-12">Plus One?</h4>

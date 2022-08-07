@@ -48,4 +48,21 @@ class Show extends Model
     {
         return $this->invites()->withResponse('CREATED')->get();
     }
+
+    public function getAtCapacityAttendantsAttribute()
+    {
+        return ($this->attending_invites->count() + $this->attending_invites->sum('plus_one_status'))>= $this->max_attendants;
+    }
+
+    public function getAtCapacityTalentsAttribute()
+    {
+        return $this->invites()->withAttendingTalent()->count() >= $this->max_talents;
+    }
+
+    public function getNextWaitlistPriority($type) {
+        if ($waitlistCount = $this->invites->max($type.'_waitlist_priority') != null) {
+            return $waitlistCount - 1;
+        }
+        return 0;
+    }
 }

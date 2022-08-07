@@ -126,17 +126,25 @@ class InviteController extends Controller
     }
 
     //TODO: this should just be update?
-    public function registerResponse(Show $show, $key, Request $request)
+    public function registerResponse(Invite $invite, Request $request)
     {
-        $invite = tap(Invite::where('key', $key)->first(), function ($invite) use ($request){
-            $invite->update([
-                'response_status' => $request->input('response_status'),
-                'talent' => $request->input('talent', 0),
-                'talent_write_in' => ($request->input('talent_write_in')),
-                'plus_one_status' => $request->input('plus_one_status', false),
-                'plus_one_name' => $request->input('plus_one_name', null),
-            ]);
-        });
+        $show = $invite->show;
+        $updateArray = [
+            'response_status' => $request->input('response_status'),
+            'talent' => $request->input('talent', 0),
+            'talent_write_in' => ($request->input('talent_write_in')),
+            'plus_one_status' => $request->input('plus_one_status', false),
+            'plus_one_name' => $request->input('plus_one_name', null),
+        ];
+
+        if ($show->at_capacity_attendants) {
+            $updateArray['attendance_waitlist_priority'] = $show->getNextWaitlistPriority('talent');
+        }
+        if ($show->at_capacity_talents) {
+            $updateArray['talent_waitlist_priority'] = $show->getNextWaitlistPriority('attendance');
+        }
+
+        $invite->update($updateArray);
 
         return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
     }

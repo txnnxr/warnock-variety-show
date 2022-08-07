@@ -32,6 +32,15 @@ class Invite extends Model
         return $query->where('response_status', 'like', 'PENDING%');
     }
 
+    public function scopeWithAttendingTalent($query)
+    {
+        return $this->withResponse('ATTENDING')->where('talent', 1);
+    }
+
+    public function scopeOnWaitlist($query, $waitlistType) {
+        return $query->whereNotNull($waitlistType.'_waitlist_priority');
+    }
+
     public function generateICS(){
         header('Content-Type: text/calendar; charset=utf-8');
 

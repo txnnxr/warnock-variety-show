@@ -41,7 +41,8 @@ class ShowController extends Controller
             'name' => $request->name,
             'description' => htmlspecialchars($request->description),
             'date' => $request->date,
-            'max_attendants' => $request->max_attendants,
+            'max_attendants' => $request->input('max_attendants', 30),
+            'max_talents' => $request->input('max_talents', 10),
             'address' => $request->address,
         ]);
 
@@ -83,7 +84,8 @@ class ShowController extends Controller
             'name' => $request->name,
             'description' => htmlspecialchars($request->description),
             'date' => $request->date,
-            'max_attendants' => $request->max_attendants,
+            'max_attendants' => $request->input('max_attendants', 30),
+            'max_talents' => $request->input('max_talents', 10),
             'address' => $request->address,
         ]);
 
