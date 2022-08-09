@@ -18,6 +18,10 @@
                 </div>
             </div>
         @endif
+    @else
+        <div>
+            <input type="file" id="" name="" accept="audio/*video/*image/*,.pdf,.txt">
+        </div>
     @endif
     <div class="card my-3">
         <div class="card-body">
