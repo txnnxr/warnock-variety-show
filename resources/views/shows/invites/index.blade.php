@@ -18,15 +18,15 @@
                     <input class="form-control" type="text" name="last_name" placeholder="Last Name (optional)">
                 </div>
                 <div class="col-md-6 my-1">
+                    <input class="form-control" type="text" name="phone" placeholder="Phone (optional)">
+                </div>
+                <div class="col-md-6 my-1">
+                    <input class="form-control" type="text" name="email" placeholder="Email (optional)">
+                </div>
+                <div class="col-md-6 my-1">
                     <label for="has_plus_one_option">Give invitation optional plus one?</label>
                     <input class="" type="checkbox" name="has_plus_one_option" value="1">
                 </div>
-{{--                <div class="col-md-6 my-1">--}}
-{{--                    <input class="form-control" type="text" name="phone" placeholder="Phone (optional)">--}}
-{{--                </div>--}}
-{{--                <div class="col-md-6 my-1">--}}
-{{--                    <input class="form-control" type="text" name="email" placeholder="Email (optional)">--}}
-{{--                </div>--}}
                 <div class="col-md-12 my-1">
                     <button class="form-control btn btn-primary" type="submit">Create Invite</button>
                 </div>

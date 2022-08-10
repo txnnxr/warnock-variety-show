@@ -2,17 +2,27 @@
 
 namespace App\Models;
 
+use App\Events\ResponseReceived;
+use App\Events\ResponseUpdated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Libraries\ICS;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
 class Invite extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Notifiable;
 
     protected $guarded = [];
+
+    protected $dispatchesEvents = [
+        //TODO: created should be to send the initial invite
+//        'created' => ResponseReceived::class,
+    //TODO: this will fire to often, call from controller
+//        'updated' => ResponseReceived::class,
+    ];
 
     public function show() {
         return $this->belongsTo(Show::class);
@@ -77,5 +87,20 @@ class Invite extends Model
         return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo
         |fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i"
         , $_SERVER["HTTP_USER_AGENT"]);
+    }
+
+    public function getUrl() {
+        //TODO: put url making code here for invite
+    }
+
+    /**
+     * Route notifications for the Vonage channel.
+     *
+     * @param \Illuminate\Notifications\Notification $notification
+     * @return string
+     */
+    public function routeNotificationForVonage(\Illuminate\Notifications\Notification $notification): string
+    {
+        return $this->phone;
     }
 }

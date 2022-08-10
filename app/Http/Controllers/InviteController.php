@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ResponseReceived;
 use App\Http\Requests\guestRequestRequest;
 use App\Http\Requests\StoreInviteRequest;
 use App\Http\Requests\UpdateInviteRequest;
@@ -9,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Invite;
 use App\Models\Show;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class InviteController extends Controller
@@ -47,7 +49,7 @@ class InviteController extends Controller
             'first_name' => $request->first_name,
             'middle_name' => $request->middle_name,
             'last_name' => $request->last_name,
-            'phone' => $request->phone,
+            'phone' => ($request->phone) ? '1'.$request->phone:null,
             'email' => $request->email,
             'has_plus_one_option' => $request->input('has_plus_one_option', false),
             'key' => Str::uuid(),
@@ -128,6 +130,7 @@ class InviteController extends Controller
     //TODO: this should just be update?
     public function registerResponse(Invite $invite, Request $request)
     {
+        Log::debug('invitecontroller regiester response');
         $show = $invite->show;
         $updateArray = [
             'response_status' => $request->input('response_status'),
@@ -146,6 +149,7 @@ class InviteController extends Controller
 
         $invite->update($updateArray);
 
+        ResponseReceived::dispatch($invite);
         return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
     }
 
