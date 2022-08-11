@@ -27,10 +27,8 @@ class SendResponseReceivedNotification
      */
     public function handle(ResponseReceived $event)
     {
-        \Log::debug('event listening');
-//        if($event->invite->can_notify) {
-            //TODO: may not need to directly pass invite in here since it's already using notifiable trait.
-            $event->invite->notify(new \App\Notifications\ResponseReceived($event->invite));
-//        }
+        if($event->invite->can_notify) {
+            $event->invite->notify(new \App\Notifications\ResponseReceived());
+        }
     }
 }

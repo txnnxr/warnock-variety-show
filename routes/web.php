@@ -20,7 +20,6 @@ Route::post('/invite/respond/{invite}', 'InviteController@registerResponse');
 Route::get('/invite/{invite}/thank-you', 'InviteController@guestThankYou');
 Route::post('/invites/{invite}/generate-ics', 'InviteController@generateICS');
 Route::get('/invites/{invite}/edit', 'InviteController@edit');
-Route::post('/invites/{invite}/mark-as-sent', 'InviteController@markAsSent');
 Route::post('/invites/{invite}/mark-as-opened', 'InviteController@markAsOpened');
 
 require __DIR__.'/auth.php';

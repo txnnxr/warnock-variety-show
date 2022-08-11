@@ -2,21 +2,16 @@
 
 namespace App\Notifications;
 
-use App\Models\Invite;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\VonageMessage;
 use Illuminate\Notifications\Notification;
+use Log;
 
-class ResponseReceived extends Notification
+class InvitationSent extends Notification
 {
     use Queueable;
-
-    /**
-     * @var Invite
-     */
-    protected $invite;
 
     /**
      * Create a new notification instance.
@@ -33,11 +28,11 @@ class ResponseReceived extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function via($notifiable): array
+    public function via($notifiable)
     {
         $via = ['database'];
         if (!empty($notifiable->phone)) $via[] = 'vonage';
-//        if (!empty($notifiable->email)) $via[] = 'email';
+        if (!empty($notifiable->email)) $via[] = 'email';
         return $via;
     }
 
@@ -56,20 +51,6 @@ class ResponseReceived extends Notification
     }
 
     /**
-    * Get the Vonage / SMS representation of the notification.
-    *
-    * @param  mixed  $notifiable
-    * @return \Illuminate\Notifications\Messages\VonageMessage
-    */
-    public function toVonage($notifiable)
-    {
-        //TODO: change messages depending on invite content
-        //TODO: add link to update their response
-        return (new VonageMessage)
-                    ->content("You are my rock, ". $notifiable->first_name .". Your response has been saved and you are signed up for notifications. \n". $notifiable->show->name ." \n ". $notifiable->show->date->format("D F j, Y @ g:ia"));
-    }
-
-    /**
      * Get the array representation of the notification.
      *
      * @param  mixed  $notifiable
@@ -81,4 +62,17 @@ class ResponseReceived extends Notification
             //
         ];
     }
+
+        /**
+    * Get the Vonage / SMS representation of the notification.
+    *
+    * @param  mixed  $notifiable
+    * @return \Illuminate\Notifications\Messages\VonageMessage
+    */
+    public function toVonage(mixed $notifiable): VonageMessage
+    {
+        return (new VonageMessage)
+                    ->content("You're invited: " . $notifiable->link);
+    }
+
 }

@@ -77,6 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('shows/{show}', 'ShowController@destroy');
 
     Route::get('shows/{show}/invite', 'InviteController@index');
+    Route::post('/invite/{invite}/send', 'InviteController@send');
     Route::post('shows/{show}/invite', 'InviteController@store');
     Route::post('/invites/{invite}/guest-request/approve', 'InviteController@guestRequestApprove')->name('invites.guest-request.approve');
 });

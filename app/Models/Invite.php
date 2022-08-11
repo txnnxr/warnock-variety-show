@@ -11,18 +11,12 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 
+//TODO: for the love of god rename to Invitation
 class Invite extends Model
 {
     use HasFactory, SoftDeletes, Notifiable;
 
     protected $guarded = [];
-
-    protected $dispatchesEvents = [
-        //TODO: created should be to send the initial invite
-//        'created' => ResponseReceived::class,
-    //TODO: this will fire to often, call from controller
-//        'updated' => ResponseReceived::class,
-    ];
 
     public function show() {
         return $this->belongsTo(Show::class);
@@ -101,6 +95,6 @@ class Invite extends Model
      */
     public function routeNotificationForVonage(\Illuminate\Notifications\Notification $notification): string
     {
-        return $this->phone;
+        return "1".$this->phone;
     }
 }
