@@ -1,11 +1,56 @@
 @extends('shows.layout')
 @section('shows-content')
-    <div class="card mt-3">
-        <div class="card-title"></div>
-        <div class="card-body">
-            <button class="btn btn-info copy-link form-control" data-link="{{route('invites.guest-request', ['show' => $show])}}">Guest Request Invite Link</button>
+    <div class="row mt-3">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title text-center">Public RSVP Status</div>
+                    <div class="fs-3 text-center text-uppercase">{{$show->public_rsvp_open_text}}</div>
+                    <form action="{{action([\App\Http\Controllers\ShowController::class, 'togglePublicRsvp'], ['show' => $show])}}" method="POST">
+                        @csrf
+                        <button class="btn btn-primary width col-12" type="submit">@if($show->public_rsvp_open) Close @else Open @endif</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+{{--                    <div class="card-title text-center">Public RSVP Status</div>--}}
+{{--                    <div class="fs-3 text-center text-uppercase">{{$show->public_rsvp_open_text}}</div>--}}
+{{--                    <form action="{{action([\App\Http\Controllers\ShowController::class, 'togglePublicRsvp'], ['show' => $show])}}" method="POST">/--}}
+{{--                        @csrf--}}
+{{--                        <button class="btn btn-primary width col-12" type="submit">@if($show->public_rsvp_open) Close @else Open @endif</button>--}}
+{{--                    </form>--}}
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+{{--                    <div class="card-title text-center">Public RSVP Status</div>--}}
+{{--                    <div class="fs-3 text-center text-uppercase">{{$show->public_rsvp_open_text}}</div>--}}
+{{--                    <form action="{{action([\App\Http\Controllers\ShowController::class, 'togglePublicRsvp'], ['show' => $show])}}" method="POST">--}}
+{{--                        @csrf--}}
+{{--                        <button class="btn btn-primary width col-12" type="submit">@if($show->public_rsvp_open) Close @else Open @endif</button>--}}
+{{--                    </form>--}}
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+{{--                    <div class="card-title text-center">Public RSVP Status</div>--}}
+{{--                    <div class="fs-3 text-center text-uppercase">{{$show->public_rsvp_open_text}}</div>--}}
+{{--                    <form action="{{action([\App\Http\Controllers\ShowController::class, 'togglePublicRsvp'], ['show' => $show])}}" method="POST">--}}
+{{--                        @csrf--}}
+{{--                        <button class="btn btn-primary width col-12" type="submit">@if($show->public_rsvp_open) Close @else Open @endif</button>--}}
+{{--                    </form>--}}
+                </div>
+            </div>
         </div>
     </div>
+
     <div class="card mt-3">
         <div class="card-body p-4">
             <h5 class="card-title text-center">Generate Invite</h5>
@@ -36,12 +81,12 @@
     <div class="card my-3">
         <div class="card-title mt-3 px-3">
             <div class="row">
-                <div class="col">Total Invites: {{count($show->invites)}}</div>
-                <div class="col">Attending: {{count($show->attending_invites)}}</div>
-                <div class="col">Maybe: {{count($show->maybe_invites)}}</div>
-                <div class="col">No: {{count($show->no_invites)}} </div>
-                <div class="col">Pending: {{count($show->pending_invites)}}</div>
-                <div class="col">Created: {{count($show->created_invites)}} </div>
+{{--                <div class="col">Total Invites: {{count($show->invites)}}</div>--}}
+{{--                <div class="col">Attending: {{count($show->attending_invites)}}</div>--}}
+{{--                <div class="col">Maybe: {{count($show->maybe_invites)}}</div>--}}
+{{--                <div class="col">No: {{count($show->no_invites)}} </div>--}}
+{{--                <div class="col">Pending: {{count($show->pending_invites)}}</div>--}}
+{{--                <div class="col">Created: {{count($show->created_invites)}} </div>--}}
             </div>
         </div>
         <div class="card-body">

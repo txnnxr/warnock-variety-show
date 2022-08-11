@@ -82,4 +82,8 @@ class Show extends Model
         }
         return 0;
     }
+
+    public function getPublicRsvpOpenTextAttribute(){
+        return ($this->public_rsvp_open) ? 'Open' : 'Closed';
+    }
 }

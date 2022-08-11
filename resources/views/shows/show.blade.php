@@ -1,23 +1,13 @@
 @extends('shows.layout')
 @section('shows-content')
-    @if($show->date > Carbon\Carbon::today())
-        @if(auth()->user())
-            <div class="card mt-3">
-                <div class="card-title"></div>
-
-                <div class="card-body">
-                    <button class="btn btn-info copy-link form-control" data-link="{{route('invites.guest-request', ['show' => $show])}}">Guest Request Invite Link</button>
+    @if($show->date > Carbon\Carbon::today() && $show->public_rsvp_open)
+        <div class="card mt-3">
+            <div class="card-body p-4">
+                <div class="col-md-12 my-1">
+                    <button class="form-control btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#rsvpModal">RSVP</button>
                 </div>
             </div>
-        @else
-            <div class="card mt-3">
-                <div class="card-body p-4">
-                    <div class="col-md-12 my-1">
-                        <button class="form-control btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#rsvpModal">RSVP</button>
-                    </div>
-                </div>
-            </div>
-        @endif
+        </div>
     @endif
     <div class="card my-3">
         <div class="card-body">

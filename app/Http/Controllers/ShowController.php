@@ -102,4 +102,13 @@ class ShowController extends Controller
     {
         //
     }
+
+    public function togglePublicRsvp(Show $show): \Illuminate\Http\RedirectResponse
+    {
+        $show->update([
+            'public_rsvp_open' => !$show->public_rsvp_open
+        ]);
+
+        return redirect()->route('admin.show', ['show' => $show]);
+    }
 }
