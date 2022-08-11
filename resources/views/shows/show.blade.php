@@ -60,7 +60,7 @@
                         <h3>Attendance Waitlist ({{count($show->attending_waitlist_invites)}})</h3>
                         <ul class="inviteeList">
                             @foreach($show->attending_waitlist_invites as $invite)
-                                <li>@if(auth()->user())<i class="fa-solid fa-dragon" title="move 'em on up"></i>@endif{{$invite->first_name}} {{$invite->last_name}}</li>
+                                <li><i class="fa-solid fa-dragon" title="move 'em on up"></i>{{$invite->first_name}} {{$invite->last_name}}</li>
                             @endforeach
                         </ul>
                     </div>
@@ -70,7 +70,7 @@
                         <h3>Talent Waitlist ({{count($show->talent_waitlist_invites)}})</h3>
                         <ul class="inviteeList">
                             @foreach($show->talent_waitlist_invites as $invite)
-                                <li>@if(auth()->user())<i class="fa-solid fa-hat-wizard" title="move 'em on up"></i>@endif{{$invite->first_name}} {{$invite->last_name}}</li>
+                                <li><i class="fa-solid fa-hat-wizard" title="move 'em on up"></i>{{$invite->first_name}} {{$invite->last_name}}</li>
                             @endforeach
                         </ul>
                     </div>
