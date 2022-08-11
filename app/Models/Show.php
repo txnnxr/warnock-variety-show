@@ -33,12 +33,12 @@ class Show extends Model
 
     public function getAttendingWaitlistInvitesAttribute()
     {
-        return $this->invites()->withResponse('ATTENDING')->onWaitlist('attendance')->get();
+        return $this->invites()->withResponse('ATTENDING')->onWaitlist('attendance')->orderBy('attendance_waitlist_priority')->get();
     }
 
     public function getTalentWaitlistInvitesAttribute()
     {
-        return $this->invites()->withResponse('ATTENDING')->onWaitlist('talent')->get();
+        return $this->invites()->withResponse('ATTENDING')->onWaitlist('talent')->orderBy('talent_waitlist_priority')->get();
     }
 
     public function getPendingInvitesAttribute()
@@ -81,5 +81,9 @@ class Show extends Model
             return $waitlistCount + 1;
         }
         return 0;
+    }
+
+    public function getPublicRsvpOpenTextAttribute(){
+        return ($this->public_rsvp_open) ? 'Open' : 'Closed';
     }
 }
