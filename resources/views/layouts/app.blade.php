@@ -18,7 +18,7 @@
     </head>
     <body class="antialiased">
         <div class="container">
-            <h1 class="text-center my-3 site-title"><a href="/">Show</a></h1>
+            <h1 class="text-center my-3 site-title"><a href="/">Webhook Show</a></h1>
             @livewire('navigation')
             @yield('content')
        </div>
