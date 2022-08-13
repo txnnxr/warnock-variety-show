@@ -15,9 +15,10 @@ class DeployController extends Controller
             Log::debug($request);
             if (json_decode($request->input('payload'))->pusher->name == 'txnnxr') {
                 $this->gitPull();
-                return shell_exec('composer install');
-                $this->composerInstall();
-                $this->npmInstall();
+                system('composer install --no-dev');
+                system('nvm use 17');
+                system('npm install');
+                system('npm run prod');
                 Artisan::call('migrate');
         }
     }
