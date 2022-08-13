@@ -22,4 +22,6 @@ Route::post('/invites/{invite}/generate-ics', 'InviteController@generateICS');
 Route::get('/invites/{invite}/edit', 'InviteController@edit');
 Route::post('/invites/{invite}/mark-as-opened', 'InviteController@markAsOpened');
 
+Route::post('deploy', 'DeployController@deploy');
+
 require __DIR__.'/auth.php';
