@@ -23,7 +23,7 @@ class Invite extends Model
     }
 
     public function getLinkAttribute(){
-        if (config('app.env') == 'production') {
+        if (config('app.env') == 'production' || config('app.env') == 'dev') {
             return config('app.url').'/shows/'.$this->show->id.'/invite/respond/'.$this->key;
         }
         return "https://warnockvarietyshow.com/";
