@@ -10,10 +10,11 @@ use Symfony\Component\Process\Process;
 
 class DeployController extends Controller
 {
-    public function deploy($webhook)
+    public function deploy(Request $request)
     {
-        Log::debug($webhook);
-        dd($webhook);
+	    Log::debug($request);
+	    $data = $request->all();
+       return (json_decode($request->input('payload'))->pusher);
 
 //        Process::
 
