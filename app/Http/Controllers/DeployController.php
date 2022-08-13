@@ -30,7 +30,7 @@ class DeployController extends Controller
     {
         $process = new Process(['composer',  'install --no-dev']);
         $process->run();
-        if (!$process->isSuccessful()) Log::error('Failed with '. $process->getExitCode());
+        if (!$process->isSuccessful()) Log::error('composer install Failed with '. $process->getExitCode());
 
     }
 
@@ -38,19 +38,19 @@ class DeployController extends Controller
     {
         $process = new Process(['nvm', 'use 17']);
         $process->run();
-        if (!$process->isSuccessful()) Log::error('Failed with '. $process->getExitCode());
-        $process = new Process(['npm', 'install']);
+        if (!$process->isSuccessful()) Log::error('nvm use 17 Failed with '. $process->getExitCode());
+        $process = new Process(['npm install']);
         $process->run();
-        if (!$process->isSuccessful()) Log::error('Failed with '. $process->getExitCode());
-        $process = new Process(['npm', 'run prod']);
+        if (!$process->isSuccessful()) Log::error('npm install Failed with '. $process->getExitCode());
+        $process = new Process(['npm run prod']);
         $process->run();
-        if (!$process->isSuccessful()) Log::error('Failed with '. $process->getExitCode());
+        if (!$process->isSuccessful()) Log::error('Npm run prod Failed with '. $process->getExitCode());
     }
 
     private function migrate()
     {
         $process = new Process(['php', 'artisan migrate']);
         $process->run();
-        if (!$process->isSuccessful()) Log::error('Failed with '. $process->getExitCode());
+        if (!$process->isSuccessful()) Log::error('Migrate failed with '. $process->getExitCode());
     }
 }
