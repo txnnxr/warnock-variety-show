@@ -25,29 +25,13 @@ class DeployController extends Controller
         $process = new Process('git pull');
         $this->info("Running 'git pull'");
 
-        $process->run(function($type, $buffer) {
-            $this->pullLog[] = $buffer;
-
-            if($buffer == "Already up to date.\n") {
-                $this->alreadyUpToDate = TRUE;
-            }
-
-        });
-
-        return $process->isSuccessful();
+        $process->run();
     }
 
     private function composerInstall()
     {
         $process = new Process('composer install --no-dev');
-        $this->info("Running 'composer install'");
-
-        $process->run(function($type, $buffer) {
-            $this->composerLog[] = $buffer;
-        });
-
-
-        return $process->isSuccessful();
+        $process->run();
     }
 
     private function npmInstall()
