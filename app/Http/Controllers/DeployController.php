@@ -7,9 +7,6 @@ use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 
 //use Symfony\Component\Process\Process;
-
-class DeployController extends Controller
-{
 class DeployController extends Controller
 {
     public function deploy(Request $request)
