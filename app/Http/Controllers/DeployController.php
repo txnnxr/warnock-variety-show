@@ -54,4 +54,3 @@ class DeployController extends Controller
         if (!$process->isSuccessful()) Log::error('Failed with '. $process->getExitCode());
     }
 }
-}
