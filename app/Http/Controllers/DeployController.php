@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Process\Process;
 
@@ -14,9 +15,10 @@ class DeployController extends Controller
             Log::debug($request);
             if (json_decode($request->input('payload'))->pusher->name == 'txnnxr') {
                 $this->gitPull();
+                return shell_exec('composer install');
                 $this->composerInstall();
                 $this->npmInstall();
-                $this->migrate();
+                Artisan::call('migrate');
         }
     }
 
@@ -49,8 +51,6 @@ class DeployController extends Controller
 
     private function migrate()
     {
-        $process = new Process(['php', 'artisan', 'migrate']);
-        $process->run();
-        if (!$process->isSuccessful()) Log::error('Migrate failed with '. $process->getExitCode());
+
     }
 }
