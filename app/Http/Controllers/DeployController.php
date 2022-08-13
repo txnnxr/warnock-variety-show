@@ -49,7 +49,7 @@ class DeployController extends Controller
 
     private function migrate()
     {
-        $process = new Process('php artisan migrate');
+        $process = new Process(['php', 'artisan migrate']);
         $process->run();
         if (!$process->isSuccessful()) Log::error('Failed with '. $process->getExitCode());
     }
