@@ -36,13 +36,13 @@ class DeployController extends Controller
 
     private function npmInstall()
     {
-        $process = new Process(['nvm', 'use', '17']);
+        $process = new Process(['nvm', 'use 17']);
         $process->run();
         if (!$process->isSuccessful()) Log::error('nvm use 17 Failed with '. $process->getExitCode());
-        $process = new Process(['npm install']);
+        $process = new Process(['npm', 'install']);
         $process->run();
         if (!$process->isSuccessful()) Log::error('npm install Failed with '. $process->getExitCode());
-        $process = new Process(['npm run prod']);
+        $process = new Process(['npm', 'run', 'prod']);
         $process->run();
         if (!$process->isSuccessful()) Log::error('Npm run prod Failed with '. $process->getExitCode());
     }
