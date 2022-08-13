@@ -28,7 +28,7 @@ class DeployController extends Controller
 
     private function composerInstall()
     {
-        $process = new Process(['composer',  'install --no-dev']);
+        $process = new Process(['composer',  'install', '--no-dev']);
         $process->run();
         if (!$process->isSuccessful()) Log::error('composer install Failed with '. $process->getExitCode());
 
@@ -36,7 +36,7 @@ class DeployController extends Controller
 
     private function npmInstall()
     {
-        $process = new Process(['nvm', 'use 17']);
+        $process = new Process(['nvm', 'use', '17']);
         $process->run();
         if (!$process->isSuccessful()) Log::error('nvm use 17 Failed with '. $process->getExitCode());
         $process = new Process(['npm install']);
@@ -49,7 +49,7 @@ class DeployController extends Controller
 
     private function migrate()
     {
-        $process = new Process(['php', 'artisan migrate']);
+        $process = new Process(['php', 'artisan', 'migrate']);
         $process->run();
         if (!$process->isSuccessful()) Log::error('Migrate failed with '. $process->getExitCode());
     }
