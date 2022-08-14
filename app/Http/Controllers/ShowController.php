@@ -100,6 +100,8 @@ class ShowController extends Controller
      */
     public function destroy(Show $show)
     {
+        // softDelete
+        //sendNotifications
         //
     }
 
