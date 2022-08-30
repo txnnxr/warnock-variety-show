@@ -18,7 +18,7 @@
         @else
             <a class="col" href="{{ route('login') }}"> Login </a>
         @endif
-        <div class="col">
+        <div class="col hideable-nav">
             <a href="{!!action([\App\Http\Controllers\ShowController::class, 'show'], ['show' => \App\Models\Show::latest('date')->first()->id])!!}">Upcoming Show</a>
         </div>
     </div>
