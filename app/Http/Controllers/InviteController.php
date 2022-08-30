@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ResponseReceived;
 use App\Http\Requests\guestRequestRequest;
 use App\Http\Requests\StoreInviteRequest;
 use App\Http\Requests\UpdateInviteRequest;
+use App\Notifications\InvitationSent;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Invite;
 use App\Models\Show;
+use Illuminate\Notifications\Events\NotificationSent;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
+//TODO: for the love of god rename to InvitationController
 class InviteController extends Controller
 {
     /**
@@ -47,7 +53,7 @@ class InviteController extends Controller
             'first_name' => $request->first_name,
             'middle_name' => $request->middle_name,
             'last_name' => $request->last_name,
-            'phone' => $request->phone,
+            'phone' => $request->input('phone'),
             'email' => $request->email,
             'has_plus_one_option' => $request->input('has_plus_one_option', false),
             'key' => Str::uuid(),
@@ -125,16 +131,22 @@ class InviteController extends Controller
         return view('shows.invites.thank-you', compact('invite', 'show'));
     }
 
-    //TODO: this should just be update?
+    //TODO: this should just be update? -- no Update should be an admin updating the nature of the invitation
+
     public function registerResponse(Invite $invite, Request $request)
     {
         $show = $invite->show;
+        $phone = $request->input('phone');
+
         $updateArray = [
             'response_status' => $request->input('response_status'),
             'talent' => $request->input('talent', 0),
             'talent_write_in' => ($request->input('talent_write_in')),
             'plus_one_status' => $request->input('plus_one_status', false),
-            'plus_one_name' => $request->input('plus_one_name', null),
+            'plus_one_name' => $request->input('plus_one_name'),
+            'can_notify' => $request->input('can_notify', false),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
         ];
 
         if ($show->at_capacity_attendants && $updateArray['response_status'] == 'ATTENDING') {
@@ -146,6 +158,7 @@ class InviteController extends Controller
 
         $invite->update($updateArray);
 
+        ResponseReceived::dispatch($invite);
         return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
     }
 
@@ -154,16 +167,27 @@ class InviteController extends Controller
         $invite->generateICS();
     }
 
-    public function markAsSent(Invite $invite)
+    public function send(Invite $invite)
     {
+//        dd($invite);
+        $invite->notify(new InvitationSent());
         $invite->update(['response_status' => 'PENDING - SENT']);
+//        Event::listen(function (NotificationSent $event) {
+//            dd($event);
+//        });
         return redirect()->action('InviteController@index', ['show' => $invite->show]);
     }
 
-    public function markAsOpened(Invite $invite)
-    {
-        $invite->update(['response_status' => 'PENDING - OPENED']);
-    }
+//    public function markAsSent(Invite $invite)
+//    {
+//        $invite->update(['response_status' => 'PENDING - SENT']);
+//        return redirect()->action('InviteController@index', ['show' => $invite->show]);
+//    }
+
+//    public function markAsOpened(Invite $invite)
+//    {
+//        $invite->update(['response_status' => 'PENDING - OPENED']);
+//    }
 
     public function guestRequest(Show $show){
         return view('shows.invites.guest-request', compact('show'));

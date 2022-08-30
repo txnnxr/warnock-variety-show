@@ -19,7 +19,9 @@
             <a class="col" href="{{ route('login') }}"> Login </a>
         @endif
         <div class="col hideable-nav">
-            <a href="{!!action([\App\Http\Controllers\ShowController::class, 'show'], ['show' => \App\Models\Show::latest('date')->first()->id])!!}">Upcoming Show</a>
+            @if(\App\Models\Show::latest('date')->first())
+                <a href="{!!action([\App\Http\Controllers\ShowController::class, 'show'], ['show' => \App\Models\Show::latest('date')->first()->id])!!}">Upcoming Show</a>
+            @endif
         </div>
     </div>
 

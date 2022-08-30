@@ -63,15 +63,15 @@
                     <input class="form-control" type="text" name="last_name" placeholder="Last Name (optional)">
                 </div>
                 <div class="col-md-6 my-1">
+                    <input class="form-control" type="text" name="phone" placeholder="Phone (optional)">
+                </div>
+                <div class="col-md-6 my-1">
+                    <input class="form-control" type="text" name="email" placeholder="Email (optional)">
+                </div>
+                <div class="col-md-6 my-1">
                     <label for="has_plus_one_option">Give invitation optional plus one?</label>
                     <input class="" type="checkbox" name="has_plus_one_option" value="1">
                 </div>
-{{--                <div class="col-md-6 my-1">--}}
-{{--                    <input class="form-control" type="text" name="phone" placeholder="Phone (optional)">--}}
-{{--                </div>--}}
-{{--                <div class="col-md-6 my-1">--}}
-{{--                    <input class="form-control" type="text" name="email" placeholder="Email (optional)">--}}
-{{--                </div>--}}
                 <div class="col-md-12 my-1">
                     <button class="form-control btn btn-primary" type="submit">Create Invite</button>
                 </div>
@@ -114,12 +114,15 @@
                                 <td>@if($invite->talent) YES @else NO @endif</td>
                                 <td>
                                     <a href="{{action([\App\Http\Controllers\InviteController::class, 'edit'], ['invite' => $invite])}}" class="btn btn-secondary col">Edit</a>
-                                    <a class="btn btn-primary copy-link col" data-link="{{$invite->link}}">Link</a>
                                     @if($invite->response_status == 'CREATED')
-                                        <form class="d-inline-block" action="/invites/{{$invite->id}}/mark-as-sent" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn btn-warning col d-inline-block" href>Sent</button>
-                                        </form>
+                                        @if($invite->phone || $invite->email)
+                                            <form class="d-inline-block" action="{{action([\App\Http\Controllers\InviteController::class, 'send'], ['invite' => $invite])}}" method="POST">
+                                                @csrf
+                                                <button type="submit" class="btn btn-warning col d-inline-block" href>Send</button>
+                                            </form>
+                                        @else
+                                             <a class="btn btn-primary copy-link col" data-link="{{$invite->link}}">Link</a>
+                                        @endif
                                     @endif
                                     @if($invite->guest_request)
                                         <form class="d-inline-block" action="{{route('invites.guest-request.approve', ['invite' => $invite])}}" method="POST">

@@ -76,6 +76,8 @@ Route::middleware('auth')->group(function () {
     Route::put('shows/{show}', 'ShowController@update');
     Route::delete('shows/{show}', 'ShowController@destroy');
 
+    Route::get('shows/{show}/invite', 'InviteController@index');
+    Route::post('/invite/{invite}/send', 'InviteController@send');
     Route::post('shows/{show}/toggle-public-rsvp', 'ShowController@togglePublicRsvp');
     Route::get('shows/{show}/invite', 'InviteController@index')->name('admin.show');
     Route::post('shows/{show}/invite', 'InviteController@store');

@@ -80,6 +80,22 @@
                     </div>
                 </div>
             @endif
+
+            <div class="notifications-box form-control my-2">
+                <div class="row">
+                    <div class="col-md-6 my-1">
+                        <label for="can_notify">Would you like to receive notifications about this event? (Current notification system only includes: Cancellations, Reschedulings, and Waitlist openings)</label>
+                        <input class="" type="checkbox" name="can_notify" value="1" checked>
+                    </div>
+                </div>
+                <div class="contact-box">
+                    <p>Please enter your phone number or email to receive notifications:</p>
+                    <div class="form-label">Phone: </div>
+                    <input class="form-text" type="text" name="phone" placeholder="" value="{{$invite->phone}}">
+                    <div class="form-label">Email: </div>
+                    <input class="form-text" type="text" name="email" placeholder="" value="{{$invite->email}}">
+                </div>
+            </div>
         </div>
         <button class="btn btn-primary mx-3 mb-3" type="submit">Submit</button>
     </form>
@@ -95,6 +111,7 @@
         if($(this).val() !== 'NO') {
             $('[name=talent]').removeAttr('disabled');
             $('.talent-box').show();
+            $('.notifications-box').show();
             if($(this).val() == 'ATTENDING') {
                 $('[name=plus-one-name]').removeAttr('disabled');
                 $('.plus-one-box').show();
@@ -107,6 +124,7 @@
             $('.talent-box').hide();
             $('[name=plus-one-name]').attr('disabled', 'disabled');
             $('.plus-one-box').hide();
+            $('.notifications-box').show();
         }
     });
     $('[name=talent]').change(function(){
@@ -127,6 +145,13 @@
         } else {
             $('[name=plus-one-name]').attr('disabled', 'disabled');
             $('.plus-one-name-box').hide();
+        }
+    });
+    $('[name=can_notify]').click(function(){
+        if ($(this).is(':checked')) {
+            $(".contact-box").show();
+        } else {
+            $(".contact-box").hide();
         }
     });
 </script>
