@@ -13,9 +13,11 @@ class DeployController extends Controller
     public function deploy(Request $request)
     {
             Log::debug($request);
-            if (json_decode($request->input('payload'))->pusher->name == 'txnnxr') {
+            $payload = json_decode($request->input('payload'));
+            if ($payload->pusher->name == 'txnnxr' && str_contains($payload->ref,  env('ENV_BRANCH'))) {
                 $this->gitPull();
                 system('composer install --no-dev');
+                system('composer dumpautoload');
                 system('nvm use 17');
                 system('npm install');
                 system('npm run prod');
