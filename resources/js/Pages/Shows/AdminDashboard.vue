@@ -158,7 +158,7 @@
                     </thead>
                     <tbody>
                     <tr v-for="(invite, index) in invites">
-                        <td>{{ index }}</td>
+                        <td>{{ index+1 }}</td>
                         <td>{{ invite.first_name }} {{ invite.middle_name }}
                             {{ invite.last_name }}
                             <span v-if="invite.has_plus_one_option">(+1)</span>
@@ -194,7 +194,9 @@
         </div>
     </Layout>
 </template>
+<!--TODO: clear old data out of table on new entry
 
+    Re add the guest rsvp functionaltiy-->
 
 <script>
 import Layout from "../../Shared/Layout";
