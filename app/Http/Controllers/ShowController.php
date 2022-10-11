@@ -16,7 +16,7 @@ class ShowController extends Controller
     public function index()
     {
         $shows = Show::orderBy('date', 'asc')->get();
-        return view('shows.index', compact('shows'));
+        return inertia('Shows/Index', compact('shows'));
     }
 
     /**
@@ -26,13 +26,13 @@ class ShowController extends Controller
      */
     public function create()
     {
-        return view('shows.create');
+        return inertia('Shows/Form');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\StoreShowRequest  $request
+     * @param \App\Http\Requests\StoreShowRequest $request
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
      */
     public function store(StoreShowRequest $request)
@@ -52,30 +52,37 @@ class ShowController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Show  $show
-     * @return \Illuminate\Http\Response
+     * @param \App\Models\Show $show
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function show(Show $show)
     {
-        return view('shows.show', compact('show'));
+        return inertia('Shows/Show', [
+            'show' => $show->append(['attending_invites', 'at_capacity_attendants', 'maybe_invites', 'no_invites', 'pending_invites', 'attending_waitlist_invites', 'at_capacity_talents', 'talent_waitlist_invites', 'attending_talents'])
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Show  $show
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
+     * @param \App\Models\Show $show
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function edit(Show $show)
     {
-        return view('shows.create', compact('show'));
+        $formattedShow = $show->toArray();
+        $formattedShow['date'] = $show->date->format('Y-m-d\TH:i');
+
+        return inertia('Shows/Form', [
+            'show' => $formattedShow
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateShowRequest  $request
-     * @param  \App\Models\Show  $show
+     * @param \App\Http\Requests\UpdateShowRequest $request
+     * @param \App\Models\Show $show
      * @return \Illuminate\Http\Response
      */
     public function update(UpdateShowRequest $request, Show $show)
@@ -95,7 +102,7 @@ class ShowController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Show  $show
+     * @param \App\Models\Show $show
      * @return \Illuminate\Http\Response
      */
     public function destroy(Show $show)
@@ -110,5 +117,10 @@ class ShowController extends Controller
         ]);
 
         return redirect()->route('admin.show', ['show' => $show]);
+    }
+
+    public function adminDashboard(Show $show){
+        $invites = $show->invites;
+        return inertia('Shows/AdminDashboard', compact('show', 'invites'));
     }
 }

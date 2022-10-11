@@ -16,4 +16,5 @@ yarn-error.log
 /.vscode
 /public/css
 /public/css/app.css
+/public/js/app.js
 .env.testing

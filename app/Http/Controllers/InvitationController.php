@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 //TODO: for the love of god rename to InvitationController
-class InviteController extends Controller
+class InvitationController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -26,7 +26,7 @@ class InviteController extends Controller
      */
     public function index(Show $show)
     {
-        return view('shows.invites.index', compact('show'));
+        return inertia('Shows/AdminDashboard', compact('show'));
     }
 
     /**
@@ -59,7 +59,8 @@ class InviteController extends Controller
             'key' => Str::uuid(),
         ]);
 
-        return redirect()->action('InviteController@index', ['show' => $show]);
+        return redirect()->route('admin.show', ['show' => $show]);
+//        return redirect()->action('InvitationController@index', ['show' => $show]);
     }
 
     /**
@@ -77,15 +78,11 @@ class InviteController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Invite  $invite
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function edit(Invite $invite)
     {
-        $invite->update([
-            'response_status' => 'PENDING - UPDATE',
-        ]);
-
-        return redirect()->action('InviteController@respond', ['show'=> $invite->show, 'key' => $invite->key]);
+        return inertia('Invitation', ['show'=> $invite->show->append(['at_capacity_attendants', 'at_capacity_talents', 'talent_waitlist_invites']), 'invite' => $invite]);
     }
 
     /**
@@ -147,6 +144,7 @@ class InviteController extends Controller
             'can_notify' => $request->input('can_notify', false),
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
+            'can_notify' => $request->input('can_notify', false)
         ];
 
         if ($show->at_capacity_attendants && $updateArray['response_status'] == 'ATTENDING') {
@@ -159,7 +157,7 @@ class InviteController extends Controller
         $invite->update($updateArray);
 
         ResponseReceived::dispatch($invite);
-        return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
+        return redirect()->action('InvitationController@guestThankYou', ['invite' => $invite]);
     }
 
     public function generateICS(Invite $invite)
@@ -175,13 +173,13 @@ class InviteController extends Controller
 //        Event::listen(function (NotificationSent $event) {
 //            dd($event);
 //        });
-        return redirect()->action('InviteController@index', ['show' => $invite->show]);
+        return redirect()->route('admin.show', ['show' => $invite->show]);
     }
 
 //    public function markAsSent(Invite $invite)
 //    {
 //        $invite->update(['response_status' => 'PENDING - SENT']);
-//        return redirect()->action('InviteController@index', ['show' => $invite->show]);
+//        return redirect()->action('InvitationController@index', ['show' => $invite->show]);
 //    }
 
 //    public function markAsOpened(Invite $invite)
@@ -218,6 +216,6 @@ class InviteController extends Controller
             ]);
         }
 
-        return redirect()->action('InviteController@index', ['show' => $invite->show]);
+        return redirect()->action('InvitationController@index', ['show' => $invite->show]);
     }
 }

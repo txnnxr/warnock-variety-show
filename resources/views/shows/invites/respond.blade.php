@@ -84,16 +84,18 @@
             <div class="notifications-box form-control my-2">
                 <div class="row">
                     <div class="col-md-6 my-1">
-                        <label for="can_notify">Would you like to receive notifications about this event? (Current notification system only includes: Cancellations, Reschedulings, and Waitlist openings)</label>
+                        <label for="can_notify">'Would you like to receive notifications about this event? (Notifications will only be sent out for: Cancellations, Reschedulings, and Waitlist openings)</label>
+                    </div>
+                    <div class="col-md-6 my-1">
                         <input class="" type="checkbox" name="can_notify" value="1" checked>
                     </div>
                 </div>
                 <div class="contact-box">
-                    <p>Please enter your phone number or email to receive notifications:</p>
+                    <p>Please enter your phone number to receive notifications:</p> {{-- TODO: email --}}
                     <div class="form-label">Phone: </div>
                     <input class="form-text" type="text" name="phone" placeholder="" value="{{$invite->phone}}">
-                    <div class="form-label">Email: </div>
-                    <input class="form-text" type="text" name="email" placeholder="" value="{{$invite->email}}">
+{{--                    <div class="form-label">Email: </div>--}}
+{{--                    <input class="form-text" type="text" name="email" placeholder="" value="{{$invite->email}}">--}}
                 </div>
             </div>
         </div>
@@ -102,11 +104,7 @@
 @endsection
 @push('scripts')
 <script>
-    @if($invite->response_status == 'PENDING - SENT')
-        $(document).ready(function(){
-            $.post( "/invites/{{$invite->id}}/mark-as-opened", {"_token": "{{ csrf_token() }}"});
-        });
-    @endif
+{{----}}
     $('[name=response_status]').change(function(){
         if($(this).val() !== 'NO') {
             $('[name=talent]').removeAttr('disabled');
