@@ -21,6 +21,8 @@ Route::get('/invite/{invite}/thank-you', 'InvitationController@guestThankYou');
 Route::post('/invites/{invite}/generate-ics', 'InvitationController@generateICS');
 Route::get('/invites/{invite}/edit', 'InvitationController@edit');
 Route::post('/invites/{invite}/mark-as-opened', 'InvitationController@markAsOpened');
+Route::get('/show/{show}/guest-invitation', 'InvitationController@guestInvitation');
+Route::post('/invite/{show}/guest-invitation', 'InvitationController@guestInvitationStore');
 
 Route::post('deploy', 'DeployController@deploy');
 

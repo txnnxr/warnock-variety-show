@@ -124,8 +124,11 @@ class InvitationController extends Controller
 
     public function guestThankYou(Invite $invite)
     {
+        $invite->is_on_talent_waitlist = $invite->isOnTalentWaitlist();
+        $invite->is_on_attending_waitlist = $invite->isOnAttendingWaitlist();
+
         $show = $invite->show;
-        return view('shows.invites.thank-you', compact('invite', 'show'));
+        return inertia('InvitationThankYou', compact('invite', 'show'));
     }
 
     //TODO: this should just be update? -- no Update should be an admin updating the nature of the invitation
@@ -217,5 +220,30 @@ class InvitationController extends Controller
         }
 
         return redirect()->action('InvitationController@index', ['show' => $invite->show]);
+    }
+
+    public function guestInvitation(Show $show){
+
+        return inertia('Invitation', compact('show'));
+    }
+    public function guestInvitationStore(Show $show, StoreInviteRequest $request) {
+        $invite = Invite::create([
+            'show_id' => $show->id,
+            'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name' => $request->last_name,
+            'response_status' => $request->input('response_status'),
+            'talent' => $request->input('talent', 0),
+            'talent_write_in' => ($request->input('talent_write_in')),
+            'plus_one_status' => $request->input('plus_one_status', false),
+            'plus_one_name' => $request->input('plus_one_name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'can_notify' => $request->input('can_notify', false),
+            'key' => Str::uuid(),
+        ]);
+
+        ResponseReceived::dispatch($invite);
+        return redirect()->action('ShowController@show', compact('show'));
     }
 }

@@ -57,6 +57,7 @@ class ShowController extends Controller
      */
     public function show(Show $show)
     {
+        $show->description = htmlspecialchars_decode(nl2br($show->description));
         return inertia('Shows/Show', [
             'show' => $show->append(['attending_invites', 'at_capacity_attendants', 'maybe_invites', 'no_invites', 'pending_invites', 'attending_waitlist_invites', 'at_capacity_talents', 'talent_waitlist_invites', 'attending_talents'])
         ]);
@@ -123,4 +124,6 @@ class ShowController extends Controller
         $invites = $show->invites;
         return inertia('Shows/AdminDashboard', compact('show', 'invites'));
     }
+
+
 }

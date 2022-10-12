@@ -66,7 +66,7 @@ class ResponseReceived extends Notification
         //TODO: change messages depending on invite content
         //TODO: add link to update their response
         return (new VonageMessage)
-                    ->content("You are my rock, ". $notifiable->first_name .". Your response has been saved and you are signed up for notifications. \n". $notifiable->show->name ." \n ". $notifiable->show->date->format("D F j, Y @ g:ia"));
+                    ->content("Your response has been saved and you are signed up for notifications. \n". $notifiable->show->name ." \n ". $notifiable->show->date->format("D F j, Y @ g:ia") . "\n Update your response here: ". $notifiable->link);
     }
 
     /**
