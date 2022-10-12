@@ -16,3 +16,6 @@ yarn-error.log
 /.vscode
 /public/css
 /public/css/app.css
+/public/js/app.js
+/public/mix-manifest.json
+.env.testing

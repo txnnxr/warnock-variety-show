@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ResponseReceived;
 use App\Http\Requests\guestRequestRequest;
 use App\Http\Requests\StoreInviteRequest;
 use App\Http\Requests\UpdateInviteRequest;
+use App\Notifications\InvitationSent;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\Invite;
 use App\Models\Show;
+use Illuminate\Notifications\Events\NotificationSent;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-class InviteController extends Controller
+//TODO: for the love of god rename to InvitationController
+class InvitationController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,7 +26,7 @@ class InviteController extends Controller
      */
     public function index(Show $show)
     {
-        return view('shows.invites.index', compact('show'));
+        return inertia('Shows/AdminDashboard', compact('show'));
     }
 
     /**
@@ -47,13 +53,14 @@ class InviteController extends Controller
             'first_name' => $request->first_name,
             'middle_name' => $request->middle_name,
             'last_name' => $request->last_name,
-            'phone' => $request->phone,
+            'phone' => $request->input('phone'),
             'email' => $request->email,
             'has_plus_one_option' => $request->input('has_plus_one_option', false),
             'key' => Str::uuid(),
         ]);
 
-        return redirect()->action('InviteController@index', ['show' => $show]);
+        return redirect()->route('admin.show', ['show' => $show]);
+//        return redirect()->action('InvitationController@index', ['show' => $show]);
     }
 
     /**
@@ -71,15 +78,11 @@ class InviteController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Invite  $invite
-     * @return \Illuminate\Http\RedirectResponse
+     * @return \Inertia\Response|\Inertia\ResponseFactory
      */
     public function edit(Invite $invite)
     {
-        $invite->update([
-            'response_status' => 'PENDING - UPDATE',
-        ]);
-
-        return redirect()->action('InviteController@respond', ['show'=> $invite->show, 'key' => $invite->key]);
+        return inertia('Invitation', ['show'=> $invite->show->append(['at_capacity_attendants', 'at_capacity_talents', 'talent_waitlist_invites']), 'invite' => $invite]);
     }
 
     /**
@@ -121,20 +124,30 @@ class InviteController extends Controller
 
     public function guestThankYou(Invite $invite)
     {
+        $invite->is_on_talent_waitlist = $invite->isOnTalentWaitlist();
+        $invite->is_on_attending_waitlist = $invite->isOnAttendingWaitlist();
+
         $show = $invite->show;
-        return view('shows.invites.thank-you', compact('invite', 'show'));
+        return inertia('InvitationThankYou', compact('invite', 'show'));
     }
 
-    //TODO: this should just be update?
+    //TODO: this should just be update? -- no Update should be an admin updating the nature of the invitation
+
     public function registerResponse(Invite $invite, Request $request)
     {
         $show = $invite->show;
+        $phone = $request->input('phone');
+
         $updateArray = [
             'response_status' => $request->input('response_status'),
             'talent' => $request->input('talent', 0),
             'talent_write_in' => ($request->input('talent_write_in')),
             'plus_one_status' => $request->input('plus_one_status', false),
-            'plus_one_name' => $request->input('plus_one_name', null),
+            'plus_one_name' => $request->input('plus_one_name'),
+            'can_notify' => $request->input('can_notify', false),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'can_notify' => $request->input('can_notify', false)
         ];
 
         if ($show->at_capacity_attendants && $updateArray['response_status'] == 'ATTENDING') {
@@ -146,7 +159,8 @@ class InviteController extends Controller
 
         $invite->update($updateArray);
 
-        return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
+        ResponseReceived::dispatch($invite);
+        return redirect()->action('InvitationController@guestThankYou', ['invite' => $invite]);
     }
 
     public function generateICS(Invite $invite)
@@ -154,16 +168,27 @@ class InviteController extends Controller
         $invite->generateICS();
     }
 
-    public function markAsSent(Invite $invite)
+    public function send(Invite $invite)
     {
+//        dd($invite);
+        $invite->notify(new InvitationSent());
         $invite->update(['response_status' => 'PENDING - SENT']);
-        return redirect()->action('InviteController@index', ['show' => $invite->show]);
+//        Event::listen(function (NotificationSent $event) {
+//            dd($event);
+//        });
+        return redirect()->route('admin.show', ['show' => $invite->show]);
     }
 
-    public function markAsOpened(Invite $invite)
-    {
-        $invite->update(['response_status' => 'PENDING - OPENED']);
-    }
+//    public function markAsSent(Invite $invite)
+//    {
+//        $invite->update(['response_status' => 'PENDING - SENT']);
+//        return redirect()->action('InvitationController@index', ['show' => $invite->show]);
+//    }
+
+//    public function markAsOpened(Invite $invite)
+//    {
+//        $invite->update(['response_status' => 'PENDING - OPENED']);
+//    }
 
     public function guestRequest(Show $show){
         return view('shows.invites.guest-request', compact('show'));
@@ -194,6 +219,31 @@ class InviteController extends Controller
             ]);
         }
 
-        return redirect()->action('InviteController@index', ['show' => $invite->show]);
+        return redirect()->action('InvitationController@index', ['show' => $invite->show]);
+    }
+
+    public function guestInvitation(Show $show){
+
+        return inertia('Invitation', compact('show'));
+    }
+    public function guestInvitationStore(Show $show, StoreInviteRequest $request) {
+        $invite = Invite::create([
+            'show_id' => $show->id,
+            'first_name' => $request->first_name,
+            'middle_name' => $request->middle_name,
+            'last_name' => $request->last_name,
+            'response_status' => $request->input('response_status'),
+            'talent' => $request->input('talent', 0),
+            'talent_write_in' => ($request->input('talent_write_in')),
+            'plus_one_status' => $request->input('plus_one_status', false),
+            'plus_one_name' => $request->input('plus_one_name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            'can_notify' => $request->input('can_notify', false),
+            'key' => Str::uuid(),
+        ]);
+
+        ResponseReceived::dispatch($invite);
+        return redirect()->action('ShowController@show', compact('show'));
     }
 }

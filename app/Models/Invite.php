@@ -2,15 +2,19 @@
 
 namespace App\Models;
 
+use App\Events\ResponseReceived;
+use App\Events\ResponseUpdated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Libraries\ICS;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
 
+//TODO: for the love of god rename to Invitation
 class Invite extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Notifiable;
 
     protected $guarded = [];
 
@@ -19,7 +23,10 @@ class Invite extends Model
     }
 
     public function getLinkAttribute(){
-        return config('app.url').'/shows/'.$this->show->id.'/invite/respond/'.$this->key;
+        if (config('app.env') == 'production' || config('app.env') == 'dev') {
+            return config('app.url').'/shows/'.$this->show->id.'/invite/respond/'.$this->key;
+        }
+        return "https://warnockvarietyshow.com/";
     }
 
     public function scopeWithResponse($query, $response)
@@ -77,5 +84,20 @@ class Invite extends Model
         return preg_match("/(android|avantgo|blackberry|bolt|boost|cricket|docomo
         |fone|hiptop|mini|mobi|palm|phone|pie|tablet|up\.browser|up\.link|webos|wos)/i"
         , $_SERVER["HTTP_USER_AGENT"]);
+    }
+
+    public function getUrl() {
+        //TODO: put url making code here for invite
+    }
+
+    /**
+     * Route notifications for the Vonage channel.
+     *
+     * @param \Illuminate\Notifications\Notification $notification
+     * @return string
+     */
+    public function routeNotificationForVonage(\Illuminate\Notifications\Notification $notification): string
+    {
+        return "1".$this->phone;
     }
 }
