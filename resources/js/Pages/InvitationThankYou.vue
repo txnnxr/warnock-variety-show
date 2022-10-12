@@ -68,7 +68,7 @@
                         </Form>
                     </div>
                     <div class="col text-center">
-                        <Link :href="'/shows/'+show.id+'/edit'">
+                        <Link :href="'/shows/'+show.id+'/view'">
                             <button type="submit" class="btn btn-info"><i class="fa-solid fa-worm"></i>
                                 View Show
                             </button>
