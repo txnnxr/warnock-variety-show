@@ -1,6 +1,6 @@
 <template>
     <Head>
-        <meta property="og:title" content="{{this.show.name}} - {{inviteData.first_name}} Invitation"/>
+        <meta property="og:title" content="{{inviteData.first_name}} Invitation"/>
         <title>{{inviteData.first_name}} Invitation</title>
     </Head>
     <Layout>

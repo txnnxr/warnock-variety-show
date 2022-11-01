@@ -1,4 +1,8 @@
 <template>
+    <Head>
+        <meta property="og:title" content="{{show.name}}"/>
+        <title>{{show.name}}</title>
+    </Head>
     <Layout>
         <div class="card p-3">
             <h2 class="card-title text-center mt-3">{{ show.name }}</h2>
