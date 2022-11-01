@@ -29,10 +29,10 @@
                         <h3>No ({{ show.no_invites.length }})</h3>
                         <GuestList :invites="show.no_invites"/>
                     </div>
-                    <div v-if="!show.at_capacity_attendants" class="col-6 col-sm-3">
-                        <h3>Pending ({{ show.pending_invites.length }})</h3>
-                        <GuestList :invites="show.pending_invites"/>
-                    </div>
+<!--                    <div v-if="!show.at_capacity_attendants" class="col-6 col-sm-3">-->
+<!--                        <h3>Pending ({{ show.pending_invites.length }})</h3>-->
+<!--                        <GuestList :invites="show.pending_invites"/>-->
+<!--                    </div>-->
                     <div v-else class="col-6 col-sm-3">
                         <h3>Attendance Waitlist ({{ show.attending_waitlist_invites.length }})</h3>
                         <GuestList :invites="show.attending_waitlist_invites"/>
