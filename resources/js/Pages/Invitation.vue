@@ -100,7 +100,7 @@
                     </div>
                 </div>
 
-                <div class="notifications-box form-control my-2" v-if="inviteData.response_status !== 'NO'">
+                <div class="notifications-box form-control my-2 hide" v-if="inviteData.response_status !== 'NO'">
                     <div class="row">
                         <div class="col-md-6 my-1">
                             <label for="can_notify">Would you like to receive notifications about this event? (Notifications will only be sent out for: Cancellations, Reschedulings, and Waitlist
@@ -110,7 +110,7 @@
                             <input class="" type="checkbox" name="can_notify" value="1" :checked="inviteData.can_notify" v-model="inviteData.can_notify">
                         </div>
                     </div>
-                    <div class="contact-box" v-if="inviteData.can_notify">
+                    <div class="contact-box" v-if="inviteData.can_notify">php
                         <p>Please enter your phone number to receive notifications:</p>
                         <div class="form-label">Phone:</div>
                         <input class="form-text" type="text" name="phone" placeholder="" v-model="inviteData.phone">
