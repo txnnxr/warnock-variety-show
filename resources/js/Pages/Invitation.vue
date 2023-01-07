@@ -77,28 +77,28 @@
                         </label>
                     </div>
                 </div>
-                <div class="plus-one-box form-control my-2" v-if="inviteData.response_status !== 'NO' && inviteData.has_plus_one_option && !this.show.at_capacity_attendants">
-                    <div class="row ">
-                        <h4 class="col-12">Plus One?</h4>
-                        <span><i>This does not include the option for the plus one to do a talent.</i></span>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="plus_one_status" id="yes" value="1" v-model="inviteData.plus_one_status">
-                        <label class="form-check-label" for="yes">
-                            Si si
-                        </label>
-                    </div>
-                    <div class="plus-one-name-box" v-if="inviteData.plus_one_status == 1">
-                        <div class="form-label">Who is this motherfucker?</div>
-                        <input class="form-text" type="text" name="plus_one_name" placeholder="" v-model="inviteData.plus_one_name">
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="plus_one_status" id="no" value="0" v-model="inviteData.plus_one_status">
-                        <label class="form-check-label" for="no">
-                            Non
-                        </label>
-                    </div>
-                </div>
+<!--               <div class="plus-one-box form-control my-2" v-if="inviteData.response_status !== 'NO' && inviteData.has_plus_one_option && !this.show.at_capacity_attendants">-->
+<!--                    <div class="row ">-->
+<!--                        <h4 class="col-12">Plus One?</h4>-->
+<!--                        <span><i>This does not include the option for the plus one to do a talent.</i></span>-->
+<!--                    </div>-->
+<!--                    <div class="form-check">-->
+<!--                        <input class="form-check-input" type="radio" name="plus_one_status" id="yes" value="1" v-model="inviteData.plus_one_status">-->
+<!--                        <label class="form-check-label" for="yes">-->
+<!--                            Si si-->
+<!--                        </label>-->
+<!--                    </div>-->
+<!--                    <div class="plus-one-name-box" v-if="inviteData.plus_one_status == 1">-->
+<!--                        <div class="form-label">Who is this motherfucker?</div>-->
+<!--                        <input class="form-text" type="text" name="plus_one_name" placeholder="" v-model="inviteData.plus_one_name">-->
+<!--                    </div>-->
+<!--                    <div class="form-check">-->
+<!--                        <input class="form-check-input" type="radio" name="plus_one_status" id="no" value="0" v-model="inviteData.plus_one_status">-->
+<!--                        <label class="form-check-label" for="no">-->
+<!--                            Non-->
+<!--                        </label>-->
+<!--                    </div>-->
+<!--                </div>-->
 
 <!--                <div class="notifications-box form-control my-2 hide" v-if="inviteData.response_status !== 'NO'">-->
 <!--                    <div class="row">-->
