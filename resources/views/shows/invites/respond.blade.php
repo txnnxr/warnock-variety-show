@@ -56,48 +56,48 @@
                   </label>
                 </div>
             </div>
-            @if($invite->has_plus_one_option && !$show->at_capacity_attendants)
-                <div class="plus-one-box form-control my-2">
-                    <div class="row ">
-                        <h4 class="col-12">Plus One?</h4>
-                        <span><i>This does not include the option for the plus one to do a talent.</i></span>
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="plus_one_status" id="yes" value="1" checked>
-                      <label class="form-check-label" for="yes">
-                          Si si
-                      </label>
-                    </div>
-                    <div class="plus-one-name-box">
-                        <div class="form-label">Who is this motherfucker?</div>
-                        <input class="form-text" type="text" name="plus_one_name" placeholder="" value="{{$invite->plus_one_name}}">
-                    </div>
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="plus_one_status" id="no" value="0">
-                      <label class="form-check-label" for="no">
-                        Non
-                      </label>
-                    </div>
-                </div>
-            @endif
+{{--            @if($invite->has_plus_one_option && !$show->at_capacity_attendants)--}}
+{{--                <div class="plus-one-box form-control my-2">--}}
+{{--                    <div class="row ">--}}
+{{--                        <h4 class="col-12">Plus One?</h4>--}}
+{{--                        <span><i>This does not include the option for the plus one to do a talent.</i></span>--}}
+{{--                    </div>--}}
+{{--                    <div class="form-check">--}}
+{{--                      <input class="form-check-input" type="radio" name="plus_one_status" id="yes" value="1" checked>--}}
+{{--                      <label class="form-check-label" for="yes">--}}
+{{--                          Si si--}}
+{{--                      </label>--}}
+{{--                    </div>--}}
+{{--                    <div class="plus-one-name-box">--}}
+{{--                        <div class="form-label">Who is this motherfucker?</div>--}}
+{{--                        <input class="form-text" type="text" name="plus_one_name" placeholder="" value="{{$invite->plus_one_name}}">--}}
+{{--                    </div>--}}
+{{--                    <div class="form-check">--}}
+{{--                      <input class="form-check-input" type="radio" name="plus_one_status" id="no" value="0">--}}
+{{--                      <label class="form-check-label" for="no">--}}
+{{--                        Non--}}
+{{--                      </label>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--            @endif--}}
 
-            <div class="notifications-box form-control my-2">
-                <div class="row">
-                    <div class="col-md-6 my-1">
-                        <label for="can_notify">'Would you like to receive notifications about this event? (Notifications will only be sent out for: Cancellations, Reschedulings, and Waitlist openings)</label>
-                    </div>
-                    <div class="col-md-6 my-1">
-                        <input class="" type="checkbox" name="can_notify" value="1" checked>
-                    </div>
-                </div>
-                <div class="contact-box">
-                    <p>Please enter your phone number to receive notifications:</p> {{-- TODO: email --}}
-                    <div class="form-label">Phone: </div>
-                    <input class="form-text" type="text" name="phone" placeholder="" value="{{$invite->phone}}">
+{{--            <div class="notifications-box form-control my-2">--}}
+{{--                <div class="row">--}}
+{{--                    <div class="col-md-6 my-1">--}}
+{{--                        <label for="can_notify">'Would you like to receive notifications about this event? (Notifications will only be sent out for: Cancellations, Reschedulings, and Waitlist openings)</label>--}}
+{{--                    </div>--}}
+{{--                    <div class="col-md-6 my-1">--}}
+{{--                        <input class="" type="checkbox" name="can_notify" value="1" checked>--}}
+{{--                    </div>--}}
+{{--                </div>--}}
+{{--                <div class="contact-box">--}}
+{{--                    <p>Please enter your phone number to receive notifications:</p> --}}{{-- TODO: email --}}
+{{--                    <div class="form-label">Phone: </div>--}}
+{{--                    <input class="form-text" type="text" name="phone" placeholder="" value="{{$invite->phone}}">--}}
 {{--                    <div class="form-label">Email: </div>--}}
 {{--                    <input class="form-text" type="text" name="email" placeholder="" value="{{$invite->email}}">--}}
-                </div>
-            </div>
+{{--                </div>--}}
+{{--            </div>--}}
         </div>
         <button class="btn btn-primary mx-3 mb-3" type="submit">Submit</button>
     </form>
