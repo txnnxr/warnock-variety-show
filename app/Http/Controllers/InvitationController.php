@@ -114,7 +114,7 @@ class InvitationController extends Controller
             return redirect('/');
         }
 
-        $invite = Invite::where('key', $key)->firstOrFail();
+        $invite = Invite::where('show', $show->id)->where('key', $key)->firstOrFail();
 
         if (!str_contains($invite->response_status, 'PENDING') && !str_contains($invite->response_status, 'CREATED')) {
             return view('shows.invites.thank-you', compact('invite', 'show'));
