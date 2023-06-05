@@ -50,16 +50,16 @@
                 </div>
             @endif
             <div class="row">
-                @if($invite->response_status == "ATTENDING")
-                    <div class="col text-left">
-                        <form method="post" action="/invites/{{$invite->id}}/generate-ics">
-                            @csrf
-                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-kiwi-bird"></i> Add
-                                to Calendar
-                            </button>
-                        </form>
-                    </div>
-                @endif
+{{--                @if($invite->response_status == "ATTENDING")--}}
+{{--                    <div class="col text-left">--}}
+{{--                        <form method="post" action="/invites/{{$invite->id}}/generate-ics">--}}
+{{--                            @csrf--}}
+{{--                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-kiwi-bird"></i> Add--}}
+{{--                                to Calendar--}}
+{{--                            </button>--}}
+{{--                        </form>--}}
+{{--                    </div>--}}
+{{--                @endif--}}
                 <div class="col text-center">
                     <a href="/shows/{{$invite->show->id}}/view">
                         <button type="submit" class="btn btn-info"><i class="fa-solid fa-worm"></i>
