@@ -60,14 +60,14 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col text-left" v-if="invite.response_status == 'ATTENDING'">
-                        <Form method="post" :action="'/invites/'+invite.id+'/generate-ics'">
-                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-kiwi-bird"></i> Add
-                                to Calendar
-                            </button>
-                        </Form>
-                    </div>
-                    <div class="col text-center">
+<!--                    <div class="col text-left" v-if="invite.response_status == 'ATTENDING'">-->
+<!--                        <Form method="post" :action="'/invites/'+invite.id+'/generate-ics'">-->
+<!--                            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-kiwi-bird"></i> Add-->
+<!--                                to Calendar-->
+<!--                            </button>-->
+<!--                        </Form>-->
+<!--                    </div>-->
+                    <div class="col text-start">
                         <Link :href="'/shows/'+show.id+'/view'">
                             <button type="submit" class="btn btn-info"><i class="fa-solid fa-worm"></i>
                                 View Show
