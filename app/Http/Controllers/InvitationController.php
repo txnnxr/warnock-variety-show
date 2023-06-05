@@ -82,7 +82,7 @@ class InvitationController extends Controller
      */
     public function edit(Invite $invite)
     {
-        return inertia('Invitation', ['show'=> $invite->show->append(['at_capacity_attendants', 'at_capacity_talents', 'talent_waitlist_invites']), 'invite' => $invite]);
+        return inertia('Invitation', ['show'=> $invite->show->append(['at_capacity_attendants', 'at_capacity_talents', 'talent_waitlist_invites', 'decoded_html_description']), 'invite' => $invite]);
     }
 
     /**

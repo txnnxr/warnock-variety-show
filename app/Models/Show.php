@@ -86,4 +86,9 @@ class Show extends Model
     public function getPublicRsvpOpenTextAttribute(){
         return ($this->public_rsvp_open) ? 'Open' : 'Closed';
     }
+
+    public function getDecodedHtmlDescriptionAttribute()
+    {
+        return htmlspecialchars_decode(nl2br($this->description));
+    }
 }

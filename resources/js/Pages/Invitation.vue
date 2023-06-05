@@ -1,10 +1,14 @@
 <template>
     <Head>
-        <meta property="og:title" content="{{inviteData.first_name}} Invitation"/>
+        <meta property="og:title" content="{{show.name}} - {{inviteData.first_name}} Invitation" />
         <title>{{inviteData.first_name}} Invitation</title>
     </Head>
     <Layout>
-
+        <div class="card p-3">
+            <h2 class="card-title text-center mt-3">{{ show.name }}</h2>
+            <img class="invitation-logo" src="/images/PetsOnly.png" alt="">
+            <div class="card-body mb-3" v-html="show.decoded_html_description"></div>
+        </div>
         <Form :action="formUrl" method="POST" class="card my-3">
             <div class="card-body">
                 <h3 class="card-title">

@@ -23,7 +23,6 @@ Route::get('/invites/{invite}/edit', 'InvitationController@edit');
 Route::post('/invites/{invite}/mark-as-opened', 'InvitationController@markAsOpened');
 Route::get('/show/{show}/guest-invitation', 'InvitationController@guestInvitation');
 Route::post('/invite/{show}/guest-invitation', 'InvitationController@guestInvitationStore');
-
 Route::post('deploy', 'DeployController@deploy');
 
 require __DIR__.'/auth.php';
