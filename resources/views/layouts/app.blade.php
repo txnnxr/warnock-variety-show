@@ -16,7 +16,7 @@
         <script src="{{ asset('js/app.js') }}" defer></script>
     </head>
     <body class="antialiased">
-        <div class="container ">
+        <div class="container">
             <div class="row">
                 <div class="col">
                    <h1 class="text-center my-3"><a href="/">Warnock Variety Show</a></h1>

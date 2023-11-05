@@ -45,7 +45,15 @@
             @endif
             <div class="card p-3">
                 <h2 class="card-title text-center mt-3">{{$show->name}}</h2>
-                <div class="card-body mb-3">{!! nl2br($show->description) !!}</div>
+                <div class="card-body mb-3">
+                    <p>{!! nl2br($show->description) !!}</p>
+                    <div class="row">
+                        <div class="col-6"></div>
+                        <div class="col-6">
+                            <a href="/shows/{{$show->id}}/submission-applications">View Submissions</a>
+                        </div>
+                    </div>
+                </div>
             </div>
             @yield('shows-content')
        </div>

@@ -24,6 +24,16 @@ class Show extends Model
         return $this->hasMany(Invite::class);
     }
 
+    public function getApplicationsWithStatus($status): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->submissionApplications()->where('approved', $status)->get();
+    }
+
+    public function submissionApplications(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(SubmissionApplication::class);
+    }
+
     public function getAttendingInvitesAttribute()
     {
         return $this->invites()->withResponse('ATTENDING')->get();

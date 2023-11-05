@@ -56,6 +56,7 @@ class ShowController extends Controller
      */
     public function show(Show $show)
     {
+       // dd($show->getApplicationsWithStatus('1') );
         return view('shows.show', compact('show'));
     }
 
@@ -98,6 +99,7 @@ class ShowController extends Controller
      */
     public function destroy(Show $show)
     {
-        //
+       // if(auth()->user()->)
+        $show->delete();
     }
 }

@@ -23,4 +23,7 @@ Route::get('/invites/{invite}/edit', 'InviteController@edit');
 Route::post('/invites/{invite}/mark-as-sent', 'InviteController@markAsSent');
 Route::post('/invites/{invite}/mark-as-opened', 'InviteController@markAsOpened');
 
+Route::get('shows/{show}/submission-applications/create', 'SubmissionApplicationController@create');
+Route::post('shows/{show}/submission-applications/', 'SubmissionApplicationController@store');
+
 require __DIR__.'/auth.php';
