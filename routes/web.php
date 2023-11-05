@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
+Route::get('/', function () {
+    $show = \App\Models\Show::where('date', '>=', Carbon::now())->orderBy('date')->first();
+    return view('home', compact('show'));
+});
 Route::get('shows/{show}/view', 'ShowController@show')->name('shows.show');
 Route::get('shows/{show}/invite/respond/{key}', 'InviteController@respond');
 Route::post('shows/{show}/invite/respond/{key}', 'InviteController@registerResponse');

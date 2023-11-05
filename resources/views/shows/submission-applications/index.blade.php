@@ -25,7 +25,7 @@
                         <td>{{$submissionApplication->phone}}</td>
                         <td>{{$submissionApplication->email}}</td>
                         <td>{{$submissionApplication->show->name}}</td>
-                        <td>{{substr($submissionApplication->description, 1, 20)}}</td>
+                        <td>{{substr($submissionApplication->description, 0, 20)}}</td>
                         <td>{{$submissionApplication->getStatus()}}</td>
                         <td>
                             <a class="btn btn-secondary" href="/shows/{{$submissionApplication->show_id}}/submission-applications/{{$submissionApplication->id}}/view">View</a>
