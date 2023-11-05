@@ -77,7 +77,9 @@
 
                         <ul class="inviteeList">
                             @foreach($show->getApplicationsWithStatus(true) as $application)
-                                <li>{{$application->name}} - {{$application->title}}</li>
+                                <li>
+                                    @if(auth()->user())<a href="/shows/{{$show->id}}/submission-applications/{{$application->id}}/view">@endif{{$application->name}} - {{$application->title}}@if(auth()->user())</a>@endif
+                                </li>
                             @endforeach
                         </ul>
                     </div>
@@ -86,7 +88,7 @@
                             <h3>Limbo ({{$show->getApplicationsWithStatus(false)->count()}})</h3>
                             <ul class="inviteeList">
                                 @foreach($show->getApplicationsWithStatus(false) as $application)
-                                    <li>{{$application->name}} - {{$application->title}} </li>
+                                    @if(auth()->user())<a href="/shows/{{$show->id}}/submission-applications/{{$application->id}}/view">@endif{{$application->name}} - {{$application->title}}@if(auth()->user())</a>@endif
                                 @endforeach
                             </ul>
                         </div>
