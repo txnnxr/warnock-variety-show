@@ -155,21 +155,20 @@ class InviteController extends Controller
 
     public function guestRequestSave(guestRequestRequest $request, Show $show)
     {
-        dd($request->all(), $show);
-        $invite = Invite::create([
+       Invite::create([
             'show_id' => $show->id,
             'first_name' => $request->first_name,
-            'middle_name' => $request->middle_name,
+//            'middle_name' => $request->middle_name,
             'last_name' => $request->last_name,
-            'phone' => $request->phone,
-            'email' => $request->email,
+//            'phone' => $request->phone,
+//            'email' => $request->email,
             'response_status' => $request->response_status,
-            'talent' => $request->talent,
+            'plus_one_status' => $request->plus_one_status,
             'guest_request' => true,
-            'key' => Str::uuid(),
+            'key' => Str::uuid()
         ]);
-
-        return back();
+////
+        return redirect('/');
     }
 
     public function guestRequestApprove(Invite $invite){

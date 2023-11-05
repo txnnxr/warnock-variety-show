@@ -92,42 +92,42 @@
             </div>
         </div>
     </div>
-    @if(count($show->submissionApplications))
-        <div class="card my-3">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-6 col-sm-3">
-                        <h3 class="headers">Exhibitions ({{$show->getApplicationsWithStatus(true)->count()}})</h3>
+{{--    @if(count($show->submissionApplications))--}}
+{{--        <div class="card my-3">--}}
+{{--            <div class="card-body">--}}
+{{--                <div class="row">--}}
+{{--                    <div class="col-6 col-sm-3">--}}
+{{--                        <h3 class="headers">Exhibitions ({{$show->getApplicationsWithStatus(true)->count()}})</h3>--}}
 
-                        <ul class="inviteeList">
-                            @foreach($show->getApplicationsWithStatus(true) as $application)
-                                <li>
-                                    @if(auth()->user())
-                                        <a href="/shows/{{$show->id}}/submission-applications/{{$application->id}}/view">@endif{{$application->name}} - {{$application->title}}@if(auth()->user())</a>
-                                    @endif
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    @if($show->getApplicationsWithStatus(false)->count())
-                        <div class="col-6 col-sm-3">
-                            <h3>Limbo ({{$show->getApplicationsWithStatus(false)->count()}})</h3>
-                            <ul class="inviteeList">
-                                @foreach($show->getApplicationsWithStatus(false) as $application)
-                                    <li>
-                                        @if(auth()->user())
-                                            <a href="/shows/{{$show->id}}/submission-applications/{{$application->id}}/view">@endif{{$application->name}}
-                                                - {{$application->title}}@if(auth()->user())</a>
-                                        @endif
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    @endif
+{{--                        <ul class="inviteeList">--}}
+{{--                            @foreach($show->getApplicationsWithStatus(true) as $application)--}}
+{{--                                <li>--}}
+{{--                                    @if(auth()->user())--}}
+{{--                                        <a href="/shows/{{$show->id}}/submission-applications/{{$application->id}}/view">@endif{{$application->name}} - {{$application->title}}@if(auth()->user())</a>--}}
+{{--                                    @endif--}}
+{{--                                </li>--}}
+{{--                            @endforeach--}}
+{{--                        </ul>--}}
+{{--                    </div>--}}
+{{--                    @if($show->getApplicationsWithStatus(false)->count())--}}
+{{--                        <div class="col-6 col-sm-3">--}}
+{{--                            <h3>Limbo ({{$show->getApplicationsWithStatus(false)->count()}})</h3>--}}
+{{--                            <ul class="inviteeList">--}}
+{{--                                @foreach($show->getApplicationsWithStatus(false) as $application)--}}
+{{--                                    <li>--}}
+{{--                                        @if(auth()->user())--}}
+{{--                                            <a href="/shows/{{$show->id}}/submission-applications/{{$application->id}}/view">@endif{{$application->name}}--}}
+{{--                                                - {{$application->title}}@if(auth()->user())</a>--}}
+{{--                                        @endif--}}
+{{--                                    </li>--}}
+{{--                                @endforeach--}}
+{{--                            </ul>--}}
+{{--                        </div>--}}
+{{--                    @endif--}}
+{{--                </div>--}}
+{{--            </div>--}}
+{{--        </div>--}}
+{{--    @endif--}}
     <!-- Modal -->
     <div class="modal fade" id="rsvpModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -218,25 +218,3 @@
     </div>
 
 @endsection
-@push('scripts')
-    <script>
-        $(document).ready(function () {
-            $(document).ready(function () {
-                $('.copy-link').click(function () {
-                    navigator.clipboard.writeText($(this).attr('data-link'));
-                    $(this).text('Copied!');
-                });
-                $('#invitesTable').DataTable();
-            });
-            $('[name=response_status]').change(function () {
-                if ($(this).val() !== 'NO') {
-                    $('[name=talent]').removeAttr('disabled');
-                    $('.talent-box').show();
-                } else {
-                    $('[name=talent]').attr('disabled', 'disabled');
-                    $('.talent-box').hide();
-                }
-            });
-        });
-    </script>
-@endpush
