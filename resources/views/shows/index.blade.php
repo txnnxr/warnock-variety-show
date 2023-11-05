@@ -2,6 +2,7 @@
 @section('content')
     <div class="card">
         <div class="card-body">
+            <a href="/shows/create" class="btn btn-info form-control align-self-center">Create Show</a>
             <table class="table tabled-bordered dt-responsive no-wrap" id="showsTable">
                 <thead>
                     <tr>

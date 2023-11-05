@@ -155,6 +155,7 @@ class InviteController extends Controller
 
     public function guestRequestSave(guestRequestRequest $request, Show $show)
     {
+        dd($request->all(), $show);
         $invite = Invite::create([
             'show_id' => $show->id,
             'first_name' => $request->first_name,

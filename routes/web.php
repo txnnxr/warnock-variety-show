@@ -29,5 +29,9 @@ Route::post('/invites/{invite}/mark-as-opened', 'InviteController@markAsOpened')
 
 Route::get('shows/{show}/submission-applications/create', 'SubmissionApplicationController@create');
 Route::post('shows/{show}/submission-applications/', 'SubmissionApplicationController@store');
+    Route::get('/shows/{show}/submission-applications/{submissionApplication}/view', 'SubmissionApplicationController@show');
+
+    Route::get('/shows/{show}/invite/guest-request', 'InviteController@guestRequest')->name('invites.guest-request');
+    Route::post('/shows/{show}/invite/guest-request', 'InviteController@guestRequestSave');
 
 require __DIR__.'/auth.php';

@@ -34,8 +34,7 @@ Route::middleware('guest')->group(function () {
     Route::post('reset-password', [NewPasswordController::class, 'store'])
                 ->name('password.update');
 
-    Route::get('/shows/{show}/invite/guest-request', 'InviteController@guestRequest')->name('invites.guest-request');
-    Route::post('/shows/{show}/invite/guest-request', 'InviteController@guestRequestSave');
+
 
     Route::get('/card', 'CardController@show')->name('card.show');
 });
@@ -78,7 +77,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/invites/{invite}/guest-request/approve', 'InviteController@guestRequestApprove')->name('invites.guest-request.approve');
 
     Route::get('shows/{show}/submission-applications', 'SubmissionApplicationController@index');
-    Route::get('/shows/{show}/submission-applications/{submissionApplication}/view', 'SubmissionApplicationController@show');
     Route::get('/shows/{show}/submission-applications/{submissionApplication}/edit', 'SubmissionApplicationController@edit');
     Route::get('/submission-applications/{submissionApplication}/approve', 'SubmissionApplicationController@approve');
     Route::get('/submission-applications/{submissionApplication}/deny', 'SubmissionApplicationController@deny');
