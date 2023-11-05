@@ -26,6 +26,6 @@
                placeholder="Like loyalty... optional, but appreciated.">
     <label class="form-label col-3" for="description">Description:</label>
     <textarea type="text" name="description" class="form-control col-9" rows="6" placeholder="a good un">@if(isset($submissionApplication)){{htmlspecialchars_decode($submissionApplication->description)}}@endif</textarea>
-    <button class="form-control btn btn-primary" type="submit">@if(isset($submissionApplication)) Edit @else Create @endif Show</button>
+    <button class="form-control btn btn-primary mt-2" type="submit">@if(isset($submissionApplication)) Edit @else Submit @endif Application</button>
 </form>
 @endsection
