@@ -74,7 +74,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('shows/{show}/invite', 'InviteController@index');
     Route::post('shows/{show}/invite', 'InviteController@store');
-    Route::post('/invites/{invite}/guest-request/approve', 'InviteController@guestRequestApprove')->name('invites.guest-request.approve');
+//    Route::post('/invites/{invite}/guest-request/approve', 'InviteController@guestRequestApprove')->name('invites.guest-request.approve');
 
     Route::get('shows/{show}/submission-applications', 'SubmissionApplicationController@index');
     Route::get('/shows/{show}/submission-applications/{submissionApplication}/edit', 'SubmissionApplicationController@edit');

@@ -18,7 +18,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-6 col-sm-3">
-                    <h3 class="headers">Attending ({{count($show->attending_invites)}})</h3>
+                    <h3 class="headers">Attending ({{count($show->attending_invites) + count($show->attending_invites_with_plus_one)}})</h3>
 
                     <ul class="inviteeList">
                         @foreach($show->attending_invites as $invite)
@@ -27,7 +27,7 @@
                                     <i class="fa-solid fa-otter"></i>
                                 @else
                                     <i class="fa-solid fa-bugs"></i>
-                                @endif {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}}</li>
+                                @endif {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}} @if($invite->plus_one_status) (+1) @endif</li>
                         @endforeach
                     </ul>
                 </div>
@@ -43,22 +43,6 @@
                         @endforeach
                     </ul>
                 </div>
-                {{--                <div class="col-6 col-sm-3">--}}
-                {{--                    <h3>No ({{count($show->no_invites)}})</h3>--}}
-                {{--                    <ul class="inviteeList">--}}
-                {{--                        @foreach($show->no_invites as $invite)--}}
-                {{--                            <li><i class="fa-regular fa-circle-xmark"></i> {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}}</li>--}}
-                {{--                        @endforeach--}}
-                {{--                    </ul>--}}
-                {{--                </div>--}}
-                {{--                <div class="col-6 col-sm-3">--}}
-                {{--                    <h3>Pending ({{count($show->pending_invites)}})</h3>--}}
-                {{--                    <ul class="inviteeList">--}}
-                {{--                        @foreach($show->pending_invites as $invite)--}}
-                {{--                            <li><i class="fa-solid fa-circle-exclamation"></i> {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}}</li>--}}
-                {{--                        @endforeach--}}
-                {{--                    </ul>--}}
-                {{--                </div>--}}
                 @if(count($show->submissionApplications))
                     <div class="col-6 col-sm-3">
                         <h3 class="headers">Exhibitions ({{$show->getApplicationsWithStatus(true)->count()}})</h3>
@@ -92,42 +76,6 @@
             </div>
         </div>
     </div>
-{{--    @if(count($show->submissionApplications))--}}
-{{--        <div class="card my-3">--}}
-{{--            <div class="card-body">--}}
-{{--                <div class="row">--}}
-{{--                    <div class="col-6 col-sm-3">--}}
-{{--                        <h3 class="headers">Exhibitions ({{$show->getApplicationsWithStatus(true)->count()}})</h3>--}}
-
-{{--                        <ul class="inviteeList">--}}
-{{--                            @foreach($show->getApplicationsWithStatus(true) as $application)--}}
-{{--                                <li>--}}
-{{--                                    @if(auth()->user())--}}
-{{--                                        <a href="/shows/{{$show->id}}/submission-applications/{{$application->id}}/view">@endif{{$application->name}} - {{$application->title}}@if(auth()->user())</a>--}}
-{{--                                    @endif--}}
-{{--                                </li>--}}
-{{--                            @endforeach--}}
-{{--                        </ul>--}}
-{{--                    </div>--}}
-{{--                    @if($show->getApplicationsWithStatus(false)->count())--}}
-{{--                        <div class="col-6 col-sm-3">--}}
-{{--                            <h3>Limbo ({{$show->getApplicationsWithStatus(false)->count()}})</h3>--}}
-{{--                            <ul class="inviteeList">--}}
-{{--                                @foreach($show->getApplicationsWithStatus(false) as $application)--}}
-{{--                                    <li>--}}
-{{--                                        @if(auth()->user())--}}
-{{--                                            <a href="/shows/{{$show->id}}/submission-applications/{{$application->id}}/view">@endif{{$application->name}}--}}
-{{--                                                - {{$application->title}}@if(auth()->user())</a>--}}
-{{--                                        @endif--}}
-{{--                                    </li>--}}
-{{--                                @endforeach--}}
-{{--                            </ul>--}}
-{{--                        </div>--}}
-{{--                    @endif--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    @endif--}}
     <!-- Modal -->
     <div class="modal fade" id="rsvpModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -170,38 +118,19 @@
                                 </div>
                             </div>
                         </div>
-                        {{--                        <div class="col-md-12">--}}
-                        {{--                            <div class="talent-box form-control my-2">--}}
-                        {{--                                <div class="row ">--}}
-                        {{--                                    <h4 class="col-12">Talent?</h4>--}}
-                        {{--                                </div>--}}
-                        {{--                                <div class="form-check">--}}
-                        {{--                                    <input class="form-check-input" type="radio" name="talent" id="yes" value="1" checked>--}}
-                        {{--                                    <label class="form-check-label" for="yes">--}}
-                        {{--                                        Ye--}}
-                        {{--                                    </label>--}}
-                        {{--                                </div>--}}
-                        {{--                                <div class="form-check">--}}
-                        {{--                                    <input class="form-check-input" type="radio" name="talent" id="no" value="0">--}}
-                        {{--                                    <label class="form-check-label" for="no">--}}
-                        {{--                                        Nay--}}
-                        {{--                                    </label>--}}
-                        {{--                                </div>--}}
-                        {{--                            </div>--}}
-                        {{--                        </div>--}}
                         <div class="col-md-12">
                             <div class="form-control my-2">
                                 <div class="row ">
                                     <h4 class="col-12">Bringing a plus one?</h4>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="plus_one_status" value="true" checked>
+                                    <input class="form-check-input" type="radio" name="plus_one_status" value="1" checked>
                                     <label class="form-check-label" for="true">
                                         Yes
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="plus_one_status" value="false">
+                                    <input class="form-check-input" type="radio" name="plus_one_status" value="0">
                                     <label class="form-check-label" for="false">
                                         No
                                     </label>

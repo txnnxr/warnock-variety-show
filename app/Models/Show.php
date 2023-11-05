@@ -39,6 +39,11 @@ class Show extends Model
         return $this->invites()->withResponse('ATTENDING')->get();
     }
 
+    public function getAttendingInvitesWithPlusOneAttribute()
+    {
+        return $this->invites()->withResponse('ATTENDING')->where('plus_one_status', 1)->get();
+    }
+
     public function getPendingInvitesAttribute()
     {
         return $this->invites()->withPending()->get();

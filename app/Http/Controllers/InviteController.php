@@ -153,7 +153,7 @@ class InviteController extends Controller
         return view('shows.invites.guest-request', compact('show'));
     }
 
-    public function guestRequestSave(guestRequestRequest $request, Show $show)
+    public function guestRequestSave(Request $request, Show $show)
     {
        Invite::create([
             'show_id' => $show->id,
@@ -168,7 +168,7 @@ class InviteController extends Controller
             'key' => Str::uuid()
         ]);
 ////
-        return redirect('/');
+        return redirect("/shows/$show->id/view");
     }
 
     public function guestRequestApprove(Invite $invite){
