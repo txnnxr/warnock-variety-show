@@ -5,25 +5,50 @@
 @import url('https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css')
 @import url('https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap5.min.css')
 
+$primary-color: #4487b0 //#437fcc
+$secondary-color: #44b083 //#43cc4b
+$tertiary-color: #87b044 //#cc9043
+
+//#4487b0
+
 body
     font-family: 'IM Fell DW Pica', serif
     //background-image: url("/images/background.jpg")
     //background-size: cover
     //background-
-    //background-color: #a7724e
+    background-color: #f3fdc8 //
 
 .btn-primary
-    background-color: #44c59f
-    border-color: #44c59f
+    background-color: $primary-color
+    border-color: $primary-color
 .btn-primary:active
-    background-color: #146c43
+    background-color: $tertiary-color
 .btn-primary:focus
-    background-color: #146c43
+    background-color: $tertiary-color
+.btn-primary:hover
+    background-color: $tertiary-color
+    border-color: $tertiary-color
+
+.btn-info
+    background-color: $secondary-color
+    border-color: $secondary-color
+.btn-info:active
+    background-color: $tertiary-color
+.btn-info:focus
+    background-color: $tertiary-color
+.btn-info:hover
+    background-color: $tertiary-color
+    border-color: $tertiary-color
+
 a
     color: #836328
     text-decoration: none
+    padding: 10px
 a:hover
-    color: #f0c055
+    color: white
+    background-color: $secondary-color
+    opacity: 0.7
+
 h1
     a
         text-decoration: none

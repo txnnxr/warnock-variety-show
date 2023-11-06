@@ -30,17 +30,27 @@
     </div>
     @if(Auth::user())
         <div class="row">
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <a href="route('logout')"
-                   onclick="event.preventDefault();
+            <div class="col">
+                <a href="/shows">Shows</a>
+            </div>
+            {{--                    <div class="col"><a href="/rsvp">RSVP</a></div>--}}
+            {{--                    <div class="col"><a href="/mailing-list">Mailing List</a></div>--}}
+            <div class="col">
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <a href="route('logout')"
+                       onclick="event.preventDefault();
                                             this.closest('form').submit();">
-                    Logout
-                </a>
-            </form>
+                        Logout
+                    </a>
+                </form>
+            </div>
+
         </div>
+    @else
         <div class="row">
-            <div class="col"><a href="/shows">Shows</a></div>
+            <a class="col-1" href="{{ route('login') }}"> Login </a>
+            {{--                    <a class ="col-1" href="{{ route('register') }}">Register </a>--}}
         </div>
     @endif
     <div class="card p-3">

@@ -11288,28 +11288,55 @@ textarea.form-control-lg {
 }
 body {
   font-family: "IM Fell DW Pica", serif;
+  background-color: #f3fdc8;
 }
 
 .btn-primary {
-  background-color: #44c59f;
-  border-color: #44c59f;
+  background-color: #4487b0;
+  border-color: #4487b0;
 }
 
 .btn-primary:active {
-  background-color: #146c43;
+  background-color: #87b044;
 }
 
 .btn-primary:focus {
-  background-color: #146c43;
+  background-color: #87b044;
+}
+
+.btn-primary:hover {
+  background-color: #87b044;
+  border-color: #87b044;
+}
+
+.btn-info {
+  background-color: #44b083;
+  border-color: #44b083;
+}
+
+.btn-info:active {
+  background-color: #87b044;
+}
+
+.btn-info:focus {
+  background-color: #87b044;
+}
+
+.btn-info:hover {
+  background-color: #87b044;
+  border-color: #87b044;
 }
 
 a {
   color: #836328;
   text-decoration: none;
+  padding: 10px;
 }
 
 a:hover {
-  color: #f0c055;
+  color: white;
+  background-color: #44b083;
+  opacity: 0.7;
 }
 
 h1 a, .h1 a {

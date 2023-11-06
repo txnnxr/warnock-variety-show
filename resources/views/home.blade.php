@@ -24,7 +24,7 @@
         <div class="row">
             <div class="col-6">Calendar
                 <p>{{$show->date}}</p>
-                {{Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($show->date), false)}}@if(Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($show->date), false) != 1) days @else day @endif until the next variety show!
+                <p>{{Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($show->date), false)}}@if(Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($show->date), false) != 1) days @else day @endif until the next variety show!</p>
                 <a href="/shows/{{$show->id}}/view" class="btn btn-info form-control align-self-center">RSVP</a>
             </div>
             <div class="col-6">
@@ -41,6 +41,7 @@
             <div class="col-6"><img src="/images/Red Icon Full .jpeg" alt="" width="100%"></div>
             <div class="col-6 align-content-center">
                 <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Amet autem cupiditate, delectus, dicta error excepturi explicabo, harum necessitatibus possimus qui quia reprehenderit velit voluptatum. Eius enim officia officiis qui ratione!</p>
+                <p>{{Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($show->date)->addDays(-5), false)}}@if(Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($show->date), false) != 1) days @else day @endif until the submission deadline for the next variety show!</p>
                 <a href="/shows/{{$show->id}}/submission-applications/create" class="btn btn-info form-control align-self-center">Exhibition Application</a></div>
         </div>
     </div>
