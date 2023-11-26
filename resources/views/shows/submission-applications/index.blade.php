@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div>
-        <a href="/shows/{{$submissionApplications->first()->show->id}}}/view">{{$submissionApplications->first()->show->name}}</a>
+        <a href="/shows/{{$show->id}}}/view">{{$submissionApplications->first()->show->name}}</a>
     </div>
 <div class="card">
     <div class="row">
