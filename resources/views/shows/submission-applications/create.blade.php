@@ -15,7 +15,7 @@
     <label class="form-label col-3" for="name">Name:</label>
         <input class="form-control col-9" type="text" name="name" id="name" value="@if(isset($submissionApplication)){{$submissionApplication->name}}@endif"
                placeholder="First, Middle, Confirmation, Last">
-    <label class="form-label col-3" for="name">Title:</label>
+    <label class="form-label col-3" for="name">Exhibition Title:</label>
         <input class="form-control col-9" type="text" name="title" id="title" value="@if(isset($submissionApplication)){{$submissionApplication->title}}@endif"
                placeholder="Required" required>
     <label class="form-label col-3" for="name">Phone:</label>
