@@ -1,7 +1,7 @@
 @extends('shows.layout')
 @section('shows-content')
     @if($show->date > Carbon\Carbon::today())
-        <div class="card mt-3">
+        <div class="card card-alt mt-3">
             <div class="card-body p-4">
                 <div class="row">
                     <div class="col-md-6 my-1">
@@ -14,7 +14,7 @@
             </div>
         </div>
     @endif
-    <div class="card my-3">
+    <div class="card card-alt-2 my-3">
         <div class="card-body">
             <div class="row">
                 <div class="col-6 col-sm-3">

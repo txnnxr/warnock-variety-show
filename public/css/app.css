@@ -11361,6 +11361,71 @@ h1 a:hover, .h1 a:hover {
   font-size: 14px;
 }
 
+.card {
+  left: -1000px;
+  -webkit-animation: slide 1s forwards;
+  -webkit-animation-delay: 0.2s;
+  animation: slide 1s forwards;
+  -webkit-animation-delay: 0.25s;
+          animation-delay: 0.25s;
+}
+
+.card-alt {
+  left: -1000px;
+  -webkit-animation: slide 1s forwards;
+  -webkit-animation-delay: 0.4s;
+  animation: slide 1s forwards;
+  -webkit-animation-delay: 0.5s;
+          animation-delay: 0.5s;
+}
+
+.card-alt-2 {
+  left: -1000px;
+  -webkit-animation: slide 1s forwards;
+  -webkit-animation-delay: 0.6s;
+  animation: slide 1s forwards;
+  -webkit-animation-delay: 0.75s;
+          animation-delay: 0.75s;
+}
+
+@-webkit-keyframes slide {
+  100% {
+    left: 0;
+  }
+}
+@keyframes slide {
+  100% {
+    left: 0;
+  }
+}
+.carousel {
+  height: 400px;
+}
+
+.carousel-inner {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.carousel-item {
+  max-width: 400px;
+  max-height: 400px;
+  float: none;
+  margin-right: auto;
+}
+
+.carousel-item.active {
+  display: inline-block;
+  max-width: 400px;
+  max-height: 400px;
+  float: none;
+  margin-right: auto;
+}
+
 @media (min-width: 576px) {
   .inviteeList {
     list-style-type: none;
