@@ -44,7 +44,7 @@
 
                 <p></p>
 
-                <p>We're pretty broad about what we allow at the show we've had: tap dancing, fire dancing, poetry readings, artist show & tells, technical talks, musical performances of all kinds! If
+                <p>We're pretty broad about what we allow at the show we've had: tap dancing, fire dancing, poetry readings, artist show & tells, technical talks, sound baths, musical performances of all kinds! If
                     you're not sure if what you do belongs here, it probably does! </p>
                 {{--(EXCEPT KARAOKE)--}}
                 <p>We aim to have about 6 artists with 10 minute exhibition slots per show. So submit an application early if you want to get in for the next show! </p>
