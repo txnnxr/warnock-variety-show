@@ -5,7 +5,7 @@
       @if(isset($submissionApplication))
           action="/shows/{{$show->id}}/submission-applications/{{$submissionApplication->id}}"
       @else
-        action="/shows/{{$show->id}}/submission-applications/"
+        action="/shows/{{$show->id}}/submission-applications"
       @endif
       method="POST">
     @csrf
