@@ -47,7 +47,7 @@ class SubmissionApplicationController extends Controller
             'title' => $request->input('title'),
         ]);
 
-        return redirect("/shows/{$submissionApplication->show_id}/view");
+        return redirect("/shows/{$submissionApplication->show_id}/submission-applications/{$submissionApplication->id}/view");
     }
 
     /**
