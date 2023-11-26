@@ -43,7 +43,13 @@
                 @endif until the submission deadline for the next variety show!</h4>
             {{--                <h4>{{$show->name}}</h4>--}}
             {{--                <p>{!! nl2br(substr($show->description, 0, 500)) !!}... <a href="/shows/{{$show->id}}/view">Read More</a></p>--}}
-            <p>The Warnock Variety Show is not just a stage; it's a canvas for your creativity to shine. As an artist, performing here means more than a showcase—it's an immersive experience in a house-party setting, fostering a unique connection with an intimate crowd. Feel the energy of collaboration, see your art resonate in the cozy ambiance, and revel in the freedom of expression. This is your opportunity to captivate an engaged audience, share your passion, and be part of a community that values and celebrates diverse talents. Join us at the Warnock Variety Show, where your performance transforms a room into a living masterpiece, leaving a lasting impression on hearts ready to embrace your artistry.</p>
+
+
+            <p>We're pretty broad about what we allow at the show we've had: tap dancing, fire dancing, poetry readings, artist show & tells, technical talks, musical performances of all kinds! If you're not sure if what you do belongs here, it probably does! (EXCEPT KARAOKE)</p>
+
+            <p>We aim to have 5-6 artists with 10 minute exhibition slots per show. So submit an application early if you want to get in for the next show! </p>
+
+
 
             <a href="/shows/{{$show->id}}/submission-applications/create" class="btn btn-info form-control align-self-center">Exhibition Application</a>
         </div>
