@@ -30,7 +30,7 @@
                     </tr>
                     <tr>
                         <th>Description</th>
-                        <td>{{substr($submissionApplication->description, 0, 20)}}</td>
+                        <td>{{htmlspecialchars_decode($submissionApplication->description)}}</td>
                     </tr>
                     <tr>
                         <th>Status</th>
