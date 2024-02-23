@@ -31,18 +31,20 @@
                         @endforeach
                     </ul>
                 </div>
-                <div class="col-6 col-sm-3">
-                    <h3>Maybe ({{count($show->maybe_invites)}})</h3>
-                    <ul class="inviteeList">
-                        @foreach($show->maybe_invites as $invite)
-                            <li><i class="fa-regular fa-circle-question"></i> @if($invite->talent)
-                                    <i class="fa-solid fa-otter"></i>
-                                @else
-                                    <i class="fa-solid fa-bugs"></i>
-                                @endif  {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}}</li>
-                        @endforeach
-                    </ul>
-                </div>
+                @if(count($show->maybe_invites))
+                    <div class="col-6 col-sm-3">
+                        <h3>Maybe ({{count($show->maybe_invites)}})</h3>
+                        <ul class="inviteeList">
+                            @foreach($show->maybe_invites as $invite)
+                                <li><i class="fa-regular fa-circle-question"></i> @if($invite->talent)
+                                        <i class="fa-solid fa-otter"></i>
+                                    @else
+                                        <i class="fa-solid fa-bugs"></i>
+                                    @endif  {{$invite->first_name}} {{$invite->middle_name}} {{$invite->last_name}}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 @if(count($show->submissionApplications))
                     <div class="col-6 col-sm-3">
                         <h3 class="headers">Exhibitions ({{$show->getApplicationsWithStatus(true)->count()}})</h3>

@@ -49,7 +49,7 @@ class CardController extends Controller
     public function show(Card $card)
     {
         return redirect(route('shows.show', [
-            'show' => Show::latest('date')->first(),
+            'show' =>  \App\Models\Show::where('date', '>=', Carbon::now())->orderBy('date', 'asc')->first()
         ]));
     }
 
