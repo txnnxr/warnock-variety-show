@@ -59,20 +59,22 @@
                             @endforeach
                         </ul>
                     </div>
-                    @if($show->getApplicationsWithStatus(false)->count())
-                        <div class="col-6 col-sm-3">
-                            <h3>Limbo ({{$show->getApplicationsWithStatus(false)->count()}})</h3>
-                            <ul class="inviteeList">
-                                @foreach($show->getApplicationsWithStatus(false) as $application)
-                                    <li>
-                                        @if(auth()->user())
-                                            <a href="/shows/{{$show->id}}/submission-applications/{{$application->id}}/view">@endif{{$application->name}}
-                                                - {{$application->title}}@if(auth()->user())</a>
-                                        @endif
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
+                    @if(auth()->user())
+                        @if($show->getApplicationsWithStatus(false)->count())
+                            <div class="col-6 col-sm-3">
+                                <h3>Limbo ({{$show->getApplicationsWithStatus(false)->count()}})</h3>
+                                <ul class="inviteeList">
+                                    @foreach($show->getApplicationsWithStatus(false) as $application)
+                                        <li>
+                                            @if(auth()->user())
+                                                <a href="/shows/{{$show->id}}/submission-applications/{{$application->id}}/view">@endif{{$application->name}}
+                                                    - {{$application->title}}@if(auth()->user())</a>
+                                            @endif
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                     @endif
                 @endif
             </div>
