@@ -108,12 +108,19 @@
 
     @if(count($show->photos))
         <div class="card">
-            <div class="card-body">
+            @php
+                $lightboxPhotos = $show->photos->map(fn ($photo) => [
+                    'url' => $photo->url,
+                    'caption' => $photo->caption,
+                    'alt' => $photo->caption ?? $show->name,
+                ])->values();
+            @endphp
+            <div class="card-body" x-data="lightbox(@js($lightboxPhotos))" x-on:keydown.window="onKey($event)">
                 <h2 class="section-heading">Photos</h2>
                 <div class="photo-grid">
                     @foreach($show->photos as $photo)
                         <figure>
-                            <a href="{{ $photo->url }}" target="_blank"><img src="{{ $photo->url }}" alt="{{ $photo->caption ?? $show->name }}" loading="lazy"></a>
+                            <a href="{{ $photo->url }}" target="_blank" x-on:click.prevent="open({{ $loop->index }})"><img src="{{ $photo->url }}" alt="{{ $photo->caption ?? $show->name }}" loading="lazy"></a>
                             @if($photo->caption)<figcaption>{{ $photo->caption }}</figcaption>@endif
                             @can('admin')
                                 <form method="POST" action="{{ route('photos.destroy', $photo) }}">
@@ -125,6 +132,33 @@
                         </figure>
                     @endforeach
                 </div>
+
+                <template x-teleport="body">
+                    <div class="lightbox" x-show="isOpen" x-transition.opacity x-cloak
+                         role="dialog" aria-modal="true" aria-label="Photo viewer"
+                         x-on:click.self="close()" x-on:touchstart="touchStart($event)" x-on:touchend="touchEnd($event)">
+                        <button type="button" class="lightbox-button lightbox-close" x-ref="close" x-on:click="close()" aria-label="Close">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                        <template x-if="photos.length > 1">
+                            <div>
+                                <button type="button" class="lightbox-button lightbox-prev" x-on:click="step(-1)" aria-label="Previous photo">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+                                <button type="button" class="lightbox-button lightbox-next" x-on:click="step(1)" aria-label="Next photo">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </template>
+                        <figure class="lightbox-figure" x-on:click.self="close()">
+                            <img x-bind:src="photo.url" x-bind:alt="photo.alt">
+                            <figcaption>
+                                <span x-show="photo.caption" x-text="photo.caption"></span>
+                                <span class="lightbox-count" x-show="photos.length > 1" x-text="`${index + 1} / ${photos.length}`"></span>
+                            </figcaption>
+                        </figure>
+                    </div>
+                </template>
             </div>
         </div>
     @endif

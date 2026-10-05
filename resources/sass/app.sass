@@ -422,6 +422,86 @@ ol.guest-list
         max-width: 32rem
         margin: 10vh auto 0
 
+// ------------------------------------------------------------- Lightbox
+
+[x-cloak]
+    display: none !important
+
+.lightbox
+    position: fixed
+    inset: 0
+    z-index: $zindex-modal
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 3.5rem 4rem
+    background: rgba(darken($ink, 8%), .94)
+
+    @media (max-width: 575.98px)
+        padding: 3.5rem .75rem
+
+.lightbox-figure
+    display: flex
+    flex-direction: column
+    align-items: center
+    max-height: 100%
+    margin: 0
+
+    img
+        max-width: 100%
+        max-height: calc(100vh - 9rem)
+        object-fit: contain
+        border: 8px solid $paper-light
+        box-shadow: 0 8px 32px rgba(#000, .5)
+
+    figcaption
+        display: flex
+        gap: 1rem
+        align-items: baseline
+        margin-top: .75rem
+        color: $paper
+        font-family: $display-font
+        font-size: 1.15rem
+        font-style: italic
+        text-align: center
+
+.lightbox-count
+    font-family: $caps-font
+    font-style: normal
+    font-size: .95rem
+    color: $rule
+
+.lightbox-button
+    position: absolute
+    display: grid
+    place-items: center
+    width: 2.75rem
+    height: 2.75rem
+    border: 1px solid rgba($paper, .35)
+    border-radius: 50%
+    background: rgba($ink, .6)
+    color: $paper
+    font-size: 1.15rem
+    transition: background .15s
+
+    &:hover, &:focus-visible
+        background: $marquee
+        border-color: $marquee
+
+.lightbox-close
+    top: .75rem
+    right: .75rem
+
+.lightbox-prev, .lightbox-next
+    top: 50%
+    transform: translateY(-50%)
+
+.lightbox-prev
+    left: .75rem
+
+.lightbox-next
+    right: .75rem
+
 // ------------------------------------------------------------- Motion
 
 // Cards slide in from the left one after another, like the original site.

@@ -3,6 +3,7 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
+        "upload": "vite build && rsync -avz --delete public/build/ tannerjameswells@warnockvarietyshow.com:~/warnockvarietyshow.com/public/build/ && ssh tannerjameswells@warnockvarietyshow.com 'cd ~/warnockvarietyshow.com && /usr/local/php83/bin/php artisan view:cache'",
         "dev": "vite"
     },
     "devDependencies": {

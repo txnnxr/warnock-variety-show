@@ -6,7 +6,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@hasSection('title')@yield('title') · @endif Warnock Variety Show</title>
-    <link rel="icon" href="/favicon.ico">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.ico" sizes="32x32">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <meta name="theme-color" content="#a63d2f">
 
     {{-- Link previews (iMessage, Instagram, Slack, etc.) --}}
     <meta name="description" content="@yield('description', 'A free-spirited celebration of artistic expression in a cozy, house party atmosphere.')">
