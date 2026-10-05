@@ -164,6 +164,87 @@ class AdminToolsTest extends TestCase
         $this->assertNotSoftDeleted($person);
     }
 
+    public function test_likely_duplicates_are_grouped_with_their_reasons(): void
+    {
+        $sam = Person::create(['name' => 'Sam Rivera', 'email' => 'Sam@Example.com']);
+        $samByEmail = Person::create(['name' => 'Samuel R.', 'email' => 'sam@example.com ']);
+        $samByPhone = Person::create(['name' => 'S. Rivera', 'phone_number' => '+1 (215) 555-0123']);
+        $samByEmail->update(['phone_number' => '2155550123']);
+        $ada = Person::create(['name' => 'Ada King Lovelace']);
+        $adaAgain = Person::create(['name' => 'ada lovelace']);
+        Person::create(['name' => 'Jo']);
+        Person::create(['name' => 'Jo']);
+        Person::create(['name' => 'Someone Else', 'email' => 'else@example.com']);
+
+        $groups = Person::duplicateGroups(Person::all());
+
+        $this->assertCount(2, $groups);
+        $byFirstId = $groups->keyBy(fn ($group) => $group['people']->min('id'));
+        $this->assertEqualsCanonicalizing([$sam->id, $samByEmail->id, $samByPhone->id], $byFirstId[$sam->id]['people']->pluck('id')->all());
+        $this->assertSame(['same email', 'same phone'], $byFirstId[$sam->id]['reasons']);
+        $this->assertEqualsCanonicalizing([$ada->id, $adaAgain->id], $byFirstId[$ada->id]['people']->pluck('id')->all());
+        $this->assertSame(['same name'], $byFirstId[$ada->id]['reasons']);
+    }
+
+    public function test_several_people_can_be_merged_at_once(): void
+    {
+        $keep = Person::create(['name' => 'Sam Rivera']);
+        $first = Person::create(['name' => 'Sam R', 'email' => 'sam@example.com']);
+        $second = Person::create(['name' => 'Samuel', 'phone_number' => '2155550123']);
+        $bystander = Person::create(['name' => 'Ada Lovelace']);
+        $invites = collect([$first, $second, $bystander])->map(fn ($person) => Invite::factory()->create(['person_id' => $person->id]));
+
+        $this->actingAs($this->admin())
+            ->post('/people/merge', ['keep_id' => $keep->id, 'merge_ids' => [$first->id, $second->id]])
+            ->assertRedirect('/people')
+            ->assertSessionHas('status', 'Merged 2 records into Sam Rivera.');
+
+        $this->assertSame([$keep->id, $keep->id, $bystander->id], $invites->map(fn ($invite) => $invite->fresh()->person_id)->all());
+        $this->assertSame('sam@example.com', $keep->fresh()->email);
+        $this->assertSame('2155550123', $keep->fresh()->phone_number);
+        $this->assertSoftDeleted($first);
+        $this->assertSoftDeleted($second);
+        $this->assertNotSoftDeleted($bystander);
+    }
+
+    public function test_the_kept_person_cannot_also_be_merged_away(): void
+    {
+        $keep = Person::create(['name' => 'Sam Rivera']);
+        $other = Person::create(['name' => 'Sam R']);
+
+        $this->actingAs($this->admin())
+            ->post('/people/merge', ['keep_id' => $keep->id, 'merge_ids' => [$other->id, $keep->id]])
+            ->assertSessionHasErrors('merge_ids.1');
+
+        $this->assertNotSoftDeleted($keep);
+        $this->assertNotSoftDeleted($other);
+    }
+
+    public function test_only_admins_can_merge_people(): void
+    {
+        $keep = Person::create(['name' => 'Sam Rivera']);
+        $other = Person::create(['name' => 'Sam R']);
+
+        $this->actingAs(User::factory()->create())
+            ->post('/people/merge', ['keep_id' => $keep->id, 'merge_ids' => [$other->id]])
+            ->assertForbidden();
+
+        $this->assertNotSoftDeleted($other);
+    }
+
+    public function test_people_page_suggests_duplicates_and_who_to_keep(): void
+    {
+        $sparse = Person::create(['name' => 'Sam Rivera']);
+        $busy = Person::create(['name' => 'sam rivera', 'email' => 'sam@example.com']);
+        Invite::factory()->count(2)->create(['person_id' => $busy->id]);
+
+        $this->actingAs($this->admin())->get('/people')
+            ->assertOk()
+            ->assertSee('Possible Duplicates')
+            ->assertSee('Same name')
+            ->assertSee("keep: {$busy->id}", false);
+    }
+
     // Canceling shows
 
     public function test_canceling_emails_interested_guests_with_the_note(): void

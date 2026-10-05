@@ -73,6 +73,7 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
 
     Route::get('people', [PersonController::class, 'index'])->name('people.index');
     Route::get('people/{person}', [PersonController::class, 'show'])->name('people.show');
+    Route::post('people/merge', [PersonController::class, 'mergeMany'])->name('people.merge-many');
     Route::post('people/{person}/merge', [PersonController::class, 'merge'])->name('people.merge');
 });
 

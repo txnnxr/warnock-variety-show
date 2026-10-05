@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class PersonController extends Controller
@@ -14,9 +15,17 @@ class PersonController extends Controller
         $people = Person::withCount([
             'invites as attended_count' => fn ($query) => $query->where('response_status', 'ATTENDING')->whereHas('show', fn ($show) => $show->past()),
             'exhibitors as performed_count' => fn ($query) => $query->where('status', 'Approved'),
-        ])->orderBy('name')->get();
+        ])->withCount(['invites', 'submissionApplications'])->orderBy('name')->get();
 
-        return view('people.index', compact('people'));
+        // Suggest keeping whoever has the most history; ties go to the oldest record.
+        $duplicateGroups = Person::duplicateGroups($people)->map(fn ($group) => $group + [
+            'keep' => $group['people']->sortBy([
+                fn ($a, $b) => ($b->invites_count + $b->submission_applications_count) <=> ($a->invites_count + $a->submission_applications_count),
+                fn ($a, $b) => $a->id <=> $b->id,
+            ])->first(),
+        ]);
+
+        return view('people.index', compact('people', 'duplicateGroups'));
     }
 
     public function show(Person $person)
@@ -28,9 +37,7 @@ class PersonController extends Controller
     }
 
     /**
-     * Fold a duplicate into this person: their invites, applications and
-     * performances move over, missing contact details are filled in, and the
-     * duplicate is removed.
+     * Merge one duplicate into this person, from the person's own page.
      */
     public function merge(Request $request, Person $person)
     {
@@ -39,20 +46,32 @@ class PersonController extends Controller
         ]);
 
         $duplicate = Person::findOrFail($validated['duplicate_id']);
-
-        DB::transaction(function () use ($person, $duplicate) {
-            foreach (['invites', 'submission_applications', 'exhibitors', 'guests'] as $table) {
-                DB::table($table)->where('person_id', $duplicate->id)->update(['person_id' => $person->id]);
-            }
-
-            $person->email ??= $duplicate->email;
-            $person->phone_number ??= $duplicate->phone_number;
-            $person->contact_info ??= $duplicate->contact_info;
-            $person->save();
-
-            $duplicate->delete();
-        });
+        $person->absorb($duplicate);
 
         return redirect()->route('people.show', $person)->with('status', "Merged {$duplicate->name} into {$person->name}.");
+    }
+
+    /**
+     * Merge several people into one, from the People list.
+     */
+    public function mergeMany(Request $request)
+    {
+        $validated = $request->validate([
+            'keep_id' => ['required', Rule::exists('people', 'id')->whereNull('deleted_at')],
+            'merge_ids' => ['required', 'array', 'min:1'],
+            'merge_ids.*' => ['distinct', Rule::exists('people', 'id')->whereNull('deleted_at'), Rule::notIn([$request->input('keep_id')])],
+        ], [
+            'merge_ids.required' => 'Choose at least one other person to merge.',
+            'merge_ids.*.not_in' => "The person you're keeping can't also be merged away.",
+        ]);
+
+        $keep = Person::findOrFail($validated['keep_id']);
+        $duplicates = Person::findMany($validated['merge_ids']);
+
+        DB::transaction(fn () => $duplicates->each(fn ($duplicate) => $keep->absorb($duplicate)));
+
+        $count = $duplicates->count();
+
+        return redirect()->route('people.index')->with('status', "Merged {$count} ".Str::plural('record', $count)." into {$keep->name}.");
     }
 }

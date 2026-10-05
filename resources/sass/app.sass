@@ -505,3 +505,33 @@ ol.guest-list
 
 .lightbox-next
     right: .75rem
+
+// ------------------------------------------------------------- Merging people
+
+.duplicate-group
+    padding: 1rem 0
+    border-top: 1px solid $rule
+
+    &:last-child
+        padding-bottom: 0
+
+    th:nth-child(-n+2)
+        width: 4.5rem
+
+.merge-bar
+    position: sticky
+    top: .5rem
+    z-index: 2
+    display: flex
+    flex-wrap: wrap
+    align-items: center
+    gap: .5rem .75rem
+    margin-bottom: 1rem
+    padding: .5rem .75rem
+    border: 1px solid $rule
+    border-radius: $border-radius
+    background: $paper
+    box-shadow: 0 2px 8px rgba($ink, .12)
+
+    label
+        margin: 0
