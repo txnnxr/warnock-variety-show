@@ -1,53 +1,44 @@
 @extends('layouts.app')
+@section('title', "Lineup · {$show->name}")
 @section('content')
-    <div>
-        <a href="{{ route('shows.show', $show) }}">{{ $show->name }}</a> と <a href="/shows/{{ $show->id }}/submission-applications">Submissions</a>
-    </div>
-    <div class="card">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('shows.show', $show) }}">{{ $show->name }}</a></li>
+            <li class="breadcrumb-item"><a href="/shows/{{ $show->id }}/submission-applications">Submissions</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Lineup</li>
+        </ol>
+    </nav>
+    <div class="card playbill">
         <div class="card-body">
-            <h3 class="card-title">Lineup</h3>
+            <h1 class="card-heading">The Lineup</h1>
             @if($lineup->isEmpty())
-                <p>No approved acts yet. Approving an application adds it to the end of the lineup.</p>
+                <p class="text-center fst-italic mb-0">No approved acts yet. Approving an application adds it to the end of the lineup.</p>
             @else
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Performer</th>
-                            <th>Act</th>
-                            <th>Order</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                <ol class="lineup">
                     @foreach($lineup as $act)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td><a href="{{ route('people.show', $act->person) }}">{{ $act->person->name }}</a></td>
-                            <td>
+                        <li>
+                            <span class="act">
                                 @if($act->submission_application_id)
                                     <a href="/shows/{{ $show->id }}/submission-applications/{{ $act->submission_application_id }}/view">{{ $act->exhibition_description }}</a>
                                 @else
                                     {{ $act->exhibition_description }}
                                 @endif
-                            </td>
-                            <td>
-                                @unless($loop->first)
-                                    <form class="d-inline-block" method="POST" action="{{ route('lineup.up', $act) }}">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-secondary" aria-label="Move up">↑</button>
-                                    </form>
-                                @endunless
-                                @unless($loop->last)
-                                    <form class="d-inline-block" method="POST" action="{{ route('lineup.down', $act) }}">
-                                        @csrf
-                                        <button type="submit" class="btn btn-sm btn-secondary" aria-label="Move down">↓</button>
-                                    </form>
-                                @endunless
-                            </td>
-                        </tr>
+                            </span>
+                            <span class="leader" aria-hidden="true"></span>
+                            <span class="performer"><a href="{{ route('people.show', $act->person) }}">{{ $act->person->name }}</a></span>
+                            <span class="lineup-controls d-inline-flex gap-1">
+                                <form method="POST" action="{{ route('lineup.up', $act) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary" aria-label="Move {{ $act->exhibition_description }} up" @disabled($loop->first)><i class="fa-solid fa-arrow-up"></i></button>
+                                </form>
+                                <form method="POST" action="{{ route('lineup.down', $act) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary" aria-label="Move {{ $act->exhibition_description }} down" @disabled($loop->last)><i class="fa-solid fa-arrow-down"></i></button>
+                                </form>
+                            </span>
+                        </li>
                     @endforeach
-                    </tbody>
-                </table>
+                </ol>
             @endif
         </div>
     </div>

@@ -1,53 +1,71 @@
 @extends('layouts.app')
+@section('title', $person->name)
 @section('content')
-    <div>
-        <a href="{{ route('people.index') }}">People</a>
-    </div>
-    <div class="card my-3">
-        <div class="card-body">
-            <h3 class="card-title">{{ $person->name }}</h3>
-            <p class="mb-0">{{ $person->email }} @if($person->email && $person->phone_number) · @endif {{ $person->phone_number }}</p>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('people.index') }}">People</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ $person->name }}</li>
+        </ol>
+    </nav>
+    <div class="card playbill">
+        <div class="card-body text-center">
+            <h1 class="card-heading mb-1">{{ $person->name }}</h1>
+            <p class="mb-0 text-break">{{ $person->email }} @if($person->email && $person->phone_number) · @endif {{ $person->phone_number }}</p>
         </div>
     </div>
-    <div class="card my-3">
-        <div class="card-body">
-            <h4 class="card-title">Invites</h4>
-            @forelse($person->invites->sortByDesc('show.date') as $invite)
-                <div>
-                    <a href="{{ route('shows.show', $invite->show) }}">{{ $invite->show->name }}</a>
-                    ({{ $invite->show->date->format('M j, Y') }}):
-                    @if($invite->response_status == 'COWARD') MAYBE @else {{ $invite->response_status }} @endif
-                    @if($invite->plus_one_status) (+1) @endif
+    <div class="row g-4">
+        <div class="col-12 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="section-heading">Invites</h2>
+                    <ul class="guest-list">
+                        @forelse($person->invites->sortByDesc('show.date') as $invite)
+                            <li class="flex-wrap">
+                                <a href="{{ route('shows.show', $invite->show) }}">{{ $invite->show->name }}</a>
+                                <span class="text-muted small">{{ $invite->show->date->format('M j, Y') }}</span>
+                                <x-rsvp-status :invite="$invite" />
+                            </li>
+                        @empty
+                            <li class="text-muted fst-italic">No invites.</li>
+                        @endforelse
+                    </ul>
                 </div>
-            @empty
-                <p class="mb-0">No invites.</p>
-            @endforelse
+            </div>
         </div>
-    </div>
-    <div class="card my-3">
-        <div class="card-body">
-            <h4 class="card-title">Performances</h4>
-            @forelse($person->exhibitors->where('status', 'Approved')->sortByDesc('show.date') as $act)
-                <div>
-                    <a href="{{ route('shows.show', $act->show) }}">{{ $act->show->name }}</a>
-                    ({{ $act->show->date->format('M j, Y') }}): {{ $act->exhibition_description }}
+        <div class="col-12 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="section-heading">Performances</h2>
+                    <ul class="guest-list">
+                        @forelse($person->exhibitors->where('status', 'Approved')->sortByDesc('show.date') as $act)
+                            <li class="flex-wrap">
+                                <span class="fst-italic">{{ $act->exhibition_description }}</span>
+                                <a href="{{ route('shows.show', $act->show) }}" class="small">{{ $act->show->name }}</a>
+                            </li>
+                        @empty
+                            <li class="text-muted fst-italic">No performances.</li>
+                        @endforelse
+                    </ul>
                 </div>
-            @empty
-                <p class="mb-0">No performances.</p>
-            @endforelse
+            </div>
         </div>
-    </div>
-    <div class="card my-3">
-        <div class="card-body">
-            <h4 class="card-title">Applications</h4>
-            @forelse($person->submissionApplications->sortByDesc('show.date') as $application)
-                <div>
-                    <a href="/shows/{{ $application->show_id }}/submission-applications/{{ $application->id }}/view">{{ $application->title }}</a>
-                    for {{ $application->show->name }}: {{ $application->getStatus() }}
+        <div class="col-12 col-lg-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="section-heading">Applications</h2>
+                    <ul class="guest-list">
+                        @forelse($person->submissionApplications->sortByDesc('show.date') as $application)
+                            <li class="flex-wrap">
+                                <a href="/shows/{{ $application->show_id }}/submission-applications/{{ $application->id }}/view">{{ $application->title }}</a>
+                                <span class="small text-muted">{{ $application->show->name }}</span>
+                                <span class="status {{ $application->approved ? 'status-attending' : 'status-waitlist' }}">{{ $application->getStatus() }}</span>
+                            </li>
+                        @empty
+                            <li class="text-muted fst-italic">No applications.</li>
+                        @endforelse
+                    </ul>
                 </div>
-            @empty
-                <p class="mb-0">No applications.</p>
-            @endforelse
+            </div>
         </div>
     </div>
 @endsection

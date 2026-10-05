@@ -5,73 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>@hasSection('title')@yield('title') · @endif{{ config('app.name', 'Warnock Variety Show') }}</title>
     <link rel="icon" href="/favicon.ico">
-    <!-- Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
-    <!-- Styles -->
-    <!-- Scripts -->
+    <meta property="og:image" content="{{ url('/images/background.jpg') }}"/>
+    @stack('meta')
+
     @vite(['resources/sass/app.sass', 'resources/js/app.js'])
 </head>
-<body class="antialiased">
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <h1 class="text-center my-3"><a href="/">Warnock Variety Show</a></h1>
+<body>
+<header class="masthead">
+    <p class="masthead-title"><a href="/">Warnock Variety Show</a></p>
+    <p class="masthead-tagline">✦ A house party of variety ✦</p>
+</header>
+
+<nav class="navbar navbar-expand-md site-nav">
+    <div class="container">
+        <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#siteNav" aria-controls="siteNav" aria-expanded="false" aria-label="Toggle navigation">
+            Menu <i class="fa-solid fa-bars ms-1"></i>
+        </button>
+        <div class="collapse navbar-collapse justify-content-center" id="siteNav">
+            <ul class="navbar-nav align-items-md-center gap-md-3">
+                <li class="nav-item"><a class="nav-link @if(request()->is('/')) active @endif" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link @if(request()->routeIs('shows.archive')) active @endif" href="{{ route('shows.archive') }}">Past Shows</a></li>
+                @can('admin')
+                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('shows.index')) active @endif" href="/shows">Manage Shows</a></li>
+                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('people.*')) active @endif" href="{{ route('people.index') }}">People</a></li>
+                @endcan
+                @auth
+                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('profile.edit')) active @endif" href="{{ route('profile.edit') }}">Profile</a></li>
+                    <li class="nav-item">
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="nav-link btn btn-link">Log Out</button>
+                        </form>
+                    </li>
+                @else
+                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('login')) active @endif" href="{{ route('login') }}">Log In</a></li>
+                @endauth
+            </ul>
         </div>
     </div>
-    @auth
-        <div class="row">
-            <div class="col">
-                @can('admin')
-                    <a href="/shows">Shows</a>
-                    <a href="{{ route('people.index') }}">People</a>
-                @endcan
-                <a href="{{ route('shows.archive') }}">Past Shows</a>
-                <a href="{{ route('profile.edit') }}">Profile</a>
-            </div>
-            {{--                    <div class="col"><a href="/rsvp">RSVP</a></div>--}}
-            {{--                    <div class="col"><a href="/mailing-list">Mailing List</a></div>--}}
-            <div class="col">
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <a href="route('logout')"
-                       onclick="event.preventDefault();
-                                            this.closest('form').submit();">
-                        Logout
-                    </a>
-                </form>
-            </div>
+</nav>
 
-        </div>
-    @else
-        <div class="row">
-            <div class="col">
-                <a href="{{ route('shows.archive') }}">Past Shows</a>
-                <a href="{{ route('login') }}">Login</a>
-            </div>
-        </div>
-    @endauth
+<main class="container">
+    @if(session('status') && ! in_array(session('status'), ['profile-updated', 'password-updated', 'verification-link-sent']))
+        <div class="alert alert-success">{{ session('status') }}</div>
+    @endif
     @isset($header)
-        <div class="my-3">{{ $header }}</div>
+        <div class="mb-3">{{ $header }}</div>
     @endisset
     @yield('content')
     @isset($slot)
         {{ $slot }}
     @endisset
-</div>
-<footer>
-    <script
-            src="https://code.jquery.com/jquery-3.6.0.min.js"
-            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-            crossorigin="anonymous"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
-    @stack('scripts')
+</main>
+
+<footer class="site-footer">
+    <div class="ornament mb-2"><i class="fa-solid fa-otter"></i></div>
+    Warnock Variety Show · <a href="{{ route('shows.archive') }}">Past Shows</a>
 </footer>
+
+<script
+        src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
+@stack('scripts')
 </body>
 </html>

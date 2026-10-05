@@ -61,16 +61,17 @@ class Invite extends Model
      */
     public function canSeeAddress(): bool
     {
-        return $this->response_status === self::ATTENDING && ! $this->guest_request;
+        return $this->holdsSeat();
     }
 
     /**
      * Record a response. An "attending" response goes on the waitlist when
-     * the show is full, and giving up a seat promotes the waitlist.
+     * the show is full, and giving up a seat promotes the waitlist. Guest
+     * requests hold no seat until they're approved.
      */
     public function respond(string $status, ?bool $plusOne = null, ?bool $talent = null): void
     {
-        $wasAttending = $this->response_status === self::ATTENDING;
+        $wasAttending = $this->holdsSeat();
 
         if ($plusOne !== null) {
             $this->plus_one_status = $plusOne;
@@ -80,7 +81,7 @@ class Invite extends Model
             $this->talent = $talent;
         }
 
-        if ($status === self::ATTENDING && ! $this->show->hasRoomFor($this->seats(), $this)) {
+        if ($status === self::ATTENDING && ! $this->guest_request && ! $this->show->hasRoomFor($this->seats(), $this)) {
             $this->response_status = self::WAITLIST;
             $this->waitlisted_at ??= now();
         } else {
@@ -90,9 +91,30 @@ class Invite extends Model
 
         $this->save();
 
-        if ($wasAttending && $this->response_status !== self::ATTENDING) {
+        if ($wasAttending && ! $this->holdsSeat()) {
             $this->show->promoteWaitlist();
         }
+    }
+
+    /**
+     * Approve a guest request. It takes a seat if one is free, otherwise it
+     * joins the waitlist.
+     */
+    public function approveGuestRequest(): void
+    {
+        $this->guest_request = false;
+
+        if ($this->response_status === self::ATTENDING && ! $this->show->hasRoomFor($this->seats(), $this)) {
+            $this->response_status = self::WAITLIST;
+            $this->waitlisted_at = now();
+        }
+
+        $this->save();
+    }
+
+    public function holdsSeat(): bool
+    {
+        return $this->response_status === self::ATTENDING && ! $this->guest_request;
     }
 
     public function scopeWithResponse($query, $response)

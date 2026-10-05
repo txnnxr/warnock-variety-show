@@ -1,99 +1,448 @@
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css')
-@import 'bootstrap/scss/bootstrap'
-@import url('https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica&display=swap')
-@import url('https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css')
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica:ital@0;1&family=IM+Fell+English+SC&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap')
 @import url('https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css')
 @import url('https://cdn.datatables.net/responsive/2.2.9/css/responsive.bootstrap5.min.css')
 
-$primary-color: #4487b0 //#437fcc
-$secondary-color: #44b083 //#43cc4b
-$tertiary-color: #87b044 //#cc9043
+// Palette: the original blue / green / olive, deepened so white text on
+// buttons stays readable, on warm playbill paper.
+$ink: #2b2118
+$paper: #f6f0dc
+$paper-light: #fffcf1
+$rule: #c9b98f
+$blue: #3a7398
+$green: #2f8a63
+$olive: #87b044
+$brown: #836328
+$marquee: #a63d2f
+$amber: #c98a1b
 
-//#4487b0
+$display-font: 'IM Fell DW Pica', Georgia, serif
+$caps-font: 'IM Fell English SC', Georgia, serif
+$body-font: 'Crimson Pro', Georgia, serif
+
+$primary: $blue
+$secondary: $brown
+$success: $green
+$info: $green
+$warning: $amber
+$danger: $marquee
+$body-bg: $paper
+$body-color: $ink
+$font-family-base: $body-font
+$font-size-base: 1.125rem
+$headings-font-family: $display-font
+$headings-font-weight: 400
+$link-color: $brown
+$link-hover-color: darken($brown, 12%)
+$border-color: $rule
+$border-radius: .375rem
+$card-bg: $paper-light
+$card-border-color: $rule
+$input-bg: #fff
+$input-border-color: $rule
+$table-bg: transparent
+$navbar-padding-y: .25rem
+
+@import 'bootstrap/scss/bootstrap'
+
+// ------------------------------------------------------------------ Base
 
 body
-    font-family: 'IM Fell DW Pica', serif
-    //background-image: url("/images/background.jpg")
-    //background-size: cover
-    //background-
-    background-color: #f3fdc8 //
+    background-color: $paper
+    background-image: radial-gradient(rgba($brown, .06) 1px, transparent 1px)
+    background-size: 22px 22px
+    min-height: 100vh
+    display: flex
+    flex-direction: column
 
-.btn-primary
-    background-color: $primary-color
-    border-color: $primary-color
-.btn-primary:active
-    background-color: $tertiary-color
-.btn-primary:focus
-    background-color: $tertiary-color
-.btn-primary:hover
-    background-color: $tertiary-color
-    border-color: $tertiary-color
-
-.btn-info
-    background-color: $secondary-color
-    border-color: $secondary-color
-.btn-info:active
-    background-color: $tertiary-color
-.btn-info:focus
-    background-color: $tertiary-color
-.btn-info:hover
-    background-color: $tertiary-color
-    border-color: $tertiary-color
+main
+    flex: 1 0 auto
 
 a
-    color: #836328
-    text-decoration: none
-    padding: 10px
-a:hover
-    color: white
-    background-color: $secondary-color
-    opacity: 0.7
+    text-underline-offset: .2em
 
-h1
-    a
+h1, h2, h3, h4
+    line-height: 1.15
+
+.small-caps
+    font-family: $caps-font
+    letter-spacing: .04em
+
+// --------------------------------------------------------------- Masthead
+
+.masthead
+    text-align: center
+    padding: 1.75rem 1rem .75rem
+
+    .masthead-title
+        font-family: $display-font
+        font-size: clamp(2rem, 7vw, 3.75rem)
+        margin: 0
+        line-height: 1
+        a
+            color: $ink
+            text-decoration: none
+
+    .masthead-tagline
+        font-family: $caps-font
+        color: $brown
+        letter-spacing: .12em
+        font-size: clamp(.85rem, 2.6vw, 1.05rem)
+        margin-top: .35rem
+
+.ornament
+    display: flex
+    align-items: center
+    gap: .75rem
+    color: $brown
+    text-align: center
+    &::before, &::after
+        content: ''
+        flex: 1
+        border-top: 3px double $rule
+
+// --------------------------------------------------------------- Nav bar
+
+.site-nav
+    border-top: 3px double $rule
+    border-bottom: 3px double $rule
+    margin-bottom: 1.5rem
+    background: rgba($paper-light, .7)
+
+    .nav-link, .navbar-toggler
+        font-family: $caps-font
+        letter-spacing: .06em
+        color: $ink
+        font-size: 1.05rem
+
+    .nav-link:hover, .nav-link:focus, .nav-link.active
+        color: $marquee
+
+    .navbar-toggler
+        border-color: $rule
+
+    .btn-link.nav-link
         text-decoration: none
-        color: black
-    a:hover
-        color: black
-.dataTables_wrapper
-    .dataTables_paginate
-        .paginate_button
-            margin: 0
-            margin-left: -1px
-            padding: 0
-.inviteeList
-    list-style-type: none
-    padding-left: 0
-    li
-        font-size: 14px
+
+// --------------------------------------------------------------- Footer
+
+.site-footer
+    margin-top: 3rem
+    padding: 1.5rem 1rem 2rem
+    text-align: center
+    color: $brown
+    font-family: $caps-font
+    letter-spacing: .06em
+
+// ----------------------------------------------------------------- Cards
+
 .card
-    left: -1000px
-    -webkit-animation: slide 1s forwards
-    -webkit-animation-delay: 0.2s
-    animation: slide 1s forwards
-    animation-delay: 0.25s
+    box-shadow: 0 1px 0 rgba($ink, .04), 0 6px 18px -10px rgba($ink, .25)
+    margin-bottom: 1.5rem
 
-.card-alt
-    left: -1000px
-    -webkit-animation: slide 1s forwards
-    -webkit-animation-delay: 0.4s
-    animation: slide 1s forwards
-    animation-delay: 0.5s
+// Side-by-side cards: the row's gutter spaces them, and the row itself
+// keeps the gap to whatever comes next.
+main > .row
+    margin-bottom: 1.5rem
+    > * > .card.h-100
+        margin-bottom: 0
 
-.card-alt-2
-    left: -1000px
-    -webkit-animation: slide 1s forwards
-    -webkit-animation-delay: 0.6s
-    animation: slide 1s forwards
-    animation-delay: 0.75s
+.playbill
+    border: 1px solid $rule
+    outline: 3px double $rule
+    outline-offset: -8px
+    padding: .5rem
 
+    > .card-body
+        padding: 1.5rem 1.25rem
+        @include media-breakpoint-up(md)
+            padding: 2rem 2.25rem
 
-@-webkit-keyframes slide
-    100%
-        left: 0
-@keyframes slide
-    100%
-        left: 0
+.card-heading
+    font-family: $display-font
+    font-size: clamp(1.6rem, 4.5vw, 2.25rem)
+    text-align: center
+    margin-bottom: 1rem
+
+.section-heading
+    @extend .ornament
+    font-family: $caps-font
+    font-size: 1.2rem
+    letter-spacing: .08em
+    margin: 0 0 1rem
+    white-space: nowrap
+
+// -------------------------------------------------------------- Buttons
+
+.btn
+    font-family: $caps-font
+    letter-spacing: .05em
+    font-size: 1.05rem
+    padding: .5rem 1.15rem
+
+.btn-sm
+    font-size: .9rem
+    padding: .25rem .65rem
+
+.btn-info, .btn-success
+    color: #fff
+    &:hover, &:focus, &:active
+        color: #fff
+
+.btn-group-actions
+    display: flex
+    flex-wrap: wrap
+    gap: .5rem
+
+// ------------------------------------------------------------ Show page
+
+.show-meta
+    text-align: center
+    font-family: $caps-font
+    color: $brown
+    letter-spacing: .06em
+    font-size: 1.1rem
+
+.show-description
+    max-width: 42rem
+    margin: 1rem auto 0
+    font-size: 1.15rem
+
+.countdown
+    font-family: $display-font
+    font-size: clamp(2.5rem, 9vw, 4rem)
+    line-height: 1
+    color: $marquee
+
+.countdown-label
+    font-family: $caps-font
+    color: $brown
+    letter-spacing: .06em
+
+.guest-list
+    list-style: none
+    padding-left: 0
+    margin: 0
+    li
+        padding: .3rem 0
+        border-bottom: 1px dotted $rule
+        display: flex
+        align-items: baseline
+        gap: .5rem
+        &:last-child
+            border-bottom: 0
+    .fa-solid, .fa-regular
+        color: $brown
+        width: 1rem
+
+ol.guest-list
+    counter-reset: guest
+    li
+        counter-increment: guest
+        &::before
+            content: counter(guest) '.'
+            font-family: $caps-font
+            color: $brown
+            min-width: 1.25rem
+
+// Lineup: act names with dotted leaders to the performer, like a playbill.
+.lineup
+    list-style: none
+    padding: 0
+    margin: 0
+    counter-reset: act
+
+    li
+        counter-increment: act
+        display: flex
+        align-items: baseline
+        gap: .5rem
+        padding: .45rem 0
+        font-size: 1.15rem
+
+        &::before
+            content: counter(act, upper-roman) '.'
+            font-family: $caps-font
+            color: $marquee
+            min-width: 2.25rem
+
+    .act
+        font-style: italic
+
+    .leader
+        flex: 1
+        border-bottom: 2px dotted $rule
+        transform: translateY(-.3em)
+        min-width: 1rem
+
+    .performer
+        font-family: $caps-font
+        letter-spacing: .04em
+        text-align: right
+
+    .lineup-controls
+        margin-left: .5rem
+
+    // On phones the leader has no room: put the performer on its own line
+    // under the act, with the reorder buttons beside the act.
+    @include media-breakpoint-down(sm)
+        li
+            flex-wrap: wrap
+        .act
+            flex: 1
+        .leader
+            display: none
+        .lineup-controls
+            order: 1
+        .performer
+            order: 2
+            flex-basis: 100%
+            text-align: left
+            padding-left: 2.75rem
+            font-size: 1rem
+
+.photo-grid
+    display: grid
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr))
+    gap: .75rem
+
+    figure
+        margin: 0
+
+    img
+        width: 100%
+        aspect-ratio: 4 / 3
+        object-fit: cover
+        border: 6px solid #fff
+        box-shadow: 0 2px 8px rgba($ink, .2)
+
+    figcaption
+        font-size: .95rem
+        color: $brown
+        margin-top: .25rem
+
+// ------------------------------------------------------------- Statuses
+
+.status
+    display: inline-block
+    font-family: $caps-font
+    font-size: .85rem
+    letter-spacing: .05em
+    padding: .1rem .55rem
+    border-radius: 999px
+    border: 1px solid currentColor
+    white-space: nowrap
+
+.status-attending
+    color: $green
+.status-maybe
+    color: darken($olive, 12%)
+.status-no
+    color: lighten($ink, 40%)
+.status-waitlist
+    color: darken($amber, 8%)
+.status-pending
+    color: $blue
+.status-requested
+    color: $marquee
+
+.stat
+    text-align: center
+    .stat-value
+        font-family: $display-font
+        font-size: 2rem
+        line-height: 1
+    .stat-label
+        font-family: $caps-font
+        color: $brown
+        font-size: .95rem
+
+// ---------------------------------------------------------------- Forms
+
+.form-label
+    font-family: $caps-font
+    letter-spacing: .04em
+    margin-bottom: .25rem
+
+.choice-group
+    border: 1px solid $rule
+    border-radius: $border-radius
+    background: #fff
+    padding: .75rem 1rem
+
+    legend
+        float: none
+        width: auto
+        font-family: $caps-font
+        font-size: 1.05rem
+        padding: 0 .35rem
+        margin: 0
+
+// --------------------------------------------------------------- Tables
+
+.table
+    --bs-table-bg: transparent
+    vertical-align: middle
+
+.table > thead th
+    font-family: $caps-font
+    font-weight: 400
+    letter-spacing: .04em
+    color: $brown
+    border-bottom: 2px solid $rule
+    white-space: nowrap
+
+// DataTables controls
+.dataTables_wrapper
+    .dataTables_filter input, .dataTables_length select
+        border: 1px solid $rule
+        border-radius: $border-radius
+        background: #fff
+        padding: .2rem .5rem
+    .paginate_button
+        margin: 0
+        padding: 0
+
+// ---------------------------------------------------------------- Modal
+
+.wvs-modal
+    position: fixed
+    inset: 0
+    z-index: $zindex-modal
+    overflow-y: auto
+    padding: 1.5rem 1rem
+
+    .wvs-modal-backdrop
+        position: fixed
+        inset: 0
+        background: rgba($ink, .55)
+
+    .wvs-modal-dialog
+        position: relative
+        max-width: 32rem
+        margin: 10vh auto 0
+
+// ------------------------------------------------------------- Motion
+
+// Cards slide in from the left one after another, like the original site.
+// They move with a transform (clipped so phones never scroll sideways) and
+// stay put for people who prefer reduced motion.
+@keyframes slide-in
+    from
+        transform: translateX(-100vw)
+    to
+        transform: none
+
+@media (prefers-reduced-motion: no-preference)
+    body
+        overflow-x: clip
+    main .card
+        animation: slide-in 1s ease-out .25s both
+    @for $i from 2 through 8
+        main .card:nth-of-type(#{$i})
+            animation-delay: #{.25 + ($i - 1) * .25}s
+
+// ---------------------------------------------------------- Carousel
 
 .carousel
     height: 400px
@@ -118,10 +467,3 @@ h1
     max-height: 400px
     float: none
     margin-right: auto
-
-@include media-breakpoint-up(sm)
-    .inviteeList
-        list-style-type: none
-        padding-left: 0
-        li
-            font-size: 16px

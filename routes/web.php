@@ -23,16 +23,16 @@ Route::get('/shows/{show}/view', [ShowController::class, 'show'])->name('shows.s
 
 // Guests reach their invite only through its secret key, never its ID.
 Route::get('/shows/{show}/invite/respond/{key}', [InviteController::class, 'respond'])->name('invites.respond');
-Route::post('/shows/{show}/invite/respond/{key}', [InviteController::class, 'registerResponse']);
+Route::post('/shows/{show}/invite/respond/{key}', [InviteController::class, 'registerResponse'])->middleware('throttle:public-forms');
 Route::get('/invites/{invite:key}/thank-you', [InviteController::class, 'guestThankYou'])->name('invites.thank-you');
 Route::get('/invites/{invite:key}/calendar', [InviteController::class, 'calendar'])->name('invites.calendar');
 Route::post('/invites/{invite:key}/mark-as-opened', [InviteController::class, 'markAsOpened'])->name('invites.mark-as-opened');
 
 Route::get('/shows/{show}/invite/guest-request', [InviteController::class, 'guestRequest'])->name('invites.guest-request');
-Route::post('/shows/{show}/invite/guest-request', [InviteController::class, 'guestRequestSave']);
+Route::post('/shows/{show}/invite/guest-request', [InviteController::class, 'guestRequestSave'])->middleware('throttle:public-forms');
 
 Route::get('/shows/{show}/submission-applications/create', [SubmissionApplicationController::class, 'create']);
-Route::post('/shows/{show}/submission-applications', [SubmissionApplicationController::class, 'store']);
+Route::post('/shows/{show}/submission-applications', [SubmissionApplicationController::class, 'store'])->middleware('throttle:public-forms');
 Route::get('/applications/{submissionApplication:key}', [SubmissionApplicationController::class, 'status'])->name('applications.status');
 
 Route::middleware(['auth', 'can:admin'])->group(function () {

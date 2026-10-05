@@ -179,11 +179,9 @@ class InviteController extends Controller
     }
 
     public function guestRequestApprove(Invite $invite){
-        $invite->update([
-            'guest_request' => false
-        ]);
+        $invite->approveGuestRequest();
 
-        if ($invite->email && $invite->canSeeAddress()) {
+        if ($invite->email && in_array($invite->response_status, [Invite::ATTENDING, Invite::WAITLIST])) {
             Mail::to($invite->email)->send(new GuestRequestApproved($invite));
         }
 

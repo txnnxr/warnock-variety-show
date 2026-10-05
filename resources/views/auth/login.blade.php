@@ -1,40 +1,33 @@
-@extends('layouts.app')
-@section('content')
-    <div class="card">
-        <h3 class="card-title text-center mt-3">Login</h3>
-        <form method="POST" action="{{ route('login') }}" class="card-body">
+<x-guest-layout>
+    <x-auth-card>
+        <h1 class="card-heading">Log In</h1>
+
+        <x-auth-session-status :status="session('status')" />
+        <x-auth-validation-errors :errors="$errors" />
+
+        <form method="POST" action="{{ route('login') }}">
             @csrf
-            <div class="form-group">
-            <!-- Email Address -->
-                <input id="email" class="form-control mb-3" type="email" name="email" required
-                       autofocus placeholder="Email"/>
-
-                <!-- Password -->
-                <input id="password" class="form-control my-3"
-                                type="password"
-                                name="password"
-                                required autocomplete="current-password"
-                                placeholder="Password"/>
-            </div>
-            <!-- Remember Me -->
-            <div class="block mt-4">
-                <label for="remember_me" class="inline-flex items-center">
-                    <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="remember">
-                    <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-                </label>
+            <div class="mb-3">
+                <x-input-label for="email" :value="__('Email')" />
+                <x-text-input id="email" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             </div>
 
-            <div class="flex items-center justify-end mt-4">
+            <div class="mb-3">
+                <x-input-label for="password" :value="__('Password')" />
+                <x-text-input id="password" type="password" name="password" required autocomplete="current-password" />
+            </div>
+
+            <div class="form-check mb-4">
+                <input id="remember_me" type="checkbox" class="form-check-input" name="remember">
+                <label for="remember_me" class="form-check-label">{{ __('Remember me') }}</label>
+            </div>
+
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
                 @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
-                    </a>
+                    <a href="{{ route('password.request') }}">{{ __('Forgot your password?') }}</a>
                 @endif
-
-                <button class="btn btn-primary" type="submit">
-                    Login
-                </button>
+                <x-primary-button>{{ __('Log In') }}</x-primary-button>
             </div>
         </form>
-    </div>
-@endsection
+    </x-auth-card>
+</x-guest-layout>

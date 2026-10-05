@@ -1,106 +1,118 @@
 @extends('shows.layout')
 @section('shows-content')
-    @if(session('status'))
-        <div class="alert alert-success mt-3">{{ session('status') }}</div>
-    @endif
-    <div class="card mt-3">
-        <div class="card-title"></div>
-        <div class="card-body row g-2">
-            <div class="col-md-6">
-                <button class="btn btn-info copy-link form-control" data-link="{{route('invites.guest-request', ['show' => $show])}}">Guest Request Invite Link</button>
+    <div class="card">
+        <div class="card-body">
+            <h2 class="section-heading">At a Glance</h2>
+            <div class="row row-cols-3 row-cols-md-6 g-3">
+                <div class="col stat"><div class="stat-value">{{ $show->seatsTaken() }}@if($show->max_attendants > 0)<span class="fs-6 text-muted">/{{ $show->max_attendants }}</span>@endif</div><div class="stat-label">Seats</div></div>
+                <div class="col stat"><div class="stat-value">{{ count($show->attending_invites) }}</div><div class="stat-label">Attending</div></div>
+                <div class="col stat"><div class="stat-value">{{ count($show->waitlist_invites) }}</div><div class="stat-label">Waitlist</div></div>
+                <div class="col stat"><div class="stat-value">{{ count($show->maybe_invites) }}</div><div class="stat-label">Maybe</div></div>
+                <div class="col stat"><div class="stat-value">{{ count($show->pending_invites) + count($show->created_invites) }}</div><div class="stat-label">No Reply</div></div>
+                <div class="col stat"><div class="stat-value">{{ count($show->pending_requests) }}</div><div class="stat-label">Requests</div></div>
             </div>
-            <div class="col-md-6">
-                <form action="{{ route('invites.send-all', $show) }}" method="POST">
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-lg-7">
+            <div class="card h-100">
+                <form class="card-body" action="/shows/{{$show->id}}/invite" method="POST">
                     @csrf
-                    <button type="submit" class="btn btn-primary form-control">Email All Unsent Invites</button>
+                    <h2 class="section-heading">New Invite</h2>
+                    <div class="row g-3">
+                        <div class="col-12 col-sm-6">
+                            <label class="form-label" for="invite-first-name">First name</label>
+                            <input class="form-control" type="text" id="invite-first-name" name="first_name" required>
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <label class="form-label" for="invite-last-name">Last name <span class="text-muted">(optional)</span></label>
+                            <input class="form-control" type="text" id="invite-last-name" name="last_name">
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <label class="form-label" for="invite-phone">Phone <span class="text-muted">(optional)</span></label>
+                            <input class="form-control" type="tel" id="invite-phone" name="phone">
+                        </div>
+                        <div class="col-12 col-sm-6">
+                            <label class="form-label" for="invite-email">Email <span class="text-muted">(optional)</span></label>
+                            <input class="form-control" type="email" id="invite-email" name="email">
+                        </div>
+                    </div>
+                    <div class="d-grid d-sm-flex justify-content-sm-end mt-3">
+                        <button class="btn btn-primary" type="submit">Create Invite</button>
+                    </div>
                 </form>
             </div>
         </div>
-    </div>
-    <div class="card mt-3">
-        <div class="card-body p-4">
-            <h5 class="card-title text-center">Generate Invite</h5>
-            <form class="row" action="/shows/{{$show->id}}/invite" method="POST">
-                @csrf
-                <div class="col-md-6 my-1">
-                    <input class="form-control" type="text" name="first_name" placeholder="First Name (required)">
+        <div class="col-12 col-lg-5">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column gap-3">
+                    <h2 class="section-heading">Spread the Word</h2>
+                    <form action="{{ route('invites.send-all', $show) }}" method="POST" class="d-grid">
+                        @csrf
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Email All Unsent Invites</button>
+                    </form>
+                    <button class="btn btn-outline-secondary copy-link" data-link="{{route('invites.guest-request', ['show' => $show])}}"><i class="fa-solid fa-link"></i> Copy Guest Request Link</button>
+                    <p class="small text-muted mb-0">Anyone with the guest request link can ask to come. Requests hold no seat until you approve them.</p>
                 </div>
-                <div class="col-md-6 my-1">
-                    <input class="form-control" type="text" name="last_name" placeholder="Last Name (optional)">
-                </div>
-                <div class="col-md-6 my-1">
-                    <input class="form-control" type="text" name="phone" placeholder="Phone (optional)">
-                </div>
-                <div class="col-md-6 my-1">
-                    <input class="form-control" type="text" name="email" placeholder="Email (optional)">
-                </div>
-                <div class="col-md-12 my-1">
-                    <button class="form-control btn btn-primary" type="submit">Create Invite</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <div class="card my-3">
-        <div class="card-title mt-3 px-3">
-            <div class="row">
-                <div class="col">Total Invites: {{count($show->invites)}}</div>
-                <div class="col">Attending: {{count($show->attending_invites)}} ({{ $show->seatsTaken() }}@if($show->max_attendants > 0)/{{ $show->max_attendants }}@endif seats)</div>
-                <div class="col">Waitlist: {{count($show->waitlist_invites)}}</div>
-                <div class="col">Maybe: {{count($show->maybe_invites)}}</div>
-                <div class="col">No: {{count($show->no_invites)}} </div>
-                <div class="col">Pending: {{count($show->pending_invites)}}</div>
-                <div class="col">Created: {{count($show->created_invites)}} </div>
             </div>
         </div>
+    </div>
+
+    <div class="card">
         <div class="card-body">
-            <table class="dt-responsive no-wrap" id="invitesTable">
-                  <thead>
+            <h2 class="section-heading">Invites ({{ count($show->invites) }})</h2>
+            <table class="table dt-responsive w-100" id="invitesTable">
+                <thead>
                     <tr>
-                        <th>#</th>
                         <th>Name</th>
-                        <th>Contact</th>
                         <th>Response</th>
                         <th>Talent</th>
-                        <th>Buttons</th>
+                        <th>Contact</th>
+                        <th>Actions</th>
                     </tr>
-                  </thead>
-                    <tbody>
-                    @php
-                        $index = 1;
-                    @endphp
-                        @foreach($show->invites as $invite)
-                            <tr>
-                                <td>{{$index++}}</td>
-                                <td>{{$invite->first_name}} {{$invite->middle_name}}
-                                    {{$invite->last_name}}</td>
-                                <td>{{ $invite->email ?: $invite->phone }}</td>
-                                <td>{{$invite->response_status}} @if($invite->guest_request) - REQUESTED @endif</td>
-                                <td>@if($invite->talent) YES @else NO @endif</td>
-                                <td>
-                                    <a class="btn btn-primary copy-link col" data-link="{{$invite->link}}">Link</a>
+                </thead>
+                <tbody>
+                    @foreach($show->invites as $invite)
+                        <tr>
+                            <td>
+                                @if($invite->person_id)
+                                    <a href="{{ route('people.show', $invite->person_id) }}">{{ $invite->full_name }}</a>
+                                @else
+                                    {{ $invite->full_name }}
+                                @endif
+                                @if($invite->plus_one_status) <span class="text-muted">(+1)</span> @endif
+                            </td>
+                            <td><x-rsvp-status :invite="$invite" /></td>
+                            <td>{{ $invite->talent ? 'Yes' : 'No' }}</td>
+                            <td class="text-break">{{ $invite->email ?: $invite->phone }}</td>
+                            <td>
+                                <div class="btn-group-actions">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary copy-link" data-link="{{$invite->link}}">Copy Link</button>
                                     @if($invite->email)
-                                        <form class="d-inline-block" action="{{ route('invites.send', $invite) }}" method="POST">
+                                        <form action="{{ route('invites.send', $invite) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="btn btn-info col d-inline-block">Email</button>
+                                            <button type="submit" class="btn btn-sm btn-primary">Email</button>
                                         </form>
                                     @endif
                                     @if($invite->response_status == 'CREATED')
-                                        <form class="d-inline-block" action="/invites/{{$invite->id}}/mark-as-sent" method="POST">
+                                        <form action="/invites/{{$invite->id}}/mark-as-sent" method="POST">
                                             @csrf
-                                            <button type="submit" class="btn btn-warning col d-inline-block" href>Sent</button>
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary">Mark Sent</button>
                                         </form>
                                     @endif
                                     @if($invite->guest_request)
-                                        <form class="d-inline-block" action="{{route('invites.guest-request.approve', ['invite' => $invite])}}" method="POST">
+                                        <form action="{{route('invites.guest-request.approve', ['invite' => $invite])}}" method="POST">
                                             @csrf
-                                            <button type="submit" class="btn btn-success col d-inline-block" href>Approve</button>
+                                            <button type="submit" class="btn btn-sm btn-success">Approve</button>
                                         </form>
                                     @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                  </tbody>
-                </table>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
 @endsection
@@ -109,9 +121,11 @@
         $(document).ready(function () {
             $('.copy-link').click(function () {
                 navigator.clipboard.writeText($(this).attr('data-link'));
-                $(this).text('Copied!');
+                var button = $(this), label = button.html();
+                button.text('Copied!');
+                setTimeout(function () { button.html(label); }, 1500);
             });
-            $('#invitesTable').DataTable();
+            $('#invitesTable').DataTable({ responsive: true, pageLength: 25 });
         });
     </script>
 @endpush

@@ -23,11 +23,11 @@ class PageRenderTest extends TestCase
         $application->approve();
 
         $this->actingAs($admin);
-        $this->get("/shows/{$show->id}/invite")->assertOk()->assertSee('Email')->assertSee('Waitlist: 1');
+        $this->get("/shows/{$show->id}/invite")->assertOk()->assertSee('Email All Unsent Invites')->assertSeeInOrder(['1', 'Waitlist'])->assertSee('Waiting');
         $this->get("/shows/{$show->id}/lineup")->assertOk()->assertSee('Sword Swallowing');
         $this->get("/shows/{$show->id}/submission-applications")->assertOk()->assertSee($application->name);
         $this->get("/shows/{$show->id}/submission-applications/{$application->id}/view")->assertOk()->assertSee('Approve');
-        $this->get("/shows/{$show->id}/view")->assertOk()->assertSee('Waitlist (1)')->assertSee('Upload Photos');
+        $this->get("/shows/{$show->id}/view")->assertOk()->assertSeeInOrder(['Waitlist', '(1)'], false)->assertSee('Upload Photos')->assertSee('Sword Swallowing');
         $this->get('/people')->assertOk()->assertSee($application->name);
         $this->get('/shows')->assertOk()->assertSee($show->name);
     }
@@ -57,5 +57,27 @@ class PageRenderTest extends TestCase
         $show = Show::factory()->create(['date' => now()->addDays(10)]);
 
         $this->get('/')->assertOk()->assertSee($show->name);
+    }
+
+    public function test_no_raw_blade_directives_leak_into_rsvp_pages(): void
+    {
+        $show = Show::factory()->create(['max_attendants' => 1]);
+        $invites = [
+            Invite::factory()->attending()->for($show)->create(),
+            Invite::factory()->for($show)->create(['response_status' => Invite::WAITLIST, 'waitlisted_at' => now()]),
+            Invite::factory()->for($show)->create(['response_status' => Invite::WAITLIST, 'waitlisted_at' => now(), 'email' => null]),
+            Invite::factory()->attending()->for($show)->create(['guest_request' => true]),
+            Invite::factory()->for($show)->create(['response_status' => Invite::MAYBE]),
+        ];
+
+        foreach ($invites as $invite) {
+            foreach (["/invites/{$invite->key}/thank-you", "/shows/{$show->id}/invite/respond/{$invite->key}?change=1"] as $url) {
+                $html = $this->get($url)->assertOk()->getContent();
+                $this->assertDoesNotMatchRegularExpression('/@(if|endif|elseif|else|can|endcan|foreach|endforeach)\b/', $html, $url);
+            }
+        }
+
+        $this->assertDoesNotMatchRegularExpression('/@(if|endif|can|endcan)\b/', $this->get("/shows/{$show->id}/view")->getContent());
+        $this->assertDoesNotMatchRegularExpression('/@(if|endif|can|endcan)\b/', $this->get('/')->getContent());
     }
 }

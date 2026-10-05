@@ -39,7 +39,7 @@ class ShowController extends Controller
     {
         $show = Show::create([
             'name' => $request->name,
-            'description' => htmlspecialchars($request->description),
+            'description' => $request->description,
             'date' => $request->date,
             'max_attendants' => $request->max_attendants,
             'address' => $request->address,
@@ -83,7 +83,7 @@ class ShowController extends Controller
     {
         $show->update([
             'name' => $request->name,
-            'description' => htmlspecialchars($request->description),
+            'description' => $request->description,
             'date' => $request->date,
             'max_attendants' => $request->max_attendants,
             'address' => $request->address,

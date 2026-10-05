@@ -66,6 +66,7 @@ class Show extends Model
     {
         return $this->invites()
             ->withResponse(Invite::ATTENDING)
+            ->where('guest_request', false)
             ->when($except?->exists, fn ($query) => $query->whereKeyNot($except->id))
             ->get()
             ->sum(fn (Invite $invite) => $invite->seats());
@@ -87,6 +88,7 @@ class Show extends Model
     {
         $waitlist = $this->invites()
             ->withResponse(Invite::WAITLIST)
+            ->where('guest_request', false)
             ->orderBy('waitlisted_at')
             ->orderBy('id')
             ->get();
@@ -116,12 +118,17 @@ class Show extends Model
 
     public function getAttendingInvitesAttribute()
     {
-        return $this->invites()->withResponse(Invite::ATTENDING)->get();
+        return $this->invites()->withResponse(Invite::ATTENDING)->where('guest_request', false)->get();
     }
 
     public function getAttendingInvitesWithPlusOneAttribute()
     {
-        return $this->invites()->withResponse(Invite::ATTENDING)->where('plus_one_status', 1)->get();
+        return $this->invites()->withResponse(Invite::ATTENDING)->where('guest_request', false)->where('plus_one_status', 1)->get();
+    }
+
+    public function getPendingRequestsAttribute()
+    {
+        return $this->invites()->where('guest_request', true)->get();
     }
 
     public function getWaitlistInvitesAttribute()

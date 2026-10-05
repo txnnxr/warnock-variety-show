@@ -1,64 +1,60 @@
 @extends('layouts.app')
+@section('title', $submissionApplication->title)
 @section('content')
-    <div>
-        <a href="/shows/{{$submissionApplication->show->id}}/view">{{$submissionApplication->show->name}}</a> @can('admin') と <a href="/shows/{{$submissionApplication->show->id}}/submission-applications">Submissions</a> と <a href="{{ route('lineup.index', $submissionApplication->show) }}">Lineup</a> @endcan
-    </div>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/shows/{{$submissionApplication->show->id}}/view">{{$submissionApplication->show->name}}</a></li>
+            @can('admin')
+                <li class="breadcrumb-item"><a href="/shows/{{$submissionApplication->show->id}}/submission-applications">Submissions</a></li>
+            @endcan
+            <li class="breadcrumb-item active" aria-current="page">{{$submissionApplication->title}}</li>
+        </ol>
+    </nav>
     @cannot('admin')
         <div class="alert alert-info">
-            Thanks for applying! Bookmark this page to check on your application: <a href="{{ route('applications.status', $submissionApplication) }}">{{ route('applications.status', $submissionApplication) }}</a>
+            Thanks for applying! Bookmark this page to check on your application: <a href="{{ route('applications.status', $submissionApplication) }}" class="text-break">{{ route('applications.status', $submissionApplication) }}</a>
         </div>
     @endcannot
     <div class="card">
-        <div class="row">
-            <div class="col-12">
-                <table class="table tabled-bordered dt-responsive no-wrap">
-
-                    <tr>
-                        <td>Name</td>
-                        <td>{{$submissionApplication->name}}</td>
-                    </tr>
-                    <tr>
-                        <th>Phone</th>
-                        <td>{{$submissionApplication->phone}}</td>
-                    </tr>
-                    <tr>
-                        <th>Email</th>
-                        <td>{{$submissionApplication->email}}</td>
-                    </tr>
-                    <tr>
-                        <th>Show Name</th>
-                        <td>{{$submissionApplication->show->name}}</td>
-                    </tr>
-                    <tr>
-                        <td>Title</td>
-                        <td>{{$submissionApplication->title}}</td>
-                    </tr>
-                    <tr>
-                        <th>Description</th>
-                        <td>{{htmlspecialchars_decode($submissionApplication->description)}}</td>
-                    </tr>
-                    <tr>
-                        <th>Status</th>
-                        <td>{{$submissionApplication->getStatus()}}</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-        @can('admin')
-            <div class="row">
-                <div class="col-6 text-center">
+        <div class="card-body">
+            <h1 class="card-heading">{{$submissionApplication->title}}</h1>
+            <p class="text-center mb-4">
+                <span class="status {{ $submissionApplication->approved ? 'status-attending' : 'status-waitlist' }}">{{$submissionApplication->getStatus()}}</span>
+            </p>
+            <dl class="row mb-0">
+                <dt class="col-sm-3 form-label">Name</dt>
+                <dd class="col-sm-9">
+                    @can('admin')
+                        @if($submissionApplication->person)
+                            <a href="{{ route('people.show', $submissionApplication->person) }}">{{$submissionApplication->name}}</a>
+                        @else
+                            {{$submissionApplication->name}}
+                        @endif
+                    @else
+                        {{$submissionApplication->name}}
+                    @endcan
+                </dd>
+                <dt class="col-sm-3 form-label">Phone</dt>
+                <dd class="col-sm-9">{{$submissionApplication->phone ?: '—'}}</dd>
+                <dt class="col-sm-3 form-label">Email</dt>
+                <dd class="col-sm-9 text-break">{{$submissionApplication->email ?: '—'}}</dd>
+                <dt class="col-sm-3 form-label">Show</dt>
+                <dd class="col-sm-9">{{$submissionApplication->show->name}}</dd>
+                <dt class="col-sm-3 form-label">Description</dt>
+                <dd class="col-sm-9">{!! nl2br(e(htmlspecialchars_decode((string) $submissionApplication->description))) !!}</dd>
+            </dl>
+            @can('admin')
+                <div class="btn-group-actions justify-content-end mt-4">
                     <form method="POST" action="{{ route('applications.deny', $submissionApplication) }}">
                         @csrf
-                        <button type="submit" class="btn btn-secondary">Deny</button>
+                        <button type="submit" class="btn btn-outline-secondary">Deny</button>
                     </form>
-                </div>
-                <div class="col-6 text-center">
                     <form method="POST" action="{{ route('applications.approve', $submissionApplication) }}">
                         @csrf
                         <button type="submit" class="btn btn-primary">Approve</button>
                     </form>
                 </div>
-            </div>
-        @endcan
+            @endcan
+        </div>
     </div>
 @endsection
