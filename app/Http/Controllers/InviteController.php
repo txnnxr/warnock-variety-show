@@ -48,6 +48,55 @@ class InviteController extends Controller
         return redirect()->action([InviteController::class, 'index'], ['show' => $show]);
     }
 
+    /**
+     * Invite everyone who attended a past show (or any past show), skipping
+     * people already invited. Invites start unsent, ready for "Email All".
+     */
+    public function invitePastGuests(Request $request, Show $show)
+    {
+        $validated = $request->validate([
+            'source' => ['required', function ($attribute, $value, $fail) use ($show) {
+                if ($value !== 'all' && ! Show::past()->whereKey($value)->whereKeyNot($show->id)->exists()) {
+                    $fail('Choose a past show.');
+                }
+            }],
+        ]);
+
+        $attended = Invite::query()
+            ->withResponse(Invite::ATTENDING)
+            ->where('guest_request', false)
+            ->whereHas('show', fn ($query) => $query->past())
+            ->where('show_id', '!=', $show->id)
+            ->when($validated['source'] !== 'all', fn ($query) => $query->where('show_id', $validated['source']))
+            ->latest('id')
+            ->get()
+            ->unique(fn (Invite $invite) => $invite->person_id ?? 'email:'.strtolower((string) $invite->email).':'.$invite->full_name);
+
+        $existing = $show->invites()->get();
+        $alreadyInvited = fn (Invite $invite) => ($invite->person_id && $existing->contains('person_id', $invite->person_id))
+            || ($invite->email && $existing->contains(fn ($other) => strcasecmp((string) $other->email, $invite->email) === 0));
+
+        $added = 0;
+
+        foreach ($attended->reject($alreadyInvited) as $past) {
+            Invite::create([
+                'show_id' => $show->id,
+                'person_id' => $past->person_id,
+                'first_name' => $past->first_name,
+                'middle_name' => $past->middle_name,
+                'last_name' => $past->last_name,
+                'email' => $past->email,
+                'phone' => $past->phone,
+                'key' => Str::uuid(),
+            ]);
+            $added++;
+        }
+
+        $skipped = $attended->count() - $added;
+
+        return back()->with('status', "Added {$added} ".Str::plural('invite', $added).($skipped ? " ({$skipped} already invited)" : '').'. Use Email All Unsent Invites to send them.');
+    }
+
     public function edit(Invite $invite)
     {
         $show = $invite->show;

@@ -1,5 +1,8 @@
 @extends('layouts.app')
 @section('title', $show->name)
+@section('og_title', $show->name)
+@section('description', $show->date->format('l, F j · g:ia').($show->canceled ? ' · Canceled' : '').($show->description ? ' · '.Str::limit(preg_replace('/\s+/', ' ', $show->description), 150) : ''))
+@section('og_image', $show->photos->first()?->url ?? url('/images/background.jpg'))
 @section('content')
     <div class="card playbill">
         <div class="card-body">

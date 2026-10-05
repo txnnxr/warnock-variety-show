@@ -18,7 +18,7 @@ class ShowFactory extends Factory
             'description' => $this->faker->paragraph(),
             'date' => now()->addWeeks(2)->setTime(20, 0),
             'max_attendants' => 30,
-            'address' => $this->faker->address(),
+            'address' => $this->faker->numberBetween(1, 999).' Warnock Lane',
         ];
     }
 }

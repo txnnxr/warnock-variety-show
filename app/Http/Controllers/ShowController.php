@@ -47,6 +47,7 @@ class ShowController extends Controller
             'date' => $request->date,
             'max_attendants' => $request->max_attendants,
             'address' => $request->address,
+            'count_performers' => $request->boolean('count_performers'),
         ]);
 
         return redirect('/shows');
@@ -91,6 +92,7 @@ class ShowController extends Controller
             'date' => $request->date,
             'max_attendants' => $request->max_attendants,
             'address' => $request->address,
+            'count_performers' => $request->boolean('count_performers'),
         ]);
 
         $show->promoteWaitlist();

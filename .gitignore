@@ -17,3 +17,4 @@ yarn-error.log
 /public/css
 /public/css/app.css
 /public/build
+/storage/app/backups

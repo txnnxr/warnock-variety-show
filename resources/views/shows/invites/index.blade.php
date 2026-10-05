@@ -4,7 +4,7 @@
         <div class="card-body">
             <h2 class="section-heading">At a Glance</h2>
             <div class="row row-cols-3 row-cols-md-6 g-3">
-                <div class="col stat"><div class="stat-value">{{ $show->seatsTaken() }}@if($show->max_attendants > 0)<span class="fs-6 text-muted">/{{ $show->max_attendants }}</span>@endif</div><div class="stat-label">Seats</div></div>
+                <div class="col stat"><div class="stat-value">{{ $show->seatsTaken() }}@if($show->max_attendants > 0)<span class="fs-6 text-muted">/{{ $show->max_attendants }}</span>@endif</div><div class="stat-label">Seats @if($show->count_performers) <span class="text-muted">(incl. {{ $show->performerSeats() }} acts)</span>@endif</div></div>
                 <div class="col stat"><div class="stat-value">{{ count($show->attending_invites) }}</div><div class="stat-label">Attending</div></div>
                 <div class="col stat"><div class="stat-value">{{ count($show->waitlist_invites) }}</div><div class="stat-label">Waitlist</div></div>
                 <div class="col stat"><div class="stat-value">{{ count($show->maybe_invites) }}</div><div class="stat-label">Maybe</div></div>
@@ -62,6 +62,32 @@
             </div>
         </div>
     </div>
+
+    @php($pastShows = \App\Models\Show::past()->whereKeyNot($show->id)->orderByDesc('date')->get())
+    @if($pastShows->isNotEmpty())
+        <div class="card">
+            <form class="card-body" method="POST" action="{{ route('invites.past-guests', $show) }}">
+                @csrf
+                <h2 class="section-heading">Invite Past Guests</h2>
+                <p>Adds everyone who attended as unsent invites, skipping anyone already invited. Then use <b>Email All Unsent Invites</b> to send them.</p>
+                <div class="row g-2 align-items-end">
+                    <div class="col-12 col-md-8">
+                        <label class="form-label" for="past-guests-source">Who</label>
+                        <select class="form-select @error('source') is-invalid @enderror" id="past-guests-source" name="source">
+                            <option value="all">Everyone who's attended any show</option>
+                            @foreach($pastShows as $past)
+                                <option value="{{ $past->id }}">Everyone who attended {{ $past->name }} ({{ $past->date->format('M j, Y') }})</option>
+                            @endforeach
+                        </select>
+                        @error('source')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                    <div class="col-12 col-md-4 d-grid">
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Add Invites</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    @endif
 
     <div class="card">
         <div class="card-body">

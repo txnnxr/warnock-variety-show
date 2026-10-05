@@ -7,7 +7,16 @@
 
     <title>@hasSection('title')@yield('title') · @endif Warnock Variety Show</title>
     <link rel="icon" href="/favicon.ico">
-    <meta property="og:image" content="{{ url('/images/background.jpg') }}"/>
+
+    {{-- Link previews (iMessage, Instagram, Slack, etc.) --}}
+    <meta name="description" content="@yield('description', 'A free-spirited celebration of artistic expression in a cozy, house party atmosphere.')">
+    <meta property="og:site_name" content="Warnock Variety Show">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="@yield('og_title', 'Warnock Variety Show')">
+    <meta property="og:description" content="@yield('description', 'A free-spirited celebration of artistic expression in a cozy, house party atmosphere.')">
+    <meta property="og:image" content="@yield('og_image', url('/images/background.jpg'))">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta name="twitter:card" content="summary_large_image">
     @stack('meta')
 
     @vite(['resources/sass/app.sass', 'resources/js/app.js'])
@@ -28,6 +37,7 @@
                 <li class="nav-item"><a class="nav-link @if(request()->is('/')) active @endif" href="/">Home</a></li>
                 <li class="nav-item"><a class="nav-link @if(request()->routeIs('shows.archive')) active @endif" href="{{ route('shows.archive') }}">Past Shows</a></li>
                 @can('admin')
+                    <li class="nav-item"><a class="nav-link @if(request()->routeIs('dashboard')) active @endif" href="{{ route('dashboard') }}">Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link @if(request()->routeIs('shows.index')) active @endif" href="/shows">Manage Shows</a></li>
                     <li class="nav-item"><a class="nav-link @if(request()->routeIs('people.*')) active @endif" href="{{ route('people.index') }}">People</a></li>
                 @endcan

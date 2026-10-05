@@ -48,6 +48,7 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::get('shows/{show}/invite', [InviteController::class, 'index'])->name('invites.index');
     Route::post('shows/{show}/invite', [InviteController::class, 'store']);
     Route::post('shows/{show}/invite/send-all', [InviteController::class, 'sendAll'])->name('invites.send-all');
+    Route::post('shows/{show}/invite/past-guests', [InviteController::class, 'invitePastGuests'])->name('invites.past-guests');
     Route::post('shows/{show}/invite/reset-guest-link', [InviteController::class, 'resetGuestLink'])->name('invites.reset-guest-link');
     Route::post('/invites/{invite}/send', [InviteController::class, 'send'])->name('invites.send');
     Route::get('/invites/{invite}/edit', [InviteController::class, 'edit'])->name('invites.edit');

@@ -35,6 +35,14 @@
                 <div class="form-text">Plus ones count. 0 means no limit.</div>
                 @error('max_attendants')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
+            <div class="col-12">
+                <div class="form-check">
+                    <input type="hidden" name="count_performers" value="0">
+                    <input class="form-check-input" type="checkbox" id="count_performers" name="count_performers" value="1" @checked(old('count_performers', $show->count_performers ?? false))>
+                    <label class="form-check-label" for="count_performers">Performers take seats too</label>
+                </div>
+                <div class="form-text">Each act in the lineup counts toward Max Attendants, unless that performer already RSVP'd as a guest.</div>
+            </div>
         </div>
         <div class="d-grid d-sm-flex justify-content-sm-end gap-2 mt-4">
             <a href="/shows" class="btn btn-outline-secondary">Cancel</a>

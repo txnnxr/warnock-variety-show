@@ -105,6 +105,7 @@ class SubmissionApplicationController extends Controller
 
     public function deny(Request $request, SubmissionApplication $submissionApplication){
         $submissionApplication->deny();
+        $submissionApplication->show->promoteWaitlist();
 
         if ($request->boolean('notify') && $submissionApplication->email) {
             Mail::to($submissionApplication->email)->send(new ActDeclined($submissionApplication));

@@ -18,6 +18,7 @@ class Show extends Model
     protected $casts = [
         'date' => 'datetime',
         'canceled' => 'boolean',
+        'count_performers' => 'boolean',
         'lineup_announced_at' => 'datetime',
         'recap_sent_at' => 'datetime',
     ];
@@ -88,12 +89,30 @@ class Show extends Model
      */
     public function seatsTaken(?Invite $except = null): int
     {
-        return $this->invites()
+        $guests = $this->invites()
             ->withResponse(Invite::ATTENDING)
             ->where('guest_request', false)
             ->when($except?->exists, fn ($query) => $query->whereKeyNot($except->id))
-            ->get()
-            ->sum(fn (Invite $invite) => $invite->seats());
+            ->get();
+
+        return $guests->sum(fn (Invite $invite) => $invite->seats()) + $this->performerSeats($guests);
+    }
+
+    /**
+     * Seats for acts in the lineup, when the show counts performers. A
+     * performer who also RSVP'd as a guest already has a seat.
+     */
+    public function performerSeats(?\Illuminate\Support\Collection $guests = null): int
+    {
+        if (! $this->count_performers) {
+            return 0;
+        }
+
+        $guests ??= $this->invites()->withResponse(Invite::ATTENDING)->where('guest_request', false)->get();
+
+        return $this->lineup()
+            ->whereNotIn('person_id', $guests->pluck('person_id')->filter()->all())
+            ->count();
     }
 
     public function hasRoomFor(int $seats, ?Invite $except = null): bool

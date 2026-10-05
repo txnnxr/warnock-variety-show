@@ -1,7 +1,5 @@
 @extends('shows.layout')
-@push('meta')
-    <meta property="og:title" content="{{$show->name}} - {{$invite->first_name}} Invitation" />
-@endpush
+@section('og_title', "{$show->name} · {$invite->first_name}'s invitation")
 @section('shows-content')
     @if($show->canceled)
         <div class="alert alert-warning">This show has been canceled, so RSVPs are closed.</div>
