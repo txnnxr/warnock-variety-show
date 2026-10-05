@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div>
-        <a href="/shows/{{$submissionApplications->first()->show->id}}}/view">{{$submissionApplications->first()->show->name}}</a>
+        <a href="/shows/{{$show->id}}/view">{{$show->name}}</a> と <a href="{{ route('lineup.index', $show) }}">Lineup</a>
     </div>
 <div class="card">
     <div class="row">
@@ -29,7 +29,6 @@
                         <td>{{$submissionApplication->getStatus()}}</td>
                         <td>
                             <a class="btn btn-secondary" href="/shows/{{$submissionApplication->show_id}}/submission-applications/{{$submissionApplication->id}}/view">View</a>
-{{--                            <a class="btn btn-secondary" href="/shows/{{$submissionApplication->show_id}}/submission-applications/{{$submissionApplication->id}}/edit">Edit</a>--}}
                         </td>
                     </tr>
                 @endforeach

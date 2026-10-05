@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\guestRequestRequest;
 use App\Http\Requests\StoreInviteRequest;
-use App\Http\Requests\UpdateInviteRequest;
-use Illuminate\Http\Request;
+use App\Mail\GuestRequestApproved;
+use App\Mail\Invitation;
 use App\Models\Invite;
+use App\Models\Person;
 use App\Models\Show;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class InviteController extends Controller
 {
@@ -23,16 +26,6 @@ class InviteController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param Show $show
@@ -43,6 +36,7 @@ class InviteController extends Controller
     {
         Invite::create([
             'show_id' => $show->id,
+            'person_id' => Person::resolve("{$request->first_name} {$request->last_name}", $request->email, $request->phone)->id,
             'first_name' => $request->first_name,
             'middle_name' => $request->middle_name,
             'last_name' => $request->last_name,
@@ -54,63 +48,17 @@ class InviteController extends Controller
         return redirect()->action([InviteController::class, 'index'], ['show' => $show]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Invite  $invite
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Invite $invite)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Invite  $invite
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function edit(Invite $invite)
-    {
-        $invite->update([
-            'response_status' => 'PENDING - UPDATE',
-        ]);
-
-        return redirect()->action([InviteController::class, 'respond'], ['show'=> $invite->show, 'key' => $invite->key]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateInviteRequest  $request
-     * @param  \App\Models\Invite  $invite
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateInviteRequest $request, Invite $invite)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Invite  $invite
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Invite $invite)
-    {
-        //
-    }
-
     //TODO: this should just be show
-    public function respond(Show $show, $key)
+    public function respond(Request $request, Show $show, $key)
     {
-        $invite = Invite::where('key', $key)->firstOrFail();
+        $invite = Invite::where('key', $key)->where('show_id', $show->id)->firstOrFail();
 
-        if (!str_contains($invite->response_status, 'PENDING') && !str_contains($invite->response_status, 'CREATED')) {
+        $responded = ! str_contains($invite->response_status, 'PENDING') && ! str_contains($invite->response_status, 'CREATED');
+
+        if ($responded && ! $request->boolean('change')) {
             return view('shows.invites.thank-you', compact('invite', 'show'));
         }
+
         return view('shows.invites.respond', compact('show', 'invite'));
     }
 
@@ -123,19 +71,33 @@ class InviteController extends Controller
     //TODO: this should just be update?
     public function registerResponse(Show $show, $key, Request $request)
     {
-        $invite = tap(Invite::where('key', $key)->first(), function ($invite) use ($request){
-            $invite->update([
-                'response_status' => $request->input('response_status'),
-                'talent' => $request->input('talent', 0),
-            ]);
-        });
+        $invite = Invite::where('key', $key)->where('show_id', $show->id)->firstOrFail();
 
-        return redirect()->action([InviteController::class, 'guestThankYou'], ['invite' => $invite]);
+        $validated = $request->validate([
+            'response_status' => ['required', Rule::in([Invite::ATTENDING, Invite::MAYBE, Invite::NO])],
+            'talent' => 'boolean',
+            'plus_one_status' => 'boolean',
+        ]);
+
+        $invite->respond(
+            $validated['response_status'],
+            $invite->has_plus_one_option ? $request->boolean('plus_one_status') : false,
+            $request->boolean('talent'),
+        );
+
+        return redirect()->route('invites.thank-you', $invite);
     }
 
-    public function generateICS(Invite $invite)
+    public function calendar(Invite $invite)
     {
-        $invite->generateICS();
+        abort_unless($invite->canSeeAddress(), 404);
+
+        $disposition = preg_match('/(android|iphone|ipad|mobile)/i', (string) request()->userAgent()) ? 'inline' : 'attachment';
+
+        return response($invite->toICS(), 200, [
+            'Content-Type' => 'text/calendar; charset=utf-8',
+            'Content-Disposition' => $disposition.'; filename="'.Str::slug($invite->show->name).'.ics"',
+        ]);
     }
 
     public function markAsSent(Invite $invite)
@@ -146,7 +108,42 @@ class InviteController extends Controller
 
     public function markAsOpened(Invite $invite)
     {
-        $invite->update(['response_status' => 'PENDING - OPENED']);
+        if ($invite->response_status === 'PENDING - SENT') {
+            $invite->update(['response_status' => 'PENDING - OPENED']);
+        }
+
+        return response()->noContent();
+    }
+
+    /**
+     * Email an invitation and mark it as sent.
+     */
+    public function send(Invite $invite)
+    {
+        abort_unless($invite->email, 422, 'This invite has no email address.');
+
+        Mail::to($invite->email)->send(new Invitation($invite));
+
+        if ($invite->response_status === 'CREATED') {
+            $invite->update(['response_status' => 'PENDING - SENT']);
+        }
+
+        return back()->with('status', "Invitation sent to {$invite->email}.");
+    }
+
+    /**
+     * Email every invite that hasn't been sent yet and has an email address.
+     */
+    public function sendAll(Show $show)
+    {
+        $invites = $show->invites()->withResponse('CREATED')->whereNotNull('email')->where('email', '!=', '')->get();
+
+        foreach ($invites as $invite) {
+            Mail::to($invite->email)->send(new Invitation($invite));
+            $invite->update(['response_status' => 'PENDING - SENT']);
+        }
+
+        return back()->with('status', "Sent {$invites->count()} invitation(s).");
     }
 
     public function guestRequest(Show $show){
@@ -155,27 +152,39 @@ class InviteController extends Controller
 
     public function guestRequestSave(Request $request, Show $show)
     {
-       Invite::create([
-            'show_id' => $show->id,
-            'first_name' => $request->first_name,
-//            'middle_name' => $request->middle_name,
-            'last_name' => $request->last_name,
-//            'phone' => $request->phone,
-//            'email' => $request->email,
-            'response_status' => $request->response_status,
-            'plus_one_status' => $request->plus_one_status,
-            'guest_request' => true,
-            'key' => Str::uuid()
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'nullable|string|max:100',
+            'email' => 'nullable|email|max:150',
+            'phone' => 'nullable|string|max:20',
+            'response_status' => ['required', Rule::in([Invite::ATTENDING, Invite::MAYBE, Invite::NO])],
+            'plus_one_status' => 'boolean',
         ]);
-////
-        return redirect("/shows/$show->id/view");
+
+        $invite = Invite::create([
+            'show_id' => $show->id,
+            'person_id' => Person::resolve("{$validated['first_name']} ".($validated['last_name'] ?? ''), $validated['email'] ?? null, $validated['phone'] ?? null)->id,
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'] ?? null,
+            'email' => $validated['email'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'response_status' => 'CREATED',
+            'guest_request' => true,
+            'key' => Str::uuid(),
+        ]);
+
+        $invite->respond($validated['response_status'], $request->boolean('plus_one_status'));
+
+        return redirect()->route('invites.thank-you', $invite);
     }
 
     public function guestRequestApprove(Invite $invite){
-        if (\Auth::user()) {
-            $invite->update([
-                'guest_request' => false
-            ]);
+        $invite->update([
+            'guest_request' => false
+        ]);
+
+        if ($invite->email && $invite->canSeeAddress()) {
+            Mail::to($invite->email)->send(new GuestRequestApproved($invite));
         }
 
         return redirect()->action([InviteController::class, 'index'], ['show' => $invite->show]);

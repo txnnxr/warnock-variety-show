@@ -36,4 +36,16 @@ class UserFactory extends Factory
             ];
         });
     }
+
+    /**
+     * Indicate that the user is an admin.
+     *
+     * @return static
+     */
+    public function admin()
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_admin' => true,
+        ]);
+    }
 }

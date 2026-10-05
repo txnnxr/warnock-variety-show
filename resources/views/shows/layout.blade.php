@@ -14,10 +14,9 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
 
     <!-- Styles -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    @vite(['resources/sass/app.sass', 'resources/js/app.js'])
 </head>
 <body class="antialiased">
 <div class="container ">
@@ -28,10 +27,12 @@
             </h1>
         </div>
     </div>
-    @if(Auth::user())
+    @can('admin')
         <div class="row">
             <div class="col">
                 <a href="/shows">Shows</a>
+                <a href="{{ route('people.index') }}">People</a>
+                <a href="{{ route('shows.archive') }}">Past Shows</a>
             </div>
             {{--                    <div class="col"><a href="/rsvp">RSVP</a></div>--}}
             {{--                    <div class="col"><a href="/mailing-list">Mailing List</a></div>--}}
@@ -49,22 +50,27 @@
         </div>
     @else
         <div class="row">
-            <a class="col-1" href="{{ route('login') }}"> Login </a>
-            {{--                    <a class ="col-1" href="{{ route('register') }}">Register </a>--}}
+            <div class="col">
+                <a href="{{ route('shows.archive') }}">Past Shows</a>
+                @guest
+                    <a href="{{ route('login') }}">Login</a>
+                @endguest
+            </div>
         </div>
-    @endif
+    @endcan
     <div class="card p-3">
         <h2 class="card-title text-center mt-3">{{$show->name}}</h2>
         <div class="card-body mb-3">
             <p>{!! nl2br($show->description) !!}</p>
-            @if(auth()->user())
+            @can('admin')
                 <div class="row">
-                    <div class="col-6"></div>
-                    <div class="col-6">
+                    <div class="col">
+                        <a href="/shows/{{$show->id}}/invite">Invites</a>
                         <a href="/shows/{{$show->id}}/submission-applications">View Submissions</a>
+                        <a href="{{ route('lineup.index', $show) }}">Lineup</a>
                     </div>
                 </div>
-            @endif
+            @endcan
         </div>
     </div>
     @yield('shows-content')
@@ -76,10 +82,6 @@
             crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
-            crossorigin="anonymous"></script>
 
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>

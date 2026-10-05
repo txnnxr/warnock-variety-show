@@ -13,6 +13,7 @@ class Exhibitor extends Model
     protected $fillable = [
         'person_id',
         'show_id',
+        'submission_application_id',
         'exhibition_description',
         'status',
         'performance_order',
@@ -31,5 +32,10 @@ class Exhibitor extends Model
     public function show()
     {
         return $this->belongsTo(Show::class);
+    }
+
+    public function submissionApplication()
+    {
+        return $this->belongsTo(SubmissionApplication::class);
     }
 }

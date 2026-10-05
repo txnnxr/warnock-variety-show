@@ -11,9 +11,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <!-- Styles -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    @vite(['resources/sass/app.sass', 'resources/js/app.js'])
 </head>
 <body class="antialiased">
 <div class="container">
@@ -22,10 +21,15 @@
             <h1 class="text-center my-3"><a href="/">Warnock Variety Show</a></h1>
         </div>
     </div>
-    @if(Auth::user())
+    @auth
         <div class="row">
             <div class="col">
-                <a href="/shows">Shows</a>
+                @can('admin')
+                    <a href="/shows">Shows</a>
+                    <a href="{{ route('people.index') }}">People</a>
+                @endcan
+                <a href="{{ route('shows.archive') }}">Past Shows</a>
+                <a href="{{ route('profile.edit') }}">Profile</a>
             </div>
             {{--                    <div class="col"><a href="/rsvp">RSVP</a></div>--}}
             {{--                    <div class="col"><a href="/mailing-list">Mailing List</a></div>--}}
@@ -43,17 +47,30 @@
         </div>
     @else
         <div class="row">
-            <a class="col-1" href="{{ route('login') }}"> Login </a>
-            {{--                    <a class ="col-1" href="{{ route('register') }}">Register </a>--}}
+            <div class="col">
+                <a href="{{ route('shows.archive') }}">Past Shows</a>
+                <a href="{{ route('login') }}">Login</a>
+            </div>
         </div>
-    @endif
+    @endauth
+    @isset($header)
+        <div class="my-3">{{ $header }}</div>
+    @endisset
     @yield('content')
+    @isset($slot)
+        {{ $slot }}
+    @endisset
 </div>
 <footer>
     <script
-            src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
-            integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI="
+            src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
             crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
     @stack('scripts')
 </footer>
 </body>

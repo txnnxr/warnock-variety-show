@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\SubmissionApplication;
+use App\Models\Person;
 use App\Models\Show;
+use App\Models\SubmissionApplication;
+use Illuminate\Http\Request;
 
 class SubmissionApplicationController extends Controller
 {
@@ -16,7 +17,7 @@ class SubmissionApplicationController extends Controller
     public function index(Show $show)
     {
         $submissionApplications = $show->submissionApplications;
-        return view('shows.submission-applications.index', compact('submissionApplications'));
+        return view('shows.submission-applications.index', compact('show', 'submissionApplications'));
     }
 
     /**
@@ -33,80 +34,60 @@ class SubmissionApplicationController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Show $show, Request $request)
     {
-        $submissionApplication = SubmissionApplication::create([
-            'show_id' => $show->id,
-            'name' => $request->input('name'),
-            'phone' => $request->input('phone'),
-            'email' => $request->input('email'),
-            'description' => $request->input('description'),
-            'approved' => 0,
-            'title' => $request->input('title'),
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'title' => 'required|string|max:50',
+            'phone' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:150',
+            'description' => 'nullable|string',
         ]);
 
-        return redirect("/shows/{$submissionApplication->show_id}/submission-applications/{$submissionApplication->id}/view");
+        $submissionApplication = SubmissionApplication::create([
+            'show_id' => $show->id,
+            'person_id' => Person::resolve($validated['name'], $validated['email'] ?? null, $validated['phone'] ?? null)->id,
+            'name' => $validated['name'],
+            'phone' => $validated['phone'] ?? null,
+            'email' => $validated['email'] ?? null,
+            'description' => $validated['description'] ?? null,
+            'approved' => false,
+            'title' => $validated['title'],
+        ]);
+
+        return redirect()->route('applications.status', $submissionApplication);
     }
 
     /**
-     * Display the specified resource.
+     * Admin view of an application.
      *
-     * @param  int  $id
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
      */
     public function show(Show $show, SubmissionApplication $submissionApplication)
     {
+        abort_unless($submissionApplication->show_id === $show->id, 404);
+
         return view('shows.submission-applications.show', compact('submissionApplication'));
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\Response
+     * The applicant's own view of their application, reached by its secret key.
      */
-    public function edit(Show $show, SubmissionApplication $submissionApplication)
+    public function status(SubmissionApplication $submissionApplication)
     {
-        //return view('shows.submission-applications.edit', compact('submissionApplication'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        return view('shows.submission-applications.show', compact('submissionApplication'));
     }
 
     public function approve(SubmissionApplication $submissionApplication){
-        $submissionApplication->update([
-            'approved' => 1
-        ]);
+        $submissionApplication->approve();
 
         return redirect("/shows/{$submissionApplication->show_id}/submission-applications/{$submissionApplication->id}/view");
     }
 
     public function deny(SubmissionApplication $submissionApplication){
-        $submissionApplication->update([
-            'approved' => 0
-        ]);
+        $submissionApplication->deny();
 
         return redirect("/shows/{$submissionApplication->show_id}/submission-applications/{$submissionApplication->id}/view");
     }

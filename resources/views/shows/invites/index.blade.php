@@ -1,9 +1,20 @@
 @extends('shows.layout')
 @section('shows-content')
+    @if(session('status'))
+        <div class="alert alert-success mt-3">{{ session('status') }}</div>
+    @endif
     <div class="card mt-3">
         <div class="card-title"></div>
-        <div class="card-body">
-            <button class="btn btn-info copy-link form-control" data-link="{{route('invites.guest-request', ['show' => $show])}}">Guest Request Invite Link</button>
+        <div class="card-body row g-2">
+            <div class="col-md-6">
+                <button class="btn btn-info copy-link form-control" data-link="{{route('invites.guest-request', ['show' => $show])}}">Guest Request Invite Link</button>
+            </div>
+            <div class="col-md-6">
+                <form action="{{ route('invites.send-all', $show) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-primary form-control">Email All Unsent Invites</button>
+                </form>
+            </div>
         </div>
     </div>
     <div class="card mt-3">
@@ -33,7 +44,8 @@
         <div class="card-title mt-3 px-3">
             <div class="row">
                 <div class="col">Total Invites: {{count($show->invites)}}</div>
-                <div class="col">Attending: {{count($show->attending_invites)}}</div>
+                <div class="col">Attending: {{count($show->attending_invites)}} ({{ $show->seatsTaken() }}@if($show->max_attendants > 0)/{{ $show->max_attendants }}@endif seats)</div>
+                <div class="col">Waitlist: {{count($show->waitlist_invites)}}</div>
                 <div class="col">Maybe: {{count($show->maybe_invites)}}</div>
                 <div class="col">No: {{count($show->no_invites)}} </div>
                 <div class="col">Pending: {{count($show->pending_invites)}}</div>
@@ -46,6 +58,7 @@
                     <tr>
                         <th>#</th>
                         <th>Name</th>
+                        <th>Contact</th>
                         <th>Response</th>
                         <th>Talent</th>
                         <th>Buttons</th>
@@ -60,12 +73,17 @@
                                 <td>{{$index++}}</td>
                                 <td>{{$invite->first_name}} {{$invite->middle_name}}
                                     {{$invite->last_name}}</td>
-        {{--                        <td>@if($invite->phone){{$invite->phone}}@else{{$invite->email}}@endif</td>--}}
+                                <td>{{ $invite->email ?: $invite->phone }}</td>
                                 <td>{{$invite->response_status}} @if($invite->guest_request) - REQUESTED @endif</td>
                                 <td>@if($invite->talent) YES @else NO @endif</td>
                                 <td>
-                                    <a class="btn btn-secondary col">Edit</a>
                                     <a class="btn btn-primary copy-link col" data-link="{{$invite->link}}">Link</a>
+                                    @if($invite->email)
+                                        <form class="d-inline-block" action="{{ route('invites.send', $invite) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="btn btn-info col d-inline-block">Email</button>
+                                        </form>
+                                    @endif
                                     @if($invite->response_status == 'CREATED')
                                         <form class="d-inline-block" action="/invites/{{$invite->id}}/mark-as-sent" method="POST">
                                             @csrf

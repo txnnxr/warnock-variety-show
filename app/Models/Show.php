@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Mail\WaitlistPromoted;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Mail;
 
 class Show extends Model
 {
@@ -32,6 +34,76 @@ class Show extends Model
         return $this->hasMany(Exhibitor::class);
     }
 
+    public function lineup(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->exhibitors()->where('status', 'Approved')->orderBy('performance_order');
+    }
+
+    public function photos(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(ShowPhoto::class);
+    }
+
+    public function scopeUpcoming($query)
+    {
+        return $query->where('date', '>=', now());
+    }
+
+    public function scopePast($query)
+    {
+        return $query->where('date', '<', now())->where('canceled', false);
+    }
+
+    public function isPast(): bool
+    {
+        return $this->date->isPast();
+    }
+
+    /**
+     * Seats taken by attending guests, counting plus ones.
+     */
+    public function seatsTaken(?Invite $except = null): int
+    {
+        return $this->invites()
+            ->withResponse(Invite::ATTENDING)
+            ->when($except?->exists, fn ($query) => $query->whereKeyNot($except->id))
+            ->get()
+            ->sum(fn (Invite $invite) => $invite->seats());
+    }
+
+    public function hasRoomFor(int $seats, ?Invite $except = null): bool
+    {
+        if ($this->max_attendants <= 0) {
+            return true;
+        }
+
+        return $this->seatsTaken($except) + $seats <= $this->max_attendants;
+    }
+
+    /**
+     * Move waitlisted guests into open seats, oldest first, and let them know.
+     */
+    public function promoteWaitlist(): void
+    {
+        $waitlist = $this->invites()
+            ->withResponse(Invite::WAITLIST)
+            ->orderBy('waitlisted_at')
+            ->orderBy('id')
+            ->get();
+
+        foreach ($waitlist as $invite) {
+            if (! $this->hasRoomFor($invite->seats())) {
+                continue;
+            }
+
+            $invite->update(['response_status' => Invite::ATTENDING, 'waitlisted_at' => null]);
+
+            if ($invite->email) {
+                Mail::to($invite->email)->send(new WaitlistPromoted($invite));
+            }
+        }
+    }
+
     public function getApplicationsWithStatus($status): \Illuminate\Database\Eloquent\Collection
     {
         return $this->submissionApplications()->where('approved', $status)->get();
@@ -44,12 +116,17 @@ class Show extends Model
 
     public function getAttendingInvitesAttribute()
     {
-        return $this->invites()->withResponse('ATTENDING')->get();
+        return $this->invites()->withResponse(Invite::ATTENDING)->get();
     }
 
     public function getAttendingInvitesWithPlusOneAttribute()
     {
-        return $this->invites()->withResponse('ATTENDING')->where('plus_one_status', 1)->get();
+        return $this->invites()->withResponse(Invite::ATTENDING)->where('plus_one_status', 1)->get();
+    }
+
+    public function getWaitlistInvitesAttribute()
+    {
+        return $this->invites()->withResponse(Invite::WAITLIST)->orderBy('waitlisted_at')->get();
     }
 
     public function getPendingInvitesAttribute()
@@ -59,12 +136,12 @@ class Show extends Model
 
     public function getNoInvitesAttribute()
     {
-        return $this->invites()->withResponse('NO')->get();
+        return $this->invites()->withResponse(Invite::NO)->get();
     }
 
     public function getMaybeInvitesAttribute()
     {
-        return $this->invites()->withResponse('COWARD')->get();
+        return $this->invites()->withResponse(Invite::MAYBE)->get();
     }
 
     public function getCreatedInvitesAttribute()

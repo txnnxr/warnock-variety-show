@@ -14,7 +14,11 @@ class ShowFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'name' => $this->faker->words(3, true),
+            'description' => $this->faker->paragraph(),
+            'date' => now()->addWeeks(2)->setTime(20, 0),
+            'max_attendants' => 30,
+            'address' => $this->faker->address(),
         ];
     }
 }
