@@ -49,6 +49,19 @@ class BackfillPeopleMigrationTest extends TestCase
         $this->assertSame(['Poetry'], Exhibitor::pluck('exhibition_description')->all());
     }
 
+    public function test_repeat_guests_with_complete_details_are_linked_to_one_person(): void
+    {
+        $details = ['first_name' => 'Ada', 'last_name' => 'Lovelace', 'email' => 'ada@example.com', 'phone' => '2155550123'];
+        $invites = Invite::factory()->count(3)->create($details);
+        DB::table('invites')->update(['person_id' => null]);
+        Person::query()->forceDelete();
+
+        $this->runBackfill();
+
+        $this->assertSame(1, Person::count());
+        $this->assertSame(1, $invites->map(fn ($invite) => $invite->fresh()->person_id)->unique()->count());
+    }
+
     public function test_first_name_only_invites_are_not_merged(): void
     {
         Invite::factory()->create(['first_name' => 'Sam', 'last_name' => null, 'email' => null]);

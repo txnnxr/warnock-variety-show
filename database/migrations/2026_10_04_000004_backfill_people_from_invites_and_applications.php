@@ -81,10 +81,14 @@ return new class extends Migration
         }
 
         if ($person) {
-            DB::table('people')->where('id', $person->id)->update(array_filter([
+            $missing = array_filter([
                 'email' => $person->email ? null : $email,
                 'phone_number' => $person->phone_number ? null : $phone,
-            ]));
+            ]);
+
+            if ($missing) {
+                DB::table('people')->where('id', $person->id)->update($missing);
+            }
 
             return $person->id;
         }
