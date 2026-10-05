@@ -48,6 +48,77 @@ class InviteController extends Controller
         return redirect()->action([InviteController::class, 'index'], ['show' => $show]);
     }
 
+    public function edit(Invite $invite)
+    {
+        $show = $invite->show;
+
+        return view('shows.invites.edit', compact('invite', 'show'));
+    }
+
+    /**
+     * Admin edit. Freeing a seat (a no, a dropped plus one) promotes the
+     * waitlist; setting someone to attending is allowed even when full.
+     */
+    public function update(Request $request, Invite $invite)
+    {
+        $validated = $request->validate([
+            'first_name' => 'required|string|max:100',
+            'middle_name' => 'nullable|string|max:100',
+            'last_name' => 'nullable|string|max:100',
+            'email' => 'nullable|email|max:150',
+            'phone' => 'nullable|string|max:20',
+            'response_status' => ['required', Rule::in(array_keys(Invite::STATUSES))],
+            'talent' => 'boolean',
+            'has_plus_one_option' => 'boolean',
+            'plus_one_status' => 'boolean',
+        ]);
+
+        $contactChanged = $invite->first_name !== $validated['first_name']
+            || $invite->last_name !== ($validated['last_name'] ?? null)
+            || $invite->email !== ($validated['email'] ?? null)
+            || $invite->phone !== ($validated['phone'] ?? null);
+
+        $invite->fill($validated + [
+            'talent' => $request->boolean('talent'),
+            'has_plus_one_option' => $request->boolean('has_plus_one_option'),
+            'plus_one_status' => $request->boolean('plus_one_status'),
+        ]);
+
+        if ($invite->response_status === Invite::WAITLIST) {
+            $invite->waitlisted_at ??= now();
+        } else {
+            $invite->waitlisted_at = null;
+        }
+
+        if ($contactChanged) {
+            $invite->person_id = Person::resolve("{$invite->first_name} {$invite->last_name}", $invite->email, $invite->phone)->id;
+        }
+
+        $invite->save();
+        $invite->show->promoteWaitlist();
+
+        return redirect()->route('invites.index', $invite->show)->with('status', "Saved {$invite->full_name}.");
+    }
+
+    /**
+     * Soft delete: the invite disappears from the site but stays in the
+     * database for the show's history.
+     */
+    public function destroy(Invite $invite)
+    {
+        $show = $invite->show;
+        $name = $invite->full_name;
+        $heldSeat = $invite->holdsSeat();
+
+        $invite->delete();
+
+        if ($heldSeat) {
+            $show->promoteWaitlist();
+        }
+
+        return redirect()->route('invites.index', $show)->with('status', "Removed {$name}'s invite.");
+    }
+
     //TODO: this should just be show
     public function respond(Request $request, Show $show, $key)
     {
@@ -71,6 +142,10 @@ class InviteController extends Controller
     //TODO: this should just be update?
     public function registerResponse(Show $show, $key, Request $request)
     {
+        if ($show->canceled) {
+            return redirect()->route('shows.show', $show)->with('status', 'This show has been canceled.');
+        }
+
         $invite = Invite::where('key', $key)->where('show_id', $show->id)->firstOrFail();
 
         $validated = $request->validate([
@@ -150,8 +225,30 @@ class InviteController extends Controller
         return view('shows.invites.guest-request', compact('show'));
     }
 
+    /**
+     * The secret guest link: same form, but RSVPs are approved automatically.
+     */
+    public function join(string $key)
+    {
+        $show = Show::where('guest_link_key', $key)->firstOrFail();
+        $guestLinkKey = $key;
+
+        return view('shows.invites.guest-request', compact('show', 'guestLinkKey'));
+    }
+
+    public function resetGuestLink(Show $show)
+    {
+        $show->resetGuestLink();
+
+        return back()->with('status', 'Guest link reset. The old link no longer auto-approves RSVPs.');
+    }
+
     public function guestRequestSave(Request $request, Show $show)
     {
+        if ($show->canceled) {
+            return redirect()->route('shows.show', $show)->with('status', 'This show has been canceled.');
+        }
+
         $validated = $request->validate([
             'first_name' => 'required|string|max:100',
             'last_name' => 'nullable|string|max:100',
@@ -159,7 +256,11 @@ class InviteController extends Controller
             'phone' => 'nullable|string|max:20',
             'response_status' => ['required', Rule::in([Invite::ATTENDING, Invite::MAYBE, Invite::NO])],
             'plus_one_status' => 'boolean',
+            'guest_link_key' => 'nullable|string',
         ]);
+
+        // RSVPs through the show's secret guest link are approved right away.
+        $viaGuestLink = isset($validated['guest_link_key']) && hash_equals((string) $show->guest_link_key, $validated['guest_link_key']);
 
         $invite = Invite::create([
             'show_id' => $show->id,
@@ -169,7 +270,7 @@ class InviteController extends Controller
             'email' => $validated['email'] ?? null,
             'phone' => $validated['phone'] ?? null,
             'response_status' => 'CREATED',
-            'guest_request' => true,
+            'guest_request' => ! $viaGuestLink,
             'key' => Str::uuid(),
         ]);
 

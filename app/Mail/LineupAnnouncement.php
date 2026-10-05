@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class MaybeNudge extends Mailable implements ShouldQueue
+class LineupAnnouncement extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -24,11 +24,14 @@ class MaybeNudge extends Mailable implements ShouldQueue
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: "Still thinking about the Warnock Variety Show?");
+        return new Envelope(subject: "The lineup is here: {$this->invite->show->name}");
     }
 
     public function content(): Content
     {
-        return new Content(markdown: 'mail.maybe-nudge');
+        return new Content(
+            markdown: 'mail.lineup-announcement',
+            with: ['lineup' => $this->invite->show->lineup()->with('person')->get()],
+        );
     }
 }

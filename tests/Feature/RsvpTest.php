@@ -98,8 +98,8 @@ class RsvpTest extends TestCase
 
         $this->assertSame(Invite::ATTENDING, $first->fresh()->response_status);
         $this->assertSame(Invite::WAITLIST, $second->fresh()->response_status);
-        Mail::assertSent(WaitlistPromoted::class, fn ($mail) => $mail->hasTo($first->email));
-        Mail::assertNotSent(WaitlistPromoted::class, fn ($mail) => $mail->hasTo($second->email));
+        Mail::assertQueued(WaitlistPromoted::class, fn ($mail) => $mail->hasTo($first->email));
+        Mail::assertNotQueued(WaitlistPromoted::class, fn ($mail) => $mail->hasTo($second->email));
     }
 
     public function test_raising_capacity_promotes_the_waitlist(): void
@@ -167,6 +167,6 @@ class RsvpTest extends TestCase
             ->post("/invites/{$invite->id}/guest-request/approve");
 
         $this->assertFalse($invite->fresh()->guest_request);
-        Mail::assertSent(GuestRequestApproved::class, fn ($mail) => $mail->hasTo($invite->email));
+        Mail::assertQueued(GuestRequestApproved::class, fn ($mail) => $mail->hasTo($invite->email));
     }
 }

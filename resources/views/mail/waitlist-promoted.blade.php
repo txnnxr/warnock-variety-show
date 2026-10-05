@@ -4,7 +4,9 @@
 A seat opened up and you're off the waitlist for **{{ $invite->show->name }}** on {{ $invite->show->date->format('l, F j, Y \a\t g:ia') }}.
 
 @if($invite->canSeeAddress())
-**Address:** {{ $invite->show->address }}
+<x-mail::panel>
+**Where:** {{ $invite->show->address }}
+</x-mail::panel>
 @endif
 
 <x-mail::button :url="route('invites.thank-you', $invite)">

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class Show extends Model
 {
@@ -17,7 +18,30 @@ class Show extends Model
     protected $casts = [
         'date' => 'datetime',
         'canceled' => 'boolean',
+        'lineup_announced_at' => 'datetime',
+        'recap_sent_at' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Show $show) {
+            $show->guest_link_key ??= (string) Str::uuid();
+        });
+    }
+
+    /**
+     * The secret link to share with guests. RSVPs through it are approved
+     * automatically.
+     */
+    public function getGuestLinkAttribute(): string
+    {
+        return route('invites.join', $this->guest_link_key);
+    }
+
+    public function resetGuestLink(): void
+    {
+        $this->update(['guest_link_key' => (string) Str::uuid()]);
+    }
 
     public function invites(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
@@ -104,6 +128,30 @@ class Show extends Model
                 Mail::to($invite->email)->send(new WaitlistPromoted($invite));
             }
         }
+    }
+
+    /**
+     * Everyone invited who hasn't said no (and whose invite has gone out):
+     * who hears about lineup news or a cancellation.
+     */
+    public function interestedGuests(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->invites()
+            ->whereNotIn('response_status', [Invite::NO, 'CREATED'])
+            ->whereNotNull('email')->where('email', '!=', '')
+            ->get();
+    }
+
+    /**
+     * Confirmed guests, who get the thank-you recap after the show.
+     */
+    public function recapRecipients(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->invites()
+            ->withResponse(Invite::ATTENDING)
+            ->where('guest_request', false)
+            ->whereNotNull('email')->where('email', '!=', '')
+            ->get();
     }
 
     public function getApplicationsWithStatus($status): \Illuminate\Database\Eloquent\Collection

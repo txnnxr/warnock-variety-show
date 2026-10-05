@@ -44,9 +44,15 @@
                 <dd class="col-sm-9">{!! nl2br(e(htmlspecialchars_decode((string) $submissionApplication->description))) !!}</dd>
             </dl>
             @can('admin')
-                <div class="btn-group-actions justify-content-end mt-4">
-                    <form method="POST" action="{{ route('applications.deny', $submissionApplication) }}">
+                <div class="btn-group-actions justify-content-end align-items-center mt-4">
+                    <form method="POST" action="{{ route('applications.deny', $submissionApplication) }}" class="d-flex flex-wrap align-items-center gap-2">
                         @csrf
+                        @if($submissionApplication->email)
+                            <div class="form-check mb-0">
+                                <input class="form-check-input" type="checkbox" name="notify" value="1" id="notify-decline">
+                                <label class="form-check-label" for="notify-decline">Email them "not this time"</label>
+                            </div>
+                        @endif
                         <button type="submit" class="btn btn-outline-secondary">Deny</button>
                     </form>
                     <form method="POST" action="{{ route('applications.approve', $submissionApplication) }}">
@@ -54,6 +60,13 @@
                         <button type="submit" class="btn btn-primary">Approve</button>
                     </form>
                 </div>
+                <p class="small text-muted text-end mt-2 mb-0">
+                    @if($submissionApplication->email)
+                        Approving emails {{ $submissionApplication->email }} their slot, arrival time and the address.
+                    @else
+                        No email on this application, so you'll need to tell them yourself.
+                    @endif
+                </p>
             @endcan
         </div>
     </div>

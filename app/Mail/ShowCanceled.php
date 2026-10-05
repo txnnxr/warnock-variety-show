@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class MaybeNudge extends Mailable implements ShouldQueue
+class ShowCanceled extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -18,17 +18,17 @@ class MaybeNudge extends Mailable implements ShouldQueue
 
     public array $backoff = [60, 300];
 
-    public function __construct(public Invite $invite)
+    public function __construct(public Invite $invite, public ?string $note = null)
     {
     }
 
     public function envelope(): Envelope
     {
-        return new Envelope(subject: "Still thinking about the Warnock Variety Show?");
+        return new Envelope(subject: "Canceled: {$this->invite->show->name}");
     }
 
     public function content(): Content
     {
-        return new Content(markdown: 'mail.maybe-nudge');
+        return new Content(markdown: 'mail.show-canceled');
     }
 }

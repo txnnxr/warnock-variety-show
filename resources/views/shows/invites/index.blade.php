@@ -52,8 +52,12 @@
                         @csrf
                         <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Email All Unsent Invites</button>
                     </form>
-                    <button class="btn btn-outline-secondary copy-link" data-link="{{route('invites.guest-request', ['show' => $show])}}"><i class="fa-solid fa-link"></i> Copy Guest Request Link</button>
-                    <p class="small text-muted mb-0">Anyone with the guest request link can ask to come. Requests hold no seat until you approve them.</p>
+                    <button class="btn btn-outline-secondary copy-link" data-link="{{ $show->guest_link }}"><i class="fa-solid fa-link"></i> Copy Guest Link</button>
+                    <p class="small text-muted mb-0">Anyone with this link can RSVP and is approved right away, so they'll see the address. RSVPs from the public show page still wait for your approval.</p>
+                    <form action="{{ route('invites.reset-guest-link', $show) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-sm btn-link p-0">Reset link (if it's been shared too widely)</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -88,6 +92,7 @@
                             <td class="text-break">{{ $invite->email ?: $invite->phone }}</td>
                             <td>
                                 <div class="btn-group-actions">
+                                    <a href="{{ route('invites.edit', $invite) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
                                     <button type="button" class="btn btn-sm btn-outline-secondary copy-link" data-link="{{$invite->link}}">Copy Link</button>
                                     @if($invite->email)
                                         <form action="{{ route('invites.send', $invite) }}" method="POST">

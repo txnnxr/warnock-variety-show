@@ -17,6 +17,20 @@ class Invite extends Model
     public const NO = 'NO';
     public const WAITLIST = 'WAITLIST';
 
+    /**
+     * Every response status, with the label admins see.
+     */
+    public const STATUSES = [
+        'CREATED' => 'Not sent',
+        'PENDING - SENT' => 'Sent',
+        'PENDING - OPENED' => 'Opened',
+        'PENDING - UPDATE' => 'Changing response',
+        self::ATTENDING => 'Attending',
+        self::MAYBE => 'Maybe',
+        self::NO => 'Not coming',
+        self::WAITLIST => 'Waitlist',
+    ];
+
     protected $guarded = [];
 
     protected $casts = [

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ActApproved;
+use App\Mail\ActDeclined;
 use App\Models\Person;
 use App\Models\Show;
 use App\Models\SubmissionApplication;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class SubmissionApplicationController extends Controller
 {
@@ -27,6 +30,10 @@ class SubmissionApplicationController extends Controller
      */
     public function create(Show $show)
     {
+        if ($show->canceled) {
+            return redirect()->route('shows.show', $show)->with('status', 'This show has been canceled.');
+        }
+
         return view('shows.submission-applications.create', compact('show'));
     }
 
@@ -38,6 +45,10 @@ class SubmissionApplicationController extends Controller
      */
     public function store(Show $show, Request $request)
     {
+        if ($show->canceled) {
+            return redirect()->route('shows.show', $show)->with('status', 'This show has been canceled.');
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:100',
             'title' => 'required|string|max:50',
@@ -81,13 +92,23 @@ class SubmissionApplicationController extends Controller
     }
 
     public function approve(SubmissionApplication $submissionApplication){
+        $wasApproved = $submissionApplication->approved;
+
         $submissionApplication->approve();
+
+        if (! $wasApproved && $submissionApplication->email) {
+            Mail::to($submissionApplication->email)->send(new ActApproved($submissionApplication->fresh()));
+        }
 
         return redirect("/shows/{$submissionApplication->show_id}/submission-applications/{$submissionApplication->id}/view");
     }
 
-    public function deny(SubmissionApplication $submissionApplication){
+    public function deny(Request $request, SubmissionApplication $submissionApplication){
         $submissionApplication->deny();
+
+        if ($request->boolean('notify') && $submissionApplication->email) {
+            Mail::to($submissionApplication->email)->send(new ActDeclined($submissionApplication));
+        }
 
         return redirect("/shows/{$submissionApplication->show_id}/submission-applications/{$submissionApplication->id}/view");
     }

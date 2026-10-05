@@ -3,6 +3,9 @@
     <meta property="og:title" content="{{$show->name}} - {{$invite->first_name}} Invitation" />
 @endpush
 @section('shows-content')
+    @if($show->canceled)
+        <div class="alert alert-warning">This show has been canceled, so RSVPs are closed.</div>
+    @else
     <form action="/shows/{{$show->id}}/invite/respond/{{$invite->key}}" method="POST" class="card">
         @csrf
         <div class="card-body">
@@ -59,6 +62,7 @@
             </div>
         </div>
     </form>
+    @endif
 @endsection
 @push('scripts')
 <script>

@@ -16,7 +16,9 @@ class InviteSecurityTest extends TestCase
     {
         $invite = Invite::factory()->attending()->create();
 
-        $this->get("/invites/{$invite->id}/edit")->assertNotFound();
+        $this->get("/invites/{$invite->id}/edit")->assertRedirect('/login');
+        $this->actingAs(User::factory()->create())->get("/invites/{$invite->id}/edit")->assertForbidden();
+        auth()->logout();
         $this->get("/invites/{$invite->id}/thank-you")->assertNotFound();
         $this->get("/invites/{$invite->id}/calendar")->assertNotFound();
         $this->post("/invites/{$invite->id}/generate-ics")->assertNotFound();

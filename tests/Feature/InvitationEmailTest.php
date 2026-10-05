@@ -23,7 +23,7 @@ class InvitationEmailTest extends TestCase
             ->post("/invites/{$invite->id}/send")
             ->assertRedirect();
 
-        Mail::assertSent(Invitation::class, fn ($mail) => $mail->hasTo($invite->email));
+        Mail::assertQueued(Invitation::class, fn ($mail) => $mail->hasTo($invite->email));
         $this->assertSame('PENDING - SENT', $invite->fresh()->response_status);
     }
 
@@ -38,8 +38,8 @@ class InvitationEmailTest extends TestCase
         $this->actingAs(User::factory()->admin()->create())
             ->post("/shows/{$show->id}/invite/send-all");
 
-        Mail::assertSent(Invitation::class, 1);
-        Mail::assertSent(Invitation::class, fn ($mail) => $mail->hasTo($unsent->email));
+        Mail::assertQueued(Invitation::class, 1);
+        Mail::assertQueued(Invitation::class, fn ($mail) => $mail->hasTo($unsent->email));
         $this->assertSame('CREATED', $noEmail->fresh()->response_status);
     }
 
@@ -61,5 +61,17 @@ class InvitationEmailTest extends TestCase
         ]);
 
         $this->assertSame('Ada Lovelace', Invite::firstOrFail()->person->name);
+    }
+
+    public function test_queued_emails_are_delivered_by_the_queue(): void
+    {
+        $invite = Invite::factory()->create();
+
+        $this->actingAs(User::factory()->admin()->create())->post("/invites/{$invite->id}/send");
+
+        $sent = app('mailer')->getSymfonyTransport()->messages();
+        $this->assertCount(1, $sent);
+        $this->assertSame($invite->email, $sent->first()->getEnvelope()->getRecipients()[0]->getAddress());
+        $this->assertStringContainsString($invite->key, $sent->first()->toString());
     }
 }

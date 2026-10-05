@@ -25,8 +25,8 @@ class ShowRemindersTest extends TestCase
         $this->artisan('app:send-reminders')->assertSuccessful();
         $this->artisan('app:send-reminders')->assertSuccessful();
 
-        Mail::assertSent(ShowReminder::class, 1);
-        Mail::assertSent(ShowReminder::class, fn ($mail) => $mail->hasTo($attending->email));
+        Mail::assertQueued(ShowReminder::class, 1);
+        Mail::assertQueued(ShowReminder::class, fn ($mail) => $mail->hasTo($attending->email));
         $this->assertNotNull($attending->fresh()->reminder_sent_at);
     }
 
@@ -38,7 +38,7 @@ class ShowRemindersTest extends TestCase
 
         $this->artisan('app:send-reminders');
 
-        Mail::assertNotSent(ShowReminder::class);
+        Mail::assertNotQueued(ShowReminder::class);
     }
 
     public function test_maybes_get_one_nudge_three_days_out(): void
@@ -52,8 +52,8 @@ class ShowRemindersTest extends TestCase
         $this->artisan('app:send-reminders');
         $this->artisan('app:send-reminders');
 
-        Mail::assertSent(MaybeNudge::class, 1);
-        Mail::assertSent(MaybeNudge::class, fn ($mail) => $mail->hasTo($maybe->email));
+        Mail::assertQueued(MaybeNudge::class, 1);
+        Mail::assertQueued(MaybeNudge::class, fn ($mail) => $mail->hasTo($maybe->email));
     }
 
     public function test_canceled_and_past_shows_are_skipped(): void
@@ -66,7 +66,7 @@ class ShowRemindersTest extends TestCase
 
         $this->artisan('app:send-reminders');
 
-        Mail::assertNothingSent();
+        Mail::assertNothingOutgoing();
     }
 
     public function test_the_reminder_includes_the_address(): void

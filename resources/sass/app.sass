@@ -441,29 +441,3 @@ ol.guest-list
     @for $i from 2 through 8
         main .card:nth-of-type(#{$i})
             animation-delay: #{.25 + ($i - 1) * .25}s
-
-// ---------------------------------------------------------- Carousel
-
-.carousel
-    height: 400px
-
-.carousel-inner
-    margin: 0
-    position: absolute
-    top: 50%
-    left: 50%
-    transform: translate(-50%, -50%)
-    text-align: center
-
-.carousel-item
-    max-width: 400px
-    max-height: 400px
-    float: none
-    margin-right: auto
-
-.carousel-item.active
-    display: inline-block
-    max-width: 400px
-    max-height: 400px
-    float: none
-    margin-right: auto

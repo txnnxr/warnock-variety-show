@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreShowRequest;
 use App\Http\Requests\UpdateShowRequest;
+use App\Mail\ShowCanceled;
 use App\Models\Show;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class ShowController extends Controller
 {
@@ -105,5 +109,33 @@ class ShowController extends Controller
         $show->delete();
 
         return redirect('/shows');
+    }
+
+    /**
+     * Cancel the show, optionally emailing everyone who hasn't said no.
+     */
+    public function cancel(Request $request, Show $show)
+    {
+        $validated = $request->validate(['note' => 'nullable|string|max:1000']);
+
+        $show->update(['canceled' => true]);
+
+        $notified = 0;
+
+        if ($request->boolean('notify')) {
+            foreach ($show->interestedGuests() as $invite) {
+                Mail::to($invite->email)->send(new ShowCanceled($invite, $validated['note'] ?? null));
+                $notified++;
+            }
+        }
+
+        return redirect()->route('shows.show', $show)->with('status', 'Show canceled.'.($notified ? ' Emailed '.$notified.' '.Str::plural('guest', $notified).'.' : ''));
+    }
+
+    public function restore(Show $show)
+    {
+        $show->update(['canceled' => false]);
+
+        return redirect()->route('shows.show', $show)->with('status', 'Show restored. Guests were not emailed.');
     }
 }

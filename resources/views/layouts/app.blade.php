@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@hasSection('title')@yield('title') · @endif{{ config('app.name', 'Warnock Variety Show') }}</title>
+    <title>@hasSection('title')@yield('title') · @endif Warnock Variety Show</title>
     <link rel="icon" href="/favicon.ico">
     <meta property="og:image" content="{{ url('/images/background.jpg') }}"/>
     @stack('meta')

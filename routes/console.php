@@ -20,3 +20,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('app:send-reminders')->dailyAt('10:00');
+
+// Send queued emails. Running the worker from the scheduler means the one
+// cron entry also delivers mail, with no separate long-running process.
+Schedule::command('queue:work --stop-when-empty --max-time=50')->everyMinute()->withoutOverlapping();

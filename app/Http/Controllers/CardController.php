@@ -2,93 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreCardRequest;
-use App\Http\Requests\UpdateCardRequest;
-use App\Models\Card;
 use App\Models\Show;
-use Carbon\Carbon;
 
 class CardController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * The business card QR code points here: send people to the next show.
      */
-    public function index()
+    public function show()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreCardRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreCardRequest $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Card  $card
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Http\Response|\Illuminate\Routing\Redirector
-     */
-    public function show(Card $card)
-    {
-        $show = \App\Models\Show::where('date', '>=', Carbon::now())->orderBy('date', 'asc')->first();
+        $show = Show::upcoming()->where('canceled', false)->orderBy('date')->first();
 
         if (! $show) {
             return redirect('/');
         }
 
         return redirect(route('shows.show', ['show' => $show]));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Card  $card
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Card $card)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \App\Http\Requests\UpdateCardRequest  $request
-     * @param  \App\Models\Card  $card
-     * @return \Illuminate\Http\Response
-     */
-    public function update(UpdateCardRequest $request, Card $card)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Card  $card
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Card $card)
-    {
-        //
     }
 }

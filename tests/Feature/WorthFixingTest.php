@@ -47,7 +47,7 @@ class WorthFixingTest extends TestCase
 
         $this->assertSame(Invite::WAITLIST, $request->fresh()->response_status);
         $this->assertFalse($request->fresh()->guest_request);
-        Mail::assertSent(GuestRequestApproved::class, fn ($mail) => $mail->hasTo($request->email));
+        Mail::assertQueued(GuestRequestApproved::class, fn ($mail) => $mail->hasTo($request->email));
     }
 
     public function test_the_waitlist_skips_unapproved_requests(): void

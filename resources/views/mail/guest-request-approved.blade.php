@@ -4,7 +4,9 @@
 Your request to come to **{{ $invite->show->name }}** on {{ $invite->show->date->format('l, F j, Y \a\t g:ia') }} was approved.
 
 @if($invite->canSeeAddress())
-**Address:** {{ $invite->show->address }}
+<x-mail::panel>
+**Where:** {{ $invite->show->address }}
+</x-mail::panel>
 @elseif($invite->response_status === \App\Models\Invite::WAITLIST)
 The show is full right now, so you're on the waitlist. If a seat opens up you'll move in automatically and we'll email you.
 @endif

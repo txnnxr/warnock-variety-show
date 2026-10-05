@@ -3,7 +3,9 @@
 
 **{{ $invite->show->name }}** is on {{ $invite->show->date->format('l, F j, Y \a\t g:ia') }}.
 
-**Address:** {{ $invite->show->address }}
+<x-mail::panel>
+**Where:** {{ $invite->show->address }}
+</x-mail::panel>
 
 <x-mail::button :url="route('invites.calendar', $invite)">
 Add to Calendar
