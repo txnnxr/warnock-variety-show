@@ -308,6 +308,10 @@ ol.guest-list
 
     figure
         margin: 0
+        transition: opacity .2s
+
+        &.is-deleting
+            opacity: .35
 
     img
         width: 100%
@@ -501,23 +505,3 @@ ol.guest-list
 
 .lightbox-next
     right: .75rem
-
-// ------------------------------------------------------------- Motion
-
-// Cards slide in from the left one after another, like the original site.
-// They move with a transform (clipped so phones never scroll sideways) and
-// stay put for people who prefer reduced motion.
-@keyframes slide-in
-    from
-        transform: translateX(-100vw)
-    to
-        transform: none
-
-@media (prefers-reduced-motion: no-preference)
-    body
-        overflow-x: clip
-    main .card
-        animation: slide-in 1s ease-out .25s both
-    @for $i from 2 through 8
-        main .card:nth-of-type(#{$i})
-            animation-delay: #{.25 + ($i - 1) * .25}s

@@ -66,7 +66,7 @@ class Show extends Model
 
     public function photos(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(ShowPhoto::class);
+        return $this->hasMany(ShowPhoto::class)->chaperone();
     }
 
     public function scopeUpcoming($query)

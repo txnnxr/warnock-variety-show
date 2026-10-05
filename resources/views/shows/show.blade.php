@@ -106,32 +106,34 @@
         </div>
     </div>
 
-    @if(count($show->photos))
-        <div class="card">
-            @php
-                $lightboxPhotos = $show->photos->map(fn ($photo) => [
-                    'url' => $photo->url,
-                    'caption' => $photo->caption,
-                    'alt' => $photo->caption ?? $show->name,
-                ])->values();
-            @endphp
-            <div class="card-body" x-data="lightbox(@js($lightboxPhotos))" x-on:keydown.window="onKey($event)">
+    {{-- Admins always get the card (hidden while empty) so uploads can appear in it. --}}
+    @if(count($show->photos) || auth()->user()?->can('admin'))
+        <div class="card" x-data="photoGallery(@js($show->photos->map->toGallery()->values()))"
+             x-show="photos.length" @if($show->photos->isEmpty()) x-cloak @endif x-on:keydown.window="onKey($event)">
+            <div class="card-body">
                 <h2 class="section-heading">Photos</h2>
+                <div x-show="error" x-text="error" class="alert alert-danger" x-cloak></div>
                 <div class="photo-grid">
-                    @foreach($show->photos as $photo)
-                        <figure>
-                            <a href="{{ $photo->url }}" target="_blank" x-on:click.prevent="open({{ $loop->index }})"><img src="{{ $photo->url }}" alt="{{ $photo->caption ?? $show->name }}" loading="lazy"></a>
-                            @if($photo->caption)<figcaption>{{ $photo->caption }}</figcaption>@endif
+                    <template x-for="(photo, i) in photos" :key="photo.id">
+                        <figure x-bind:class="{ 'is-deleting': photo.deleting }">
+                            <a x-bind:href="photo.url" target="_blank" x-on:click.prevent="open(i)"><img x-bind:src="photo.url" x-bind:alt="photo.alt" loading="lazy"></a>
+                            <figcaption x-show="photo.caption" x-text="photo.caption"></figcaption>
                             @can('admin')
-                                <form method="POST" action="{{ route('photos.destroy', $photo) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger mt-1">Delete</button>
-                                </form>
+                                <button type="button" class="btn btn-sm btn-outline-danger mt-1" x-on:click="remove(photo)" x-bind:disabled="!!photo.deleting">Delete</button>
                             @endcan
                         </figure>
-                    @endforeach
+                    </template>
                 </div>
+                <noscript>
+                    <div class="photo-grid">
+                        @foreach($show->photos as $photo)
+                            <figure>
+                                <a href="{{ $photo->url }}" target="_blank"><img src="{{ $photo->url }}" alt="{{ $photo->caption ?? $show->name }}" loading="lazy"></a>
+                                @if($photo->caption)<figcaption>{{ $photo->caption }}</figcaption>@endif
+                            </figure>
+                        @endforeach
+                    </div>
+                </noscript>
 
                 <template x-teleport="body">
                     <div class="lightbox" x-show="isOpen" x-transition.opacity x-cloak
@@ -220,19 +222,28 @@
         <div class="card">
             <div class="card-body">
                 <h2 class="section-heading">Upload Photos</h2>
-                <form method="POST" action="{{ route('photos.store', $show) }}" enctype="multipart/form-data" class="row g-2 align-items-end">
+                <form method="POST" action="{{ route('photos.store', $show) }}" enctype="multipart/form-data" class="row g-2 align-items-end"
+                      x-data="photoUpload(@js(route('photos.store', $show)))" x-on:submit.prevent="submit($el)">
                     @csrf
                     <div class="col-12 col-md-6">
                         <label class="form-label" for="photos">Photos</label>
-                        <input class="form-control" type="file" id="photos" name="photos[]" accept="image/*" multiple required>
+                        <input class="form-control" type="file" id="photos" name="photos[]" accept="image/*" multiple required x-bind:disabled="uploading">
                     </div>
                     <div class="col-12 col-md-4">
                         <label class="form-label" for="caption">Caption</label>
-                        <input class="form-control" type="text" id="caption" name="caption" placeholder="Optional">
+                        <input class="form-control" type="text" id="caption" name="caption" placeholder="Optional" x-bind:disabled="uploading">
                     </div>
                     <div class="col-12 col-md-2 d-grid">
-                        <button type="submit" class="btn btn-primary">Upload</button>
+                        <button type="submit" class="btn btn-primary" x-bind:disabled="uploading">Upload</button>
                     </div>
+                    <div class="col-12" x-show="uploading" x-cloak>
+                        <div class="progress" role="progressbar" aria-label="Upload progress" x-bind:aria-valuenow="progress" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" x-bind:style="`width: ${progress}%`"></div>
+                        </div>
+                        <div class="small text-muted mt-1" x-text="progress < 100 ? `Uploading… ${progress}%` : 'Saving photos…'"></div>
+                    </div>
+                    <div class="col-12 text-success" x-show="message" x-text="message" x-cloak></div>
+                    <div class="col-12 text-danger" x-show="error" x-text="error" x-cloak></div>
                     @error('photos.*')<div class="text-danger">{{ $message }}</div>@enderror
                 </form>
             </div>

@@ -1,10 +1,10 @@
 import './bootstrap';
 
 import Alpine from 'alpinejs';
-import lightbox from './lightbox';
+import photos from './photos';
 
 window.Alpine = Alpine;
 
-Alpine.data('lightbox', lightbox);
+photos(Alpine);
 
 Alpine.start();

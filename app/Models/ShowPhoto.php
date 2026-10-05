@@ -29,4 +29,18 @@ class ShowPhoto extends Model
     {
         return Storage::disk('public')->url($this->path);
     }
+
+    /**
+     * What the show page's photo gallery needs to display this photo.
+     */
+    public function toGallery(): array
+    {
+        return [
+            'id' => $this->id,
+            'url' => $this->url,
+            'caption' => $this->caption,
+            'alt' => $this->caption ?? $this->show->name,
+            'delete_url' => route('photos.destroy', $this),
+        ];
+    }
 }
