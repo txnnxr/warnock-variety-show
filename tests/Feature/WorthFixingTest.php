@@ -118,6 +118,23 @@ class WorthFixingTest extends TestCase
         $this->assertSame("Tom & Jerry's night", $show->fresh()->description);
     }
 
+    public function test_unique_key_migration_rekeys_copied_invites(): void
+    {
+        $migration = require database_path('migrations/2026_10_05_000002_add_unique_key_index_to_invites_table.php');
+        $migration->down();
+
+        $original = Invite::factory()->create();
+        $copy = Invite::factory()->create(['key' => $original->key]);
+        $other = Invite::factory()->create();
+
+        $migration->up();
+
+        $this->assertSame($original->key, $original->fresh()->key);
+        $this->assertNotSame($original->key, $copy->fresh()->key);
+        $this->assertSame($other->key, $other->fresh()->key);
+        $this->assertSame(3, Invite::count());
+    }
+
     public function test_invite_keys_are_unique(): void
     {
         $invite = Invite::factory()->create();
