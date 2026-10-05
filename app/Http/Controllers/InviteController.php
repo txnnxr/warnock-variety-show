@@ -51,7 +51,7 @@ class InviteController extends Controller
             'key' => Str::uuid(),
         ]);
 
-        return redirect()->action('InviteController@index', ['show' => $show]);
+        return redirect()->action([InviteController::class, 'index'], ['show' => $show]);
     }
 
     /**
@@ -77,7 +77,7 @@ class InviteController extends Controller
             'response_status' => 'PENDING - UPDATE',
         ]);
 
-        return redirect()->action('InviteController@respond', ['show'=> $invite->show, 'key' => $invite->key]);
+        return redirect()->action([InviteController::class, 'respond'], ['show'=> $invite->show, 'key' => $invite->key]);
     }
 
     /**
@@ -130,7 +130,7 @@ class InviteController extends Controller
             ]);
         });
 
-        return redirect()->action('InviteController@guestThankYou', ['invite' => $invite]);
+        return redirect()->action([InviteController::class, 'guestThankYou'], ['invite' => $invite]);
     }
 
     public function generateICS(Invite $invite)
@@ -141,7 +141,7 @@ class InviteController extends Controller
     public function markAsSent(Invite $invite)
     {
         $invite->update(['response_status' => 'PENDING - SENT']);
-        return redirect()->action('InviteController@index', ['show' => $invite->show]);
+        return redirect()->action([InviteController::class, 'index'], ['show' => $invite->show]);
     }
 
     public function markAsOpened(Invite $invite)
@@ -178,6 +178,6 @@ class InviteController extends Controller
             ]);
         }
 
-        return redirect()->action('InviteController@index', ['show' => $invite->show]);
+        return redirect()->action([InviteController::class, 'index'], ['show' => $invite->show]);
     }
 }

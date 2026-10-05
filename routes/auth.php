@@ -5,9 +5,16 @@ use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
+use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\InviteController;
+use App\Http\Controllers\MailingListController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RSVPController;
+use App\Http\Controllers\ShowController;
+use App\Http\Controllers\SubmissionApplicationController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -32,17 +39,17 @@ Route::middleware('guest')->group(function () {
                 ->name('password.reset');
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
-                ->name('password.update');
-
-
-
-    Route::get('/card', 'CardController@show')->name('card.show');
+                ->name('password.store');
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
-    })->middleware(['auth'])->name('dashboard');
+    })->name('dashboard');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('verify-email', [EmailVerificationPromptController::class, '__invoke'])
                 ->name('verification.notice');
@@ -60,24 +67,26 @@ Route::middleware('auth')->group(function () {
 
     Route::post('confirm-password', [ConfirmablePasswordController::class, 'store']);
 
+    Route::put('password', [PasswordController::class, 'update'])->name('password.update');
+
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
                 ->name('logout');
 
-    Route::resource('mailing-list', 'MailingListController');
-    Route::resource('rsvps', 'RSVPController');
-    Route::get('shows', 'ShowController@index');
-    Route::get('shows/create', 'ShowController@create');
-    Route::post('shows', 'ShowController@store');
-    Route::get('shows/{show}/edit', 'ShowController@edit');
-    Route::put('shows/{show}', 'ShowController@update');
-    Route::delete('shows/{show}', 'ShowController@destroy');
+    Route::resource('mailing-list', MailingListController::class);
+    Route::resource('rsvps', RSVPController::class);
+    Route::get('shows', [ShowController::class, 'index'])->name('shows.index');
+    Route::get('shows/create', [ShowController::class, 'create'])->name('shows.create');
+    Route::post('shows', [ShowController::class, 'store'])->name('shows.store');
+    Route::get('shows/{show}/edit', [ShowController::class, 'edit'])->name('shows.edit');
+    Route::put('shows/{show}', [ShowController::class, 'update'])->name('shows.update');
+    Route::delete('shows/{show}', [ShowController::class, 'destroy'])->name('shows.destroy');
 
-    Route::get('shows/{show}/invite', 'InviteController@index');
-    Route::post('shows/{show}/invite', 'InviteController@store');
-//    Route::post('/invites/{invite}/guest-request/approve', 'InviteController@guestRequestApprove')->name('invites.guest-request.approve');
+    Route::get('shows/{show}/invite', [InviteController::class, 'index']);
+    Route::post('shows/{show}/invite', [InviteController::class, 'store']);
+    Route::post('/invites/{invite}/guest-request/approve', [InviteController::class, 'guestRequestApprove'])->name('invites.guest-request.approve');
 
-    Route::get('shows/{show}/submission-applications', 'SubmissionApplicationController@index');
-    Route::get('/shows/{show}/submission-applications/{submissionApplication}/edit', 'SubmissionApplicationController@edit');
-    Route::get('/submission-applications/{submissionApplication}/approve', 'SubmissionApplicationController@approve');
-    Route::get('/submission-applications/{submissionApplication}/deny', 'SubmissionApplicationController@deny');
+    Route::get('shows/{show}/submission-applications', [SubmissionApplicationController::class, 'index']);
+    Route::get('/shows/{show}/submission-applications/{submissionApplication}/edit', [SubmissionApplicationController::class, 'edit']);
+    Route::get('/submission-applications/{submissionApplication}/approve', [SubmissionApplicationController::class, 'approve']);
+    Route::get('/submission-applications/{submissionApplication}/deny', [SubmissionApplicationController::class, 'deny']);
 });

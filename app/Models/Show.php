@@ -12,16 +12,24 @@ class Show extends Model
 
     protected $guarded = [];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at',
-        'date'
+    protected $casts = [
+        'date' => 'datetime',
+        'canceled' => 'boolean',
     ];
 
     public function invites(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Invite::class);
+    }
+
+    public function guests(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Guest::class);
+    }
+
+    public function exhibitors(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Exhibitor::class);
     }
 
     public function getApplicationsWithStatus($status): \Illuminate\Database\Eloquent\Collection

@@ -17,12 +17,17 @@
             </div>
         </div>
     </div>
+    @if($show)
+    @php
+        $daysUntilShow = (int) Carbon\Carbon::now()->diffInDays($show->date, false);
+        $daysUntilDeadline = (int) Carbon\Carbon::now()->diffInDays($show->date->copy()->addDays(-5), false);
+    @endphp
     <div class="row" style="--bs-gutter-x: 0;">
         <div class="col-12 col-md-6 pe-0 pe-sm-1">
             <div class="card card-alt p-3 my-2">
                 <h2>Come!</h2>
                 <h3>{{$show->date->format('l, F j, Y')}}</h3>
-                <h4>{{Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($show->date), false)}}@if(Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($show->date), false) != 1)
+                <h4>{{$daysUntilShow}}@if($daysUntilShow != 1)
                         days
                     @else
                         day
@@ -36,7 +41,7 @@
         <div class="col-12 col-md-6 ps-0 ps-sm-1">
             <div class="card card-alt p-3 my-2">
                 <h2>Exhibit!</h2>
-                <h4>{{Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($show->date)->addDays(-5), false)}}@if(Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($show->date), false) != 1)
+                <h4>{{$daysUntilDeadline}}@if($daysUntilDeadline != 1)
                         days
                     @else
                         day
@@ -53,4 +58,5 @@
             </div>
         </div>
     </div>
+    @endif
 @endsection

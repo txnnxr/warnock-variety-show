@@ -49,9 +49,13 @@ class CardController extends Controller
      */
     public function show(Card $card)
     {
-        return redirect(route('shows.show', [
-            'show' =>  \App\Models\Show::where('date', '>=', Carbon::now())->orderBy('date', 'asc')->first()
-        ]));
+        $show = \App\Models\Show::where('date', '>=', Carbon::now())->orderBy('date', 'asc')->first();
+
+        if (! $show) {
+            return redirect('/');
+        }
+
+        return redirect(route('shows.show', ['show' => $show]));
     }
 
     /**

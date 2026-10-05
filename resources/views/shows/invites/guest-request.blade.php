@@ -50,7 +50,7 @@
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="plus_one_status" value="false">
+                                    <input class="form-check-input" type="radio" name="plus_one_status" value="0">
                                     <label class="form-check-label" for="false">
                                         No
                                     </label>
