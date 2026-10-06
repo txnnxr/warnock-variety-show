@@ -74,6 +74,8 @@ Route::middleware(['auth', 'can:admin'])->group(function () {
     Route::get('people', [PersonController::class, 'index'])->name('people.index');
     Route::get('people/{person}', [PersonController::class, 'show'])->name('people.show');
     Route::post('people/merge', [PersonController::class, 'mergeMany'])->name('people.merge-many');
+    Route::post('people/not-matching', [PersonController::class, 'markNotMatching'])->name('people.not-matching');
+    Route::delete('people/{person}/not-matching/{other}', [PersonController::class, 'forgetNotMatching'])->name('people.forget-not-matching');
     Route::post('people/{person}/merge', [PersonController::class, 'merge'])->name('people.merge');
 });
 

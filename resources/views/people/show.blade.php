@@ -97,4 +97,25 @@
             </div>
         </div>
     @endif
+
+    @if($notMatching->isNotEmpty())
+        <div class="card mt-4">
+            <div class="card-body">
+                <h2 class="section-heading">Not the Same Person</h2>
+                <p>You said {{ $person->name }} isn't the same person as these people, so they aren't suggested together as duplicates.</p>
+                <ul class="guest-list">
+                    @foreach($notMatching as $other)
+                        <li>
+                            <a href="{{ route('people.show', $other) }}">{{ $other->name }}</a>
+                            <form method="POST" action="{{ route('people.forget-not-matching', [$person, $other]) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-link btn-sm p-0">Undo</button>
+                            </form>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        </div>
+    @endif
 @endsection

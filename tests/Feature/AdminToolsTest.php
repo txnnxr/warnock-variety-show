@@ -172,18 +172,92 @@ class AdminToolsTest extends TestCase
         $samByEmail->update(['phone_number' => '2155550123']);
         $ada = Person::create(['name' => 'Ada King Lovelace']);
         $adaAgain = Person::create(['name' => 'ada lovelace']);
-        Person::create(['name' => 'Jo']);
-        Person::create(['name' => 'Jo']);
+        $jo = Person::create(['name' => 'Jo']);
+        $joAgain = Person::create(['name' => 'Jo Park']);
+        Person::create(['name' => 'Unknown']);
+        Person::create(['name' => 'Unknown']);
         Person::create(['name' => 'Someone Else', 'email' => 'else@example.com']);
 
         $groups = Person::duplicateGroups(Person::all());
 
-        $this->assertCount(2, $groups);
+        $this->assertCount(3, $groups);
         $byFirstId = $groups->keyBy(fn ($group) => $group['people']->min('id'));
         $this->assertEqualsCanonicalizing([$sam->id, $samByEmail->id, $samByPhone->id], $byFirstId[$sam->id]['people']->pluck('id')->all());
         $this->assertSame(['same email', 'same phone'], $byFirstId[$sam->id]['reasons']);
-        $this->assertEqualsCanonicalizing([$ada->id, $adaAgain->id], $byFirstId[$ada->id]['people']->pluck('id')->all());
-        $this->assertSame(['same name'], $byFirstId[$ada->id]['reasons']);
+        $this->assertSame(['same first name', 'same name'], $byFirstId[$ada->id]['reasons']);
+        $this->assertEqualsCanonicalizing([$jo->id, $joAgain->id], $byFirstId[$jo->id]['people']->pluck('id')->all());
+        $this->assertSame(['same first name'], $byFirstId[$jo->id]['reasons']);
+
+        // First-name hunches come last and have nobody strongly matched.
+        $this->assertSame($jo->id, $groups->last()['people']->min('id'));
+        $this->assertSame([], $groups->last()['strong']);
+    }
+
+    public function test_first_name_matches_are_suggested_but_not_strong(): void
+    {
+        $sam = Person::create(['name' => 'Sam Rivera']);
+        $samAgain = Person::create(['name' => 'sam rivera', 'email' => 'sam@example.com']);
+        $samJones = Person::create(['name' => 'Sam Jones']);
+
+        $group = Person::duplicateGroups(Person::all())->sole();
+
+        $this->assertEqualsCanonicalizing([$sam->id, $samAgain->id, $samJones->id], $group['people']->pluck('id')->all());
+        $this->assertEqualsCanonicalizing([$sam->id, $samAgain->id], $group['strong']);
+    }
+
+    public function test_people_marked_not_matching_are_not_suggested_together(): void
+    {
+        $sam = Person::create(['name' => 'Sam Rivera']);
+        $samJones = Person::create(['name' => 'Sam Jones']);
+        $samLee = Person::create(['name' => 'Sam Lee']);
+
+        $this->actingAs($this->admin())
+            ->post('/people/not-matching', ['person_id' => $samJones->id, 'person_ids' => [$sam->id, $samJones->id, $samLee->id]])
+            ->assertRedirect('/people')
+            ->assertSessionHas('status', 'Sam Jones will no longer be suggested with them.');
+
+        $group = Person::duplicateGroups(Person::all())->sole();
+        $this->assertEqualsCanonicalizing([$sam->id, $samLee->id], $group['people']->pluck('id')->all());
+
+        $this->actingAs($this->admin())
+            ->post('/people/not-matching', ['person_ids' => [$sam->id, $samLee->id]]);
+
+        $this->assertCount(0, Person::duplicateGroups(Person::all()));
+        $this->assertDatabaseCount('person_non_matches', 3);
+
+        // Marking the same pair again doesn't duplicate it.
+        $sam->markNotMatching([$samLee]);
+        $this->assertDatabaseCount('person_non_matches', 3);
+    }
+
+    public function test_a_not_matching_pair_can_be_undone_from_the_person_page(): void
+    {
+        $sam = Person::create(['name' => 'Sam Rivera']);
+        $samJones = Person::create(['name' => 'Sam Jones']);
+        $samJones->markNotMatching([$sam]);
+
+        $this->actingAs($this->admin())->get("/people/{$sam->id}")
+            ->assertSee('Not the Same Person')
+            ->assertSee('Sam Jones');
+
+        $this->actingAs($this->admin())
+            ->delete("/people/{$sam->id}/not-matching/{$samJones->id}")
+            ->assertRedirect("/people/{$sam->id}");
+
+        $this->assertDatabaseCount('person_non_matches', 0);
+        $this->assertCount(1, Person::duplicateGroups(Person::all()));
+    }
+
+    public function test_only_admins_can_mark_people_as_not_matching(): void
+    {
+        $sam = Person::create(['name' => 'Sam Rivera']);
+        $samJones = Person::create(['name' => 'Sam Jones']);
+
+        $this->actingAs(User::factory()->create())
+            ->post('/people/not-matching', ['person_ids' => [$sam->id, $samJones->id]])
+            ->assertForbidden();
+
+        $this->assertDatabaseCount('person_non_matches', 0);
     }
 
     public function test_several_people_can_be_merged_at_once(): void
@@ -241,7 +315,7 @@ class AdminToolsTest extends TestCase
         $this->actingAs($this->admin())->get('/people')
             ->assertOk()
             ->assertSee('Possible Duplicates')
-            ->assertSee('Same name')
+            ->assertSee('Same first name · same name')
             ->assertSee("keep: {$busy->id}", false);
     }
 

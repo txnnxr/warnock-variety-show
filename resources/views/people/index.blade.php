@@ -9,15 +9,43 @@
         <div class="card">
             <div class="card-body">
                 <h2 class="section-heading">Possible Duplicates</h2>
-                <p>These look like the same person entered more than once. Pick the record to keep, untick anyone who isn't really a match, and merge. Invites, applications and performances move to the kept record, and missing contact details are filled in.</p>
+                <p>These look like the same person entered more than once. Pick the record to keep, tick the ones to merge into it, and merge. Invites, applications and performances move to the kept record, and missing contact details are filled in. If someone isn't really a match, say so and they won't be suggested together again.</p>
 
                 @foreach($duplicateGroups as $group)
-                    <form method="POST" action="{{ route('people.merge-many') }}" class="duplicate-group"
-                          x-data="{ keep: {{ $group['keep']->id }}, names: @js($group['people']->pluck('name', 'id')) }"
-                          x-on:submit="const count = $el.querySelectorAll('[name=\'merge_ids[]\']:checked:enabled').length;
-                                       if (! confirm(`Merge ${count} ${count === 1 ? 'record' : 'records'} into ${names[keep]}? This can't be undone.`)) $event.preventDefault()">
-                        @csrf
-                        <p class="small text-muted mb-2">{{ ucfirst(implode(' · ', $group['reasons'])) }}</p>
+                    @php
+                        $g = $loop->index;
+                        $ids = $group['people']->pluck('id');
+                        // Only strong matches start ticked; first-name hunches wait for you.
+                        $merging = $ids->mapWithKeys(fn ($id) => [$id => in_array($id, $group['strong']) && $id !== $group['keep']->id]);
+                    @endphp
+                    <div class="duplicate-group" x-data="{
+                        keep: {{ $group['keep']->id }},
+                        names: @js($group['people']->pluck('name', 'id')),
+                        merging: @js($merging),
+                        get count() {
+                            return Object.entries(this.merging).filter(([id, on]) => on && Number(id) !== this.keep).length;
+                        },
+                    }">
+                        <form id="merge-{{ $g }}" method="POST" action="{{ route('people.merge-many') }}"
+                              x-on:submit="if (! confirm(`Merge ${count} ${count === 1 ? 'record' : 'records'} into ${names[keep]}? This can't be undone.`)) $event.preventDefault()">
+                            @csrf
+                        </form>
+                        <form id="split-{{ $g }}" method="POST" action="{{ route('people.not-matching') }}">
+                            @csrf
+                            @foreach($ids as $id)<input type="hidden" name="person_ids[]" value="{{ $id }}">@endforeach
+                        </form>
+                        @foreach($group['people'] as $person)
+                            <form id="split-{{ $g }}-{{ $person->id }}" method="POST" action="{{ route('people.not-matching') }}">
+                                @csrf
+                                <input type="hidden" name="person_id" value="{{ $person->id }}">
+                                @foreach($ids as $id)<input type="hidden" name="person_ids[]" value="{{ $id }}">@endforeach
+                            </form>
+                        @endforeach
+
+                        <p class="small text-muted mb-2">
+                            {{ ucfirst(implode(' · ', $group['reasons'])) }}
+                            @if($group['strong'] === []) — only a hunch, so nobody is ticked @endif
+                        </p>
                         <div class="table-responsive">
                             <table class="table table-sm align-middle mb-2">
                                 <thead>
@@ -28,24 +56,31 @@
                                         <th scope="col">Email</th>
                                         <th scope="col">Phone</th>
                                         <th scope="col">History</th>
+                                        <th scope="col"><span class="visually-hidden">Not a match</span></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($group['people'] as $person)
                                         <tr>
-                                            <td><input class="form-check-input" type="radio" name="keep_id" value="{{ $person->id }}" x-model.number="keep" aria-label="Keep {{ $person->name }}"></td>
-                                            <td><input class="form-check-input" type="checkbox" name="merge_ids[]" value="{{ $person->id }}" checked x-bind:disabled="keep === {{ $person->id }}" x-bind:class="{ invisible: keep === {{ $person->id }} }" aria-label="Merge {{ $person->name }}"></td>
+                                            <td><input form="merge-{{ $g }}" class="form-check-input" type="radio" name="keep_id" value="{{ $person->id }}" x-model.number="keep" aria-label="Keep {{ $person->name }}"></td>
+                                            <td><input form="merge-{{ $g }}" class="form-check-input" type="checkbox" name="merge_ids[]" value="{{ $person->id }}" x-model="merging[{{ $person->id }}]" x-bind:disabled="keep === {{ $person->id }}" x-bind:class="{ invisible: keep === {{ $person->id }} }" aria-label="Merge {{ $person->name }}"></td>
                                             <td><a href="{{ route('people.show', $person) }}">{{ $person->name }}</a></td>
                                             <td class="text-break">{{ $person->email }}</td>
                                             <td>{{ $person->phone_number }}</td>
                                             <td class="text-nowrap">{{ $person->invites_count }} {{ Str::plural('invite', $person->invites_count) }}@if($person->submission_applications_count), {{ $person->submission_applications_count }} {{ Str::plural('application', $person->submission_applications_count) }}@endif</td>
+                                            <td class="text-end"><button form="split-{{ $g }}-{{ $person->id }}" type="submit" class="btn btn-link btn-sm p-0 text-nowrap">Not a match</button></td>
                                         </tr>
                                     @endforeach
                                 </tbody>
                             </table>
                         </div>
-                        <button type="submit" class="btn btn-sm btn-primary">Merge into <span x-text="names[keep]">{{ $group['keep']->name }}</span></button>
-                    </form>
+                        <div class="d-flex flex-wrap align-items-center gap-3">
+                            <button form="merge-{{ $g }}" type="submit" class="btn btn-sm btn-primary" x-bind:disabled="count === 0">
+                                Merge <span x-text="count"></span> into <span x-text="names[keep]">{{ $group['keep']->name }}</span>
+                            </button>
+                            <button form="split-{{ $g }}" type="submit" class="btn btn-sm btn-outline-secondary">None of these match</button>
+                        </div>
+                    </div>
                 @endforeach
             </div>
         </div>
